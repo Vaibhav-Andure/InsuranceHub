@@ -1,0 +1,22 @@
+package com.InsureHub.CrudApplication.repository;
+
+
+
+import com.InsureHub.CrudApplication.entities.Claim;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface ClaimRepository extends JpaRepository<Claim, Integer> {
+
+    // Custom query to find a claim by PolicyID (should only be one claim per policy)
+    Optional<Claim> findByPolicy_PolicyId(int policyId);
+
+    // Custom query to find a claim by TransactionID (should only be one claim per transaction)
+    Optional<Claim> findByTransaction_TransactionId(String transactionId);
+
+    // You can add more custom queries based on your requirements, e.g., by ClaimStatus
+    Optional<Claim> findByClaimStatus(String claimStatus);
+}
