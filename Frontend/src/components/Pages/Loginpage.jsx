@@ -22,30 +22,32 @@ export default function LoginPage() {
     setErrorMessage(''); // Clear previous errors
 
     try {
-      const response = await fetch('http://localhost:5555/api/auth/login', {
+      const response = await fetch('http://localhost:5555/users/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email: email,
+          password: password
+        }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log('Login successful:', data);
+        const userData = await response.json();
+        console.log('Login successful:', userData);
 
         // Dispatch loginSuccess with user details
-        dispatch(
-          loginSuccess({
-            username: data.uname, // Extracting `uname` as the username
-            role: data.role, // Extracting user role
-            email: data.email,
-            uid: data.uid,
-          })
-        );
-
+       
+        dispatch(loginSuccess({
+          username: userData.username, // Extracting `username` from the response
+          role: userData.roleName, // Extracting user role from the response
+          email: userData.email, // Extracting email from the response
+          uid: userData.userId, // Extracting user ID from the response
+        }));
+        
         // Redirect based on role
-        switch (data.role) {
+        switch (userData.roleName) {
           case 'Admin':
             navigate('/admin');
             break;

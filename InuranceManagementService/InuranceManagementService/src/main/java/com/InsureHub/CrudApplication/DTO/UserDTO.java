@@ -4,7 +4,7 @@ public class UserDTO {
     private int userId;          // Unique identifier for the user
     private String username;    // Username of the user
     private String email;        // Email address of the user
-    private String address;     // Address of the user
+//    private String address;     // Address of the user
     private String roleName;    // Name of the role assigned to the user (e.g., admin, customer, insurer)
 
     // Getter and Setter methods
@@ -32,13 +32,13 @@ public class UserDTO {
         this.email = email;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
+//    public String getAddress() {
+//        return address;
+//    }
+//
+//    public void setAddress(String address) {
+//        this.address = address;
+//    }
 
     public String getRoleName() {
         return roleName;

@@ -137,27 +137,40 @@
 
 
 
+
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
-import { loginSuccess } from '../../redux/slices/authSlice'; // Use loginSuccess from authSlice
+import { loginSuccess } from '../../redux/slices/authSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import { Shield } from 'lucide-react';
 
 export default function RegistrationPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-const [errorMessage , setErrorMessage] = useState();
+  const [errorMessage, setErrorMessage] = useState();
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
+    // Ensure the data matches the required format
+
+    console.log(data);
+    const payload = {
+      username: data.uname,
+      password: data.password,
+      email: data.email,
+      role: {
+        roleName: "Customer"
+      }
+    };
+
     try {
-      const response = await fetch('http://localhost:5555/api/auth/register', {
+      const response = await fetch('http://localhost:5555/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
-  
+
       if (response.ok) {
         const userData = await response.json();
         
@@ -170,26 +183,13 @@ const [errorMessage , setErrorMessage] = useState();
         // Handle error (such as a conflict 409 error)
         const errorText = await response.json(); // Parse the error message returned from backend
         console.log('Error:', errorText.message);
-  
-        
-      
-          setErrorMessage(errorText.message);
-        
+        setErrorMessage(errorText.message);
       }
     } catch (err) {
       console.error('Registration error:', err);
       setErrorMessage('An unexpected error occurred during registration.');
     }
   };
-  
-
-  function handleSelect(event){
-
-console.log(event.target.value);
-
-
-  }
-  
 
   return (
     <div className="min-vh-100 bg-light py-5">
@@ -215,7 +215,6 @@ console.log(event.target.value);
                     id="uname"
                     {...register('uname', { required: 'Username is required', minLength: { value: 2, message: 'Username must have at least 2 characters' } })}
                   />
-
                   {errors.uname && <p className="text-danger">{errors.uname.message}</p>}
                 </div>
 
@@ -247,33 +246,6 @@ console.log(event.target.value);
                     })}
                   />
                   {errors.password && <p className="text-danger">{errors.password.message}</p>}
-                </div>
-
-                {/* Address Field */}
-                <div className="mb-3">
-                  <label htmlFor="address" className="form-label">Address</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="address"
-                    {...register('address', { required: 'Address is required' })}
-                  />
-                  {errors.address && <p className="text-danger">{errors.address.message}</p>}
-                </div>
-
-                {/* Role Field */}
-                <div className="mb-3">
-                  <label htmlFor="role" className="form-label">Role</label>
-                  <select 
-                    className="form-control"
-                    id="role"
-                    {...register('role', { required: 'Role is required' })}
-                    onSelect={ handleSelect()}
-                  >
-                    <option value="Customer">Customer</option>
-                    <option value="Insurer">Insurer</option>
-                  </select>
-                  {errors.role && <p className="text-danger">{errors.role.message}</p>}
                 </div>
 
                 {/* Submit Button */}

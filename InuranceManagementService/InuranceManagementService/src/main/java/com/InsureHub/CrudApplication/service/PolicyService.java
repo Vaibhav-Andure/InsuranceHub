@@ -116,7 +116,8 @@ public class PolicyService {
         return new PolicyDTO(
                 policy.getPolicyId(),
                 policy.getPolicyNumber(),
-
+                policy.getPolicyName(),
+                policy.getPolicyTerms(),
                 policy.getPremiumAmount(),
                 policy.getCoverageAmount(),
                 policy.getCoverageType(),

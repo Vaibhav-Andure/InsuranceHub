@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/policies")
+@CrossOrigin(origins="http://localhost:5173")
 public class PolicyController {
 
     private final PolicyService policyService;

@@ -8,7 +8,10 @@ import {
   TableContainer, 
   TableHead, 
   TableRow, 
-  Paper 
+  Paper,
+  Grid,
+  Button,
+  Typography
 } from '@mui/material';
 
 const PolicyBenefits = ({ benefits, onClose }) => {
@@ -21,28 +24,135 @@ const PolicyBenefits = ({ benefits, onClose }) => {
   };
 
   return (
-    <div style={styles.benefitsDrawer}>
-      <div style={styles.benefitsContent}>
-        <button 
-          onClick={onClose} 
-          style={styles.closeButton}
-        >
-          ×
-        </button>
-        <h4 style={styles.benefitsTitle}>Policy Benefits</h4>
-        <TableContainer component={Paper} style={styles.benefitsTableContainer}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell><strong>Benefit</strong></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {splitBenefits(benefits)}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
+    <div style={{
+      backgroundColor: 'white',
+      borderRadius: '1rem',
+      padding: '1.5rem',
+      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+      display: 'flex',
+      flexDirection: 'column',
+      transition: 'transform 0.3s ease',
+      width: '100%',
+      maxWidth: '500px',
+    }}>
+      <Typography variant="h6">Policy Benefits</Typography>
+      <TableContainer component={Paper} style={{
+        maxHeight: 'calc(100% - 50px)',
+        overflowY: 'auto',
+      }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell><strong>Benefit</strong></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {splitBenefits(benefits)}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Button 
+        onClick={onClose} 
+        style={{
+          padding: '0.5rem 1rem',
+          color: 'white',
+          border: 'none',
+          borderRadius: '0.375rem',
+          cursor: 'pointer',
+          fontWeight: '500',
+          backgroundColor: '#ff6b6b',
+        }}
+      >
+        ×
+      </Button>
+    </div>
+  );
+};
+
+const PolicyInfo = ({ policy }) => {
+  return (
+    <div style={{
+      backgroundColor: 'white',
+      borderRadius: '1rem',
+      padding: '1.5rem',
+      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+      display: 'flex',
+      flexDirection: 'column',
+      transition: 'transform 0.3s ease',
+      width: '100%',
+      maxWidth: '500px',
+    }}>
+      <Typography variant="h6">Policy Information</Typography>
+      <p><strong>Policy Number:</strong> {policy.policyNumber}</p>
+      <p><strong>Coverage Amount:</strong> {policy.coverageAmount}</p>
+      <p><strong>Coverage Type:</strong> {policy.coverageType}</p>
+      <p><strong>Waiting Period:</strong> {policy.waitingPeriod} days</p>
+      <p><strong>Renewal Terms:</strong> {policy.renewalTerms}</p>
+      <p><strong>Claim Process:</strong> {policy.claimProcess}</p>
+      <p><strong>Insurer:</strong> {policy.insurer.insurerName}</p>
+    </div>
+  );
+};
+
+const PolicyComparison = ({ policies, onRemove }) => {
+  return (
+    <div style={{
+      backgroundColor: 'white',
+      borderRadius: '1rem',
+      padding: '1.5rem',
+      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+      display: 'flex',
+      flexDirection: 'column',
+      transition: 'transform 0.3s ease',
+      width: '100%',
+      maxWidth: '500px',
+    }}>
+      <Typography variant="h6">Compare</Typography>
+
+      <br/>
+      <br/>
+      <Grid container spacing={2}>
+        {policies.map(policy => (
+          <Grid item key={policy.policyId} xs={12}>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '1rem',
+              padding: '1.5rem',
+              boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+              display: 'flex',
+              flexDirection: 'column',
+              transition: 'transform 0.3s ease',
+            }}>
+              <img src={policy.insurer.insurerImage} alt="Insurer" style={{
+                width: '150px',
+                height: '80px',
+                borderRadius: '50%',
+                marginRight: '1rem',
+              }} />
+              <Typography variant="h6"> <strong> {policy.policyName} </strong></Typography>
+              <p><strong>Base Premium:</strong> {policy.premiumAmount}</p>
+              <p><strong>Terms:</strong> {policy.policyTerms} years</p>
+              <p><strong>Coverage Amount:</strong> {policy.coverageAmount}</p>
+              <p><strong>Coverage Type:</strong> {policy.coverageType}</p>
+              <p><strong>Waiting Period:</strong> {policy.waitingPeriod} days</p>
+              <Button 
+                onClick={() => onRemove(policy.policyId)} 
+                style={{
+                  padding: '0.5rem 1rem',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.375rem',
+                  cursor: 'pointer',
+                  fontWeight: '500',
+                  backgroundColor: 'red',
+                }}
+              >
+                Remove
+              </Button>
+            </div>
+          </Grid>
+        ))}
+      </Grid>
     </div>
   );
 };
@@ -52,24 +162,24 @@ const ViewPolicy = () => {
   const [error, setError] = useState(null);
   const [checkedPolicies, setCheckedPolicies] = useState({});
   const [activeBenefitsPolicy, setActiveBenefitsPolicy] = useState(null);
+  const [activeInfoPolicy, setActiveInfoPolicy] = useState(null);
   const [sortOption, setSortOption] = useState('premium-low-high');
   const [sortedPolicies, setSortedPolicies] = useState([]);
+  const [comparePolicies, setComparePolicies] = useState([]);
+  const [selectedPolicyForComparison, setSelectedPolicyForComparison] = useState(null);
   const navigate = useNavigate();
 
-  // Fetching policies on component mount
   useEffect(() => {
     fetchPolicies();
   }, []);
 
-  // Sorting policies when sort option or policies change
   useEffect(() => {
     sortPolicies();
   }, [sortOption, policies]);
 
-  // Fetch policies from the server
   const fetchPolicies = async () => {
     try {
-      const response = await fetch('http://localhost:5555/api/auth/viewpolicy');
+      const response = await fetch('http://localhost:5555/api/policies/getallpolicies');
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
       setPolicies(data);
@@ -78,13 +188,10 @@ const ViewPolicy = () => {
     }
   };
 
-  // Handle buying the policy and navigate to the transaction page
   const handlebuy = (policyID) => {
-    console.dir("hitting buying api for the policy buying for " + policyID);
     navigate("/payment");
   };
 
-  // Handle the switch change (when a policy is selected/deselected)
   const handleSwitchChange = (event, policyID) => {
     setCheckedPolicies(prevState => ({
       ...prevState,
@@ -95,31 +202,38 @@ const ViewPolicy = () => {
     }
   };
 
-  // Toggle benefits for a specific policy
   const toggleBenefits = (policyID) => {
     setActiveBenefitsPolicy(activeBenefitsPolicy === policyID ? null : policyID);
   };
 
-  // Handle change in sort option
+  const toggleInfo = (policyID) => {
+    setActiveInfoPolicy(activeInfoPolicy === policyID ? null : policyID);
+  };
+
   const handleSortChange = (event) => {
     setSortOption(event.target.value);
   };
 
-  // Sorting policies based on selected sort option
   const sortPolicies = () => {
     const sortedPolicies = [...policies];
     switch (sortOption) {
       case 'premium-low-high':
-        sortedPolicies.sort((a, b) => parseInt(a.premium) - parseInt(b.premium));
+        sortedPolicies.sort((a, b) => parseInt(a.premiumAmount) - parseInt(b.premiumAmount));
         break;
       case 'premium-high-low':
-        sortedPolicies.sort((a, b) => parseInt(b.premium) - parseInt(a.premium));
+        sortedPolicies.sort((a, b) => parseInt(b.premiumAmount) - parseInt(a.premiumAmount));
+        break;
+      case 'coverage-low-high':
+        sortedPolicies.sort((a, b) => parseInt(a.coverageAmount) - parseInt(b.coverageAmount));
+        break;
+      case 'coverage-high-low':
+        sortedPolicies.sort((a, b) => parseInt(b.coverageAmount) - parseInt(a.coverageAmount));
         break;
       case 'tenure-low-high':
-        sortedPolicies.sort((a, b) => a.terms - b.terms);
+        sortedPolicies.sort((a, b) => a.policyTerms - b.policyTerms);
         break;
       case 'tenure-high-low':
-        sortedPolicies.sort((a, b) => b.terms - a.terms);
+        sortedPolicies.sort((a, b) => b.policyTerms - a.policyTerms);
         break;
       default:
         break;
@@ -127,210 +241,226 @@ const ViewPolicy = () => {
     setSortedPolicies(sortedPolicies);
   };
 
+  const handleCompare = (policyID) => {
+    if (comparePolicies.includes(policyID)) {
+      setComparePolicies(comparePolicies.filter(id => id !== policyID));
+    } else {
+      setComparePolicies([...comparePolicies, policyID]);
+    }
+  };
+
+  const handleCompareButtonClick = () => {
+    setSelectedPolicyForComparison(true);
+  };
+
   return (
-    <div style={styles.pageContainer}>
-      <div style={styles.header}>
-        <h1 style={styles.headerTitle}>Policy Details</h1>
-        <div style={styles.sortSelectContainer}>
-          <select onChange={handleSortChange} style={styles.sortSelect}>
+    <div style={{
+      padding: '2rem',
+      backgroundColor: '#f5f5f5',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+    }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        marginBottom: '2rem',
+      }}>
+        <Typography variant="h4">Policy Details</Typography>
+        <div style={{
+          marginLeft: 'auto',
+        }}>
+          <select onChange={handleSortChange} style={{
+            padding: '0.5rem',
+            fontSize: '1rem',
+            borderRadius: '0.375rem',
+            border: '1px solid #ddd',
+            backgroundColor: '#f9fafb',
+          }}>
             <option value="premium-low-high">Sort by Premium (Low to High)</option>
             <option value="premium-high-low">Sort by Premium (High to Low)</option>
+            <option value="coverage-low-high">Sort by Coverage Amount (Low to High)</option>
+            <option value="coverage-high-low">Sort by Coverage Amount (High to Low)</option>
             <option value="tenure-low-high">Sort by Tenure (Low to High)</option>
             <option value="tenure-high-low">Sort by Tenure (High to Low)</option>
           </select>
         </div>
       </div>
 
-      {error && <div style={styles.error}>Error: {error}</div>}
+      {error && <div style={{
+        textAlign: 'left',
+        color: '#6b7280',
+        fontSize: '1.2rem',
+      }}>Error: {error}</div>}
 
-      <div style={styles.policiesContainer}>
-        {sortedPolicies.length > 0 ? sortedPolicies.map((policy) => (
-          <div 
-            key={policy.policyID} 
-            style={{
-              ...styles.policyCardWrapper,
-              position: 'relative',
-            }}
-          >
-            <div style={styles.policyCard}>
-              <div style={styles.policyHeader}>
-                <img src={policy.insurerImage} alt="Insurer" style={styles.insurerImage} />
-                <div style={styles.policyInfo}>
-                  <h3 style={styles.policyName}>{policy.p_name}</h3>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        width: '100%',
+        padding: '0 20px',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          gap: '2rem',
+          width: '50%',
+        }}>
+          {sortedPolicies.length > 0 ? sortedPolicies.map((policy) => (
+            <Grid container key={policy.policyId} spacing={2}>
+              <Grid item xs={12}>
+                <div style={{
+                  backgroundColor: 'white',
+                  borderRadius: '1rem',
+                  padding: '1.5rem',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'transform 0.3s ease',
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginBottom: '1rem',
+                  }}>
+                    <img src={policy.insurer.insurerImage} alt="Insurer" style={{
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '50%',
+                      marginRight: '1rem',
+                    }} />
+                    <div style={{
+                      flex: 1,
+                      marginLeft: '1rem',
+                    }}>
+                      <Typography variant="h6">{policy.policyName}</Typography>
+                    </div>
+                  </div>
+                  <div style={{
+                    marginBottom: '1rem',
+                    flex: '1',
+                  }}>
+                    <p><strong>Base Premium:</strong> {policy.premiumAmount}</p>
+                    <p><strong>Terms:</strong> {policy.policyTerms} years</p>
+                    <p><strong>Coverage Amount:</strong> {policy.coverageAmount}</p>
+                    <p><strong>Coverage Type:</strong> {policy.coverageType}</p>
+                    <p><strong>Waiting Period:</strong> {policy.waitingPeriod} days</p>
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    marginTop: 'auto',
+                  }}>
+                    <CustomizedSwitches
+                      checked={checkedPolicies[policy.policyId] || false}
+                      onChange={(event) => handleSwitchChange(event, policy.policyId)}
+                      trackText="Slide to Buy Policy"
+                    />
+                  </div>
+                  <Button
+                    onClick={() => toggleBenefits(policy.policyId)}
+                    style={{
+                      marginTop: '1rem',
+                      padding: '0.5rem 1rem',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '0.375rem',
+                      cursor: 'pointer',
+                      fontWeight: '500',
+                      backgroundColor: activeBenefitsPolicy === policy.policyId 
+                        ? '#ff6b6b' 
+                        : '#2563eb'
+                    }}
+                  >
+                    {activeBenefitsPolicy === policy.policyId ? 'Hide Benefits' : 'See Benefits'}
+                  </Button>
+                  <Button
+                    onClick={() => toggleInfo(policy.policyId)}
+                    style={{
+                      marginTop: '1rem',
+                      padding: '0.5rem 1rem',
+ color: 'white',
+                      border: 'none',
+                      borderRadius: '0.375rem',
+                      cursor: 'pointer',
+                      fontWeight: '500',
+                      backgroundColor: activeInfoPolicy === policy.policyId 
+                        ? '#ff6b6b' 
+                        : '#2563eb'
+                    }}
+                  >
+                    {activeInfoPolicy === policy.policyId ? 'Hide Info' : 'See Info'}
+                  </Button>
+                  <Button
+                    onClick={() => handleCompare(policy.policyId)}
+                    style={{
+                      marginTop: '1rem',
+                      padding: '0.5rem 1rem',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '0.375rem',
+                      cursor: 'pointer',
+                      fontWeight: '500',
+                      backgroundColor: comparePolicies.includes(policy.policyId) 
+                        ? 'red' 
+                        : '#2563eb'
+                    }}
+                  >
+                    {comparePolicies.includes(policy.policyId) ? 'Remove from Compare' : 'Compare'}
+                  </Button>
                 </div>
-              </div>
-              <div style={styles.policyDetails}>
-                <p><strong>Premium:</strong> {policy.premium}</p>
-                <p><strong>Terms:</strong> {policy.terms} years</p>
-              </div>
-              <div style={styles.switchContainer}>
-                <CustomizedSwitches
-                  checked={checkedPolicies[policy.policyID] || false}
-                  onChange={(event) => handleSwitchChange(event, policy.policyID)}
-                  trackText="Slide to Buy Policy"
-                />
-              </div>
-              <button
-                onClick={() => toggleBenefits(policy.policyID)}
-                style={{
-                  ...styles.benefitsButton,
-                  backgroundColor: activeBenefitsPolicy === policy.policyID 
-                    ? '#ff6b6b' 
-                    : '#2563eb'
-                }}
-              >
-                {activeBenefitsPolicy === policy.policyID ? 'Hide Benefits' : 'See Benefits'}
-              </button>
-            </div>
-
-            {activeBenefitsPolicy === policy.policyID && (
-              <PolicyBenefits 
-                benefits={policy.benefits} 
-                onClose={() => setActiveBenefitsPolicy(null)}
-              />
-            )}
-          </div>
-        )) : (
-          <p style={styles.loading}>Loading...</p>
-        )}
+              </Grid>
+              <Grid item xs={12}>
+                {activeBenefitsPolicy === policy.policyId && (
+                  <div style={{ marginTop: '1rem', width: '100%' }}>
+                    <PolicyBenefits 
+                      benefits={policy.benefits} 
+                      onClose={() => setActiveBenefitsPolicy(null)}
+                    />
+                  </div>
+                )}
+                {activeInfoPolicy === policy.policyId && (
+                  <div style={{ marginTop: '1rem', width: '100%' }}>
+                    <PolicyInfo 
+                      policy={policy} 
+                      onClose={() => setActiveInfoPolicy(null)}
+                    />
+                  </div>
+                )}
+              </Grid>
+            </Grid>
+          )) : (
+            <p style={{
+              textAlign: 'left',
+              color: '#6b7280',
+              fontSize: '1.2rem',
+            }}>Loading...</p>
+          )}
+        </div>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          gap: '2rem',
+          width: '50%',
+          border: '1px solid #ddd',
+          padding: '1rem',
+          borderRadius: '1rem',
+        }}>
+          {comparePolicies.length > 0 && (
+            <PolicyComparison 
+              policies={comparePolicies.map(id => policies.find(policy => policy.policyId === id))} 
+              onRemove={(policyId) => setComparePolicies(comparePolicies.filter(id => id !== policyId))}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
-};
-
-const styles = {
-  pageContainer: {
-    padding: '2rem',
-    backgroundColor: '#f5f5f5',
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: '2rem',
-  },
-  headerTitle: {
-    fontSize: '2rem',
-    color: '#1f2937',
-    flexGrow: 1,
-    textAlign : 'center',
-  },
-  sortSelectContainer: {
-    marginLeft: 'auto',
-  },
-  sortSelect: {
-    padding: '0.5rem',
-    fontSize: '1rem',
-    borderRadius: '0.375rem',
-    border: '1px solid #ddd',
-    backgroundColor: '#f9fafb',
-  },
-  policiesContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '2rem',
-    width: '100%',
-    padding: '0 20px',
-    overflow: 'hidden',
-  },
-  policyCardWrapper: {
-    width: '100%',
-    maxWidth: '500px',
-    position: 'relative',
-  },
-  policyCard: {
-    backgroundColor: 'white',
-    borderRadius: '1rem',
-    padding: '1.5rem',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    display: 'flex',
-    flexDirection: 'column',
-    transition: 'transform 0.3s ease',
-  },
-  policyHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '1rem',
-  },
-  insurerImage: {
-    width: '80px',
-    height: '80px',
-    borderRadius: '50%',
-    marginRight: '1rem',
-  },
-  policyInfo: {
-    flex: 1,
-    marginLeft: '1rem',
-  },
-  policyName: {
-    fontSize: '1.25rem',
-    fontWeight: '600',
-    color: '#1f2937',
-    marginBottom: '0.5rem',
-  },
-  policyDetails: {
-    marginBottom: '1rem',
-    flex: '1',
-  },
-  switchContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: 'auto',
-  },
-  benefitsButton: {
-    marginTop: '1rem',
-    padding: '0.5rem 1rem',
-    color: 'white',
-    border: 'none',
-    borderRadius: '0.375rem',
-    cursor: 'pointer',
-    fontWeight: '500',
-  },
-  loading: {
-    textAlign: 'center',
-    color: '#6b7280',
-    fontSize: '1.2rem',
-  },
-  benefitsDrawer: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    width: '400px',
-    height: '100%',
-    backgroundColor: 'white',
-    boxShadow: '-4px 0 6px rgba(0,0,0,0.1)',
-    zIndex: 1000,
-    padding: '1rem',
-    overflowY: 'auto',
-    transform: 'translateX(100%)',
-    transition: 'transform 0.3s ease-in-out',
-  },
-  benefitsContent: {
-    height: '100%',
-  },
-  benefitsTitle: {
-    textAlign: 'center',
-    marginBottom: '1rem',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: '10px',
-    right: '10px',
-    background: 'none',
-    border: 'none',
-    fontSize: '1.5rem',
-    cursor: 'pointer',
-  },
-  benefitsTableContainer: {
-    maxHeight: 'calc(100% - 50px)',
-    overflowY: 'auto',
-  },
 };
 
 export default ViewPolicy;

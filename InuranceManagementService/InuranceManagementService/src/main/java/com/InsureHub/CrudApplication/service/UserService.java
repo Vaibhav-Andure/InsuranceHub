@@ -101,7 +101,7 @@ public class UserService {
         return userRepository.findById(userId).map(existingUser -> {
             existingUser.setUsername(user.getUsername());
             existingUser.setEmail(user.getEmail());
-            existingUser.setAddress(user.getAddress());
+//            existingUser.setAddress(user.getAddress());
 
             // Set the role if provided
             if (user.getRole() != null) {
@@ -141,7 +141,7 @@ public class UserService {
         userDTO.setUserId(user.getUserId());
         userDTO.setUsername(user.getUsername());
         userDTO.setEmail(user.getEmail());
-        userDTO.setAddress(user.getAddress());
+//        userDTO.setAddress(user.getAddress());
 
         if (user.getRole() != null) {
             logger.info("Fetched role name: {}", user.getRole().getRoleName());

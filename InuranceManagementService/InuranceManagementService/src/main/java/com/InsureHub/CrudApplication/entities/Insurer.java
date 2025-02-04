@@ -1,6 +1,8 @@
 package com.InsureHub.CrudApplication.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ public class Insurer {
     @Column(nullable = true)
     private String licenseNumber; // License number of the insurer
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "insurer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Policy> policies = new ArrayList<>(); // Initialize to empty list
 

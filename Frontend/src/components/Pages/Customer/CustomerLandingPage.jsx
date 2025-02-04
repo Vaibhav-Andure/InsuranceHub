@@ -55,52 +55,56 @@ export default function CustomerLandingPage() {
       <div className="container">
         <h1 className="text-center">Welcome, {user?.username}</h1>
 
-        <div className="row mt-5">
-          {state.showPolicy && (
-            <div className="col-md-4 d-flex">
-              <div className="card shadow mb-4 flex-fill">
-                <div className="card-body text-center">
-                  <h4>Your Policies</h4>
-                  <p>View and manage your insurance policies</p>
-                  <button className="btn btn-primary mb-3" onClick={toggleViewPolicy}>
-                    view policies
-                  </button>
-                </div>
+        {state.showViewPolicy ? (
+          <div className="row mt-5">
+            <div className="col-md-12">
+              <button className="btn btn-primary mb-3" onClick={toggleViewPolicy}>
+                Back to main menu
+              </button>
+              <div style={{ height: '100vh', overflowY: 'auto' }}>
+                <ViewPolicy />
               </div>
             </div>
-          )}
-
-          {state.showClaims && (
-            <div className="col-md-4 d-flex">
-              <div className="card shadow mb-4 flex-fill">
-                <div className="card-body text-center">
-                  <h4>Claims</h4>
-                  <p>Track your insurance claims</p>
-                  <button className="btn btn-primary">View Claims</button>
+          </div>
+        ) : (
+          <div className="row mt-5">
+            {state.showPolicy && (
+              <div className="col-md-4 d-flex">
+                <div className="card shadow mb-4 flex-fill">
+                  <div className="card-body text-center">
+                    <h4>Your Policies</h4>
+                    <p>View and manage your insurance policies</p>
+                    <button className="btn btn-primary mb-3" onClick={toggleViewPolicy}>
+                      view policies
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {state.showAsst && (
-            <div className="col-md-4 d-flex">
-              <div className="card shadow mb-4 flex-fill">
-                <div className="card-body text-center">
-                  <h4>Contact Support</h4>
-                  <p>Reach out for any assistance</p>
-                  <button className="btn btn-primary">Contact Support</button>
+            {state.showClaims && (
+              <div className="col-md-4 d-flex">
+                <div className="card shadow mb-4 flex-fill">
+                  <div className="card-body text-center">
+                    <h4>Claims</h4>
+                    <p>Track your insurance claims</p>
+                    <button className="btn btn-primary">View Claims</button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
 
-        {state.showViewPolicy && (
-          <div>
-            <button className="btn btn-primary mb-3" onClick={toggleViewPolicy}>
-              Back to main menu
-            </button>
-            <ViewPolicy />
+            {state.showAsst && (
+              <div className="col-md-4 d-flex">
+                <div className="card shadow mb-4 flex-fill">
+                  <div className="card-body text-center">
+                    <h4>Contact Support</h4>
+                    <p>Reach out for any assistance</p>
+                    <button className="btn btn-primary">Contact Support</button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

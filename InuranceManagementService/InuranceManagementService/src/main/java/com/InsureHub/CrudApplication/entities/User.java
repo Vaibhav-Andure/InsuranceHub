@@ -20,8 +20,7 @@ public class User {
     @Column(name = "Email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "Address", nullable = false)
-    private String address;
+
 
     @ManyToOne(fetch = FetchType.LAZY)  // Use LAZY fetch strategy to avoid issues
     @JoinColumn(name = "RoleName", referencedColumnName = "RoleName", nullable = false)
@@ -60,13 +59,13 @@ public class User {
         this.email = email;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
+//    public String getAddress() {
+//        return address;
+//    }
+//
+//    public void setAddress(String address) {
+//        this.address = address;
+//    }
 
     public Role getRole() {
         return role;

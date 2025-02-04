@@ -1,5 +1,6 @@
 package com.InsureHub.CrudApplication.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -11,6 +12,9 @@ public class Policy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int policyId;
+
+    @Column(nullable = false)
+    private String policyName;
 
     @Column(unique = true, nullable = false)
     private String policyNumber;
@@ -49,6 +53,7 @@ public class Policy {
     private Date modifiedDate;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "insurer_id", referencedColumnName = "insurerId")
     private Insurer insurer; // Many policies belong to one insurer
 
@@ -200,4 +205,20 @@ public class Policy {
     public void setPolicyTerms(String policyTerms) {
         this.policyTerms = policyTerms;
     }
+
+
+
+
+    public String getPolicyName() {
+        return policyName;
+    }
+
+    public void setPolicyName(String policyName) {
+        this.policyName = policyName;
+    }
+
+
+
+
+
 }

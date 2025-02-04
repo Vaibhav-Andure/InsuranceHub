@@ -8,7 +8,8 @@ public class PolicyDTO {
 
     private int policyId;
     private String policyNumber;
-
+    private String policyName;
+    private String policyTerms;
     private BigDecimal premiumAmount;
     private BigDecimal coverageAmount;
     private String coverageType;
@@ -19,20 +20,21 @@ public class PolicyDTO {
     private String claimProcess;
     private String status;
     private Date createdDate;
-    private Date modifiedDate;
-    private InsurerDTO insurer;  // Add InsurerDTO field
+   private Date modifiedDate;
+private InsurerDTO insurer;  // Add InsurerDTO field
 
     // Default constructor
     public PolicyDTO() {}
 
     // Constructor for mapping Policy entity
-    public PolicyDTO(int policyId, String policyNumber,
+    public PolicyDTO(int policyId, String policyNumber, String policyName ,  String policyTerms ,
                      BigDecimal premiumAmount, BigDecimal coverageAmount, String coverageType, String benefits,
                      String exclusions, int waitingPeriod, String renewalTerms, String claimProcess, String status,
                      Date createdDate, Date modifiedDate, InsurerDTO insurer) {
         this.policyId = policyId;
         this.policyNumber = policyNumber;
-
+  this.policyName = policyName;
+  this.policyTerms = policyTerms;
         this.premiumAmount = premiumAmount;
         this.coverageAmount = coverageAmount;
         this.coverageType = coverageType;
@@ -42,10 +44,12 @@ public class PolicyDTO {
         this.renewalTerms = renewalTerms;
         this.claimProcess = claimProcess;
         this.status = status;
-        this.createdDate = createdDate;
-        this.modifiedDate = modifiedDate;
+     this.createdDate = createdDate;
+     this.modifiedDate = modifiedDate;
         this.insurer = insurer;  // Set InsurerDTO
     }
+
+
 
     // Getters and Setters
     public int getPolicyId() {
@@ -161,4 +165,30 @@ public class PolicyDTO {
     public void setInsurer(InsurerDTO insurer) {
         this.insurer = insurer;
     }
+
+
+
+
+
+
+    public String getPolicyName() {
+        return policyName;
+    }
+
+    public void setPolicyName(String policyName) {
+        this.policyName = policyName;
+    }
+
+    public String getPolicyTerms() {
+        return policyTerms;
+    }
+
+    public void setPolicyTerms(String policyTerms) {
+        this.policyTerms = policyTerms;
+    }
+
+
+
+
+
 }

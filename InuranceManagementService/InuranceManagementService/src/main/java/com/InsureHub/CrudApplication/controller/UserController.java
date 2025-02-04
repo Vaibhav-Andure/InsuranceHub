@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins="http://localhost:5173")
 public class UserController {
 
     @Autowired
@@ -23,6 +23,15 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         System.out.println("Received request: " + user);
+        System.out.println("received user data ");
+        System.out.println(user.getEmail());
+        System.out.println(user.getPassword());
+        System.out.println(user.getRole().getRoleName());
+
+
+
+
+
 
         // Check if the user already exists by email
         Optional<User> existingUser = userService.findUserByEmail(user.getEmail());
