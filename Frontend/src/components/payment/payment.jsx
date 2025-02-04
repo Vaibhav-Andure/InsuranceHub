@@ -1,343 +1,197 @@
 import React, { useState } from 'react';
-
 import { Formik, Field, Form } from 'formik';
-
-import * as Yup from 'yup';
-
-import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Typography } from '@mui/material';
-
+import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Typography, InputAdornment } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-
-import PaymentAnimation from './paymenticon'; // Import PaymentAnimation
-
-import CustomizedSwitches from "../switch/custswitch"; // Import the switch component
-
+import { Payment, VpnKey } from '@mui/icons-material';
+import PaymentAnimation from './paymenticon';
+import CustomizedSwitches from "../switch/custswitch";
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios'; // Import axios
 
-
-// Styles using Material-UI to create an aesthetic payment gateway
-
+// Styles
 const useStyles = makeStyles({
-
-container: {
-
-width: '500px', // Set a fixed width for the payment gateway
-
-margin: '100px auto', // Center the container vertically and horizontally
-
-padding: '30px',
-
-backgroundColor: '#ffffff', // White background for better contrast
-
-borderRadius: '10px',
-
-boxShadow: '0 6px 15px rgba(0, 0, 0, 0.1)', // Enhanced shadow
-
-fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
-
-textAlign: 'center',
-
-},
-
-header: {
-
-textAlign: 'center',
-
-fontSize: '1.8rem', // Larger header font size
-
-color: '#333',
-
-marginBottom: '30px', // Increased margin for spacing
-
-},
-
-formControl: {
-
-marginBottom: '15px',
-
-width: '100%',
-
-},
-
-button: {
-
-marginTop: '20px',
-
-width: '100%',
-
-backgroundColor: '#2563eb',
-
-color: 'white',
-
-'&:hover': {
-
-backgroundColor: '#1d4ed8',
-
-},
-
-},
-
-error: {
-
-color: 'red',
-
-fontSize: '0.8rem',
-
-marginTop: '5px',
-
-},
-
-paymentIconContainer: {
-
-marginTop: '30px',
-
-},
-
-iconText: {
-
-fontSize: '1.1rem',
-
-fontWeight: '500',
-
-color: '#333',
-
-marginTop: '10px',
-
-},
-
-centerSwitch: {
-
-display: 'flex',
-
-justifyContent: 'center', // Center the switch horizontally
-
-alignItems: 'center', // Center the switch vertically
-
-height: '100px', // Make space for centering the switch
-
-},
-
-retryButton: {
-
-marginTop: '20px',
-
-width: '100%',
-
-color: '#1392ed',
-
-'&:hover': {
-
-backgroundColor: 'lightgreen', // Maintain red color on hover
-
-},
-
-}
-
+    container: {
+        width: '500px',
+        margin: '50px auto',
+        padding: '30px',
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 6px 15px rgba(0, 0, 0, 0.1)',
+        textAlign: 'center',
+    },
+    formControl: { marginBottom: '15px', width: '100%' },
+    centerSwitch: { display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' },
+    inputField: { marginBottom: '15px' },
+    retryButton: { marginTop: '20px', width: '100%', color: '#1392ed', '&:hover': { backgroundColor: 'lightgreen' } },
+    logo: { width: '120px', marginBottom: '20px' },
+    paymentIconContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: '30px',
+    },
+    iconText: { marginTop: '10px', fontWeight: 'bold' },
+    header: { marginTop: '10px', fontSize: '16px', color: '#555' },
 });
 
-
-// PaymentGateway component
+// Payment Types
+const PaymentType = { CARD: 0, UPI: 1, NETBANKING: 2 };
 
 const PaymentGateway = () => {
+    const classes = useStyles();
+    const navigate = useNavigate();
 
-const classes = useStyles();
+    const [paymentSuccess, setPaymentSuccess] = useState(null);
+    const [isSwitchOn, setIsSwitchOn] = useState(false);
+    const [seconds, setSeconds] = useState(10);
+    const [errors, setErrors] = useState({});
 
-const [paymentSuccess, setPaymentSuccess] = useState(null); // Track payment success status
+    const initialValues = {
+        paymentMethod: 'upi',
+        upiId: '',
+        upiPin: '', // Added UPI PIN
+        cardNumber: '',
+        expiryDate: '',
+        cvv: '',
+        username: '',
+        password: '',
+    };
 
-const [isSwitchOn, setIsSwitchOn] = useState(false); // Track the switch state
+    const validate = (values) => {
+        const newErrors = {};
+        if (!values.paymentMethod) newErrors.paymentMethod = 'Payment method is required';
 
-const [seconds, setSeconds] = useState(10); // Countdown for redirection
+        if (values.paymentMethod === 'upi') {
+            if (!values.upiId) newErrors.upiId = 'UPI ID is required';
+            if (!/^\d{4,6}$/.test(values.upiPin)) newErrors.upiPin = 'UPI PIN must be 4-6 digits'; // Validate UPI PIN format
+        }
 
-const navigate = useNavigate();
+        if (values.paymentMethod === 'card') {
+            if (!/^\d{12}$/.test(values.cardNumber)) newErrors.cardNumber = 'Card number must be 12 digits';
+            if (!/^\d{2}\/\d{2}$/.test(values.expiryDate)) newErrors.expiryDate = 'Invalid expiry date format (MM/YY)';
+            if (!/^\d{3}$/.test(values.cvv)) newErrors.cvv = 'CVV must be 3 digits';
+        }
 
-const initialValues = {
-  paymentMethod: 'upi',
-  upiId: '',
-  pin: '',
-  cardNumber: '',
-  expiryDate: '',
-  cvv: '',
-  username: '',
-  password: '',
-};;
+        if (values.paymentMethod === 'netbanking') {
+            if (!values.username) newErrors.username = 'Username is required';
+            if (!values.password) newErrors.password = 'Password is required';
+        }
 
-const validationSchema = Yup.object({
+        return newErrors;
+    };
 
-paymentMethod: Yup.string().required('Payment method is required'),
-
-upiId: Yup.string().when('paymentMethod', {
-
-is: 'upi',
-
-then: Yup.string().required('UPI ID is required'),
-
-}),
-
-pin: Yup.string().when('paymentMethod', {
-
-is: 'upi',
-
-then: Yup.string()
-
-.matches(/^\d{4}$/, 'PIN must be 4 digits')
-
-.required('PIN is required for UPI'),
-
-}),
-
-cardNumber: Yup.string().when('paymentMethod', {
-
-is: 'card',
-
-then: Yup.string()
-
-.matches(/^\d{16}$/, 'Card number must be 16 digits')
-
-.required('Card number is required'),
-
-}),
-
-expiryDate: Yup.string().when('paymentMethod', {
-
-is: 'card',
-
-then: Yup.string()
-
-.matches(/^\d{2}\/\d{2}$/, 'Invalid expiry date format (MM/YY)')
-
-.required('Expiry date is required'),
-
-}),
-
-cvv: Yup.string().when('paymentMethod', {
-
-is: 'card',
-
-then: Yup.string()
-
-.matches(/^\d{3}$/, 'CVV must be 3 digits')
-
-.required('CVV is required'),
-
-}),
-
-bank: Yup.string().when('paymentMethod', {
-
-is: 'netbanking',
-
-then: Yup.string().required('Bank selection is required'),
-
-}),
-
-});
-
-// Handle payment on switch toggle
-
-const handlePayment = async (values) => {
-    try {
-      const response = await axios.post('https://localhost:7277/api/Payment/CheckPayment', {
-        PaymentType: values.paymentMethod,
-        PaymentDetails: {
-          UPIId: values.upiId,
-          PIN: values.pin,
-          CardNumber: values.cardNumber,
-          ExpiryDate: values.expiryDate,
-          CVV: values.cvv,
-          Username: values.username,
-          Password: values.password,
-        },
-      });
-  
-      const paymentSuccess = response.data; // API returns true/false
-      setPaymentSuccess(paymentSuccess);
-  
-      if (paymentSuccess) {
-        let sec = 5; // 5 seconds countdown for success
-        setSeconds(sec);
-  
-        const interval = setInterval(() => {
-          setSeconds((prevSec) => {
-            if (prevSec > 1) {
-              return prevSec - 1;
+    const handlePayment = async (values) => {
+        const validationErrors = validate(values);
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+    
+        setIsSwitchOn(true);
+    
+        try {
+            let payload = {
+                paymentType: values.paymentMethod === 'card' ? PaymentType.CARD :
+                             values.paymentMethod === 'upi' ? PaymentType.UPI :
+                             PaymentType.NETBANKING,
+                netBankingPaymentDetails: values.paymentMethod === 'netbanking' ? {
+                    Username: values.username,
+                    Password: values.password,
+                } : null,
+                cardPaymentDetails: values.paymentMethod === 'card' ? {
+                    CardNumber: values.cardNumber,
+                    ExpiryDate: values.expiryDate,
+                    CVV: values.cvv,
+                } : null,
+                upiPaymentDetails: values.paymentMethod === 'upi' ? {
+                    upiId: values.upiId,
+                    upiPin: values.upiPin,
+                    // REMOVE upiPin FROM PAYLOAD for security reasons
+                } : null, 
+            };
+    
+            console.log("Payload (stringified):", JSON.stringify(payload)); // Check payload
+    
+            const response = await axios.post('https://localhost:7277/api/Payment/CheckPayment', payload, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+    
+            console.log("Payment Response:", response.data); // Access data with response.data
+    
+            setPaymentSuccess(response.data.exists); // Access data with response.data
+            if (response.data.exists) {  // Access data with response.data
+                setTimeout(() => navigate('/transaction'), 5000);
             } else {
-              clearInterval(interval);
-              navigate('/transaction'); // Navigate to /transaction after 5 seconds
-              return 0;
+                setPaymentSuccess(false);
+                startCountdown();
             }
-          });
-        }, 1000);
-      } else {
-        let sec = 10;
-        setSeconds(sec); // Initialize countdown
-  
-        const interval = setInterval(() => {
-          setSeconds((prevSec) => {
-            if (prevSec > 1) {
-              return prevSec - 1;
+    
+        } catch (error) {
+            console.error('Error fetching payment response:', error);
+    
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.error("Server Response Data:", error.response.data);
+                console.error("Server Response Status:", error.response.status);
+                console.error("Server Response Headers:", error.response.headers);
+            } else if (error.request) {
+                // The request was made but no response was received
+                console.error("Request made but no response received:", error.request);
             } else {
-              clearInterval(interval);
-              retryPayment(); // Retry payment after countdown
-              return 0;
+                // Something happened in setting up the request that triggered an Error
+                console.error("Error setting up the request:", error.message);
             }
-          });
+    
+            setPaymentSuccess(false);
+            startCountdown();
+        } finally {
+            setIsSwitchOn(false);
+        }
+    };
+
+
+
+
+
+
+
+
+
+
+
+   
+    const startCountdown = () => {
+        setSeconds(10);
+        const interval = setInterval(() => {
+            setSeconds((prevSec) => {
+                if (prevSec > 1) return prevSec - 1;
+                clearInterval(interval);
+                retryPayment();
+                return 0;
+            });
         }, 1000);
-      }
-    } catch (error) {
-      console.error('Payment error:', error);
-      setPaymentSuccess(false);
-  
-      // Handle failure by starting the countdown even if the request fails
-      let sec = 10;
-      setSeconds(sec);
-  
-      const interval = setInterval(() => {
-        setSeconds((prevSec) => {
-          if (prevSec > 1) {
-            return prevSec - 1;
-          } else {
-            clearInterval(interval);
-            retryPayment(); // Retry payment after countdown
-            return 0;
-          }
-        });
-      }, 1000);
-    }
-  };
-  
+    };
 
+    const retryPayment = () => {
+        setPaymentSuccess(null);
+        setIsSwitchOn(false);
+        setErrors({});
+    };
 
-// Retry payment manually
+    
+      
 
-const retryPayment = () => {
+    return (
+        <div className={classes.container}>
+            
 
-setPaymentSuccess(null); // Reset payment status to initiate the process again
-
-setIsSwitchOn(false); // Reset the switch
-
-};
-
-return (
-
-<div className={classes.container}>
-
-{paymentSuccess === null && (
-
-<Formik
-
-initialValues={initialValues}
-
-validationSchema={validationSchema}
-
-onSubmit={handlePayment}
-
->
-
-{({ setFieldValue, values, errors, touched }) => (
-
-<Form>
-
-{/* Payment Method Select */}
+            {paymentSuccess === null && (
+                
+                <Formik initialValues={initialValues} onSubmit={handlePayment} validate={validate}>
+                    {({ setFieldValue, values, handleSubmit, errors, touched }) => (
+                        <Form>
 
 <div
 
@@ -375,95 +229,57 @@ height: 'auto', // Maintain aspect ratio
 
 </div>
 
-<FormControl fullWidth className={classes.formControl}>
 
-<InputLabel>Payment Method</InputLabel>
 
-<Select
 
-value={values.paymentMethod}
 
-onChange={(e) => setFieldValue('paymentMethod', e.target.value)}
 
-label="Payment Method"
 
->
 
-<MenuItem value="upi">UPI</MenuItem>
 
-<br/>
 
-<MenuItem value="card">Card</MenuItem>
 
-<br/>
 
-<MenuItem value="netbanking">NetBanking</MenuItem>
 
-<br/>
 
-</Select>
+                            {/* Payment Method Select Dropdown */}
+                            <FormControl fullWidth className={classes.formControl}>
+                                <InputLabel>Payment Method</InputLabel>
+                                <Select
+                                    name="paymentMethod"
+                                    value={values.paymentMethod}
+                                    onChange={(e) => setFieldValue('paymentMethod', e.target.value)}
+                                    label="Payment Method"
+                                >
+                                    <MenuItem value="upi">UPI</MenuItem>
+                                    <MenuItem value="card">Card</MenuItem>
+                                    <MenuItem value="netbanking">NetBanking</MenuItem>
+                                </Select>
+                            </FormControl>
 
-</FormControl>
+                            {values.paymentMethod === 'upi' && (
+                                <>
+                                    <Field name="upiId" as={TextField} label="Enter UPI ID" fullWidth variant="outlined"
+                                        className={classes.inputField} InputProps={{ startAdornment: <InputAdornment position="start"><Payment /></InputAdornment> }}
+                                        error={touched.upiId && errors.upiId ? true : false}
+                                        helperText={touched.upiId && errors.upiId}
+                                    />
 
-<br/>
+                                    <Field name="upiPin" as={TextField} label="Enter UPI PIN" fullWidth variant="outlined" type="password"
+                                        className={classes.inputField} InputProps={{ startAdornment: <InputAdornment position="start"><VpnKey /></InputAdornment> }}
+                                        error={touched.upiPin && errors.upiPin ? true : false}
+                                        helperText={touched.upiPin && errors.upiPin}
+                                    />
+                                </>
+                            )}
 
-<br/>
 
-{/* Conditional Fields based on Payment Method */}
 
-{values.paymentMethod === 'upi' && (
 
-<div>
 
-<Field
 
-name="upiId"
 
-label="Enter UPI ID"
 
-fullWidth
-
-as={TextField}
-
-variant="outlined"
-
-className={classes.formControl}
-
-error={touched.upiId && Boolean(errors.upiId)}
-
-helperText={touched.upiId && errors.upiId}
-
-/>
-
-<br/>
-
-<br/>
-
-<Field
-
-name="pin"
-
-label="Enter UPI PIN"
-
-fullWidth
-
-as={TextField}
-
-variant="outlined"
-
-className={`${classes.formControl} ${classes.pinField}`}
-
-error={touched.pin && Boolean(errors.pin)}
-
-helperText={touched.pin && errors.pin}
-
-type="password"
-
-/>
-
-</div>
-
-)}
 
 {values.paymentMethod === 'card' && (
 
@@ -597,94 +413,67 @@ type="password"
 
 )}
 
-{/* Switch for Payment */}
 
-<div className={classes.centerSwitch}>
 
-<CustomizedSwitches
 
-checked={isSwitchOn}
 
-onChange={
 
-() => {
 
-setIsSwitchOn(!isSwitchOn);
 
-if (!isSwitchOn) {
 
-handlePayment(); // Trigger payment if the switch is turned on
 
-}
 
-}}
 
-trackColor="#4CAF50"
 
-trackText={isSwitchOn ? "Processing..." : "Swipe to Pay"}
+                            <div className={classes.centerSwitch}>
+                                <CustomizedSwitches checked={isSwitchOn} onChange={handleSubmit} trackText={isSwitchOn ? "Processing..." : "Swipe to Pay"} />
+                            </div>
+                        </Form>
+                    )}
+                </Formik>
+            )}
 
-/>
 
-</div>
 
-</Form>
 
-)}
 
-</Formik>
 
-)}
 
-{/* Payment Animation Component */}
 
-{paymentSuccess !== null && (
 
-<div className={classes.paymentIconContainer}>
 
-<PaymentAnimation paymentSuccess={paymentSuccess} />
 
-<Typography className={classes.iconText}>
 
-{paymentSuccess ? 'Thank you for shopping with us!' : ''}
 
-</Typography>
 
-{/* Retry Button */}
 
-{!paymentSuccess && (
 
-<div>
 
-<Button
 
-className={classes.retryButton}
 
-onClick={retryPayment}
 
->
+            {paymentSuccess !== null && (
+                <div className={classes.paymentIconContainer}>
+                    <PaymentAnimation paymentSuccess={paymentSuccess} />
+                    <Typography className={classes.iconText}>
+                        {paymentSuccess ? 'Thank you for shopping with us!' : 'Payment Failed'}
+                    </Typography>
 
-Retry Payment
-
-</Button>
-
-<Typography variant="h6" className={classes.header}>
-
-You will be redirected to the payment page in {seconds} seconds
-
-</Typography>
-
-</div>
-
-)}
-
-</div>
-
-)}
-
-</div>
-
-);
-
+                    {/* Retry Button */}
+                    {!paymentSuccess && (
+                        <div>
+                            <Button className={classes.retryButton} onClick={retryPayment}>
+                                Retry Payment
+                            </Button>
+                            <Typography variant="h6" className={classes.header}>
+                                You will be redirected to the payment page in {seconds} seconds
+                            </Typography>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
 };
 
 export default PaymentGateway;
