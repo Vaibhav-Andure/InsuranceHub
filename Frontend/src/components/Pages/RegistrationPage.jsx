@@ -150,6 +150,7 @@ export default function RegistrationPage() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState();
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const [registrationmessage, setregistrationmessage] = useState("");
 
   const onSubmit = async (data) => {
     // Ensure the data matches the required format
@@ -175,15 +176,21 @@ export default function RegistrationPage() {
         const userData = await response.json();
         
         // Dispatch the loginSuccess action if you want to automatically log the user in after registration
-        dispatch(loginSuccess(userData)); // Assuming userData contains the necessary user info (e.g., role, name)
+        // dispatch(loginSuccess(userData)); // Assuming userData contains the necessary user info (e.g., role, name)
         
         console.log('Registration successful:', userData);
-        navigate('/login'); // Redirect to login after successful registration
+        setregistrationmessage(" Registration successful! You will be navigated to the login page. Please sign in.")
+    
+    
+        setTimeout(() => navigate("/login"), 3000);
+        
+        // Redirect to login after successful registration
       } else {
         // Handle error (such as a conflict 409 error)
         const errorText = await response.json(); // Parse the error message returned from backend
         console.log('Error:', errorText.message);
         setErrorMessage(errorText.message);
+      
       }
     } catch (err) {
       console.error('Registration error:', err);
@@ -202,7 +209,15 @@ export default function RegistrationPage() {
                 <h2 className="h4">User Registration</h2>
                 <p className="text-muted">Join our insurance platform</p>
               </div>
-
+             <div>
+              {registrationmessage && (
+            <div className="alert alert-success text-center" role="alert">
+ <div style={{ fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", textAlign: 'center', padding: '15px', borderRadius: '5px' }}>
+      {registrationmessage}
+    </div>
+              </div>
+              ) 
+            }   </div>
               <form onSubmit={handleSubmit(onSubmit)}>
                 {/* Username Field */}
                 {errorMessage && 

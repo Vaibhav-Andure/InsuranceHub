@@ -18,14 +18,18 @@ public class PolicyHolder {
     @Column(nullable = false)
     private String dateOfBirth;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String aadharNumber;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String panNumber;
 
     @Column(nullable = false)
     private String contactNumber;
+
+
+    @Column(nullable = false)
+    private String address;
 
     @OneToOne
     @JoinColumn(name = "UserId", nullable = false)
@@ -88,6 +92,16 @@ public class PolicyHolder {
         this.contactNumber = contactNumber;
     }
 
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String Address) {
+        this.address = Address;
+    }
+
+
     public User getUser() {
         return user;
     }
@@ -111,4 +125,7 @@ public class PolicyHolder {
     public void setInsuredMembers(List<InsuredMember> insuredMembers) {
         this.insuredMembers = insuredMembers;
     }
+
+
+
 }

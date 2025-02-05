@@ -4,11 +4,13 @@ package com.InsureHub.CrudApplication.controller;
 import com.InsureHub.CrudApplication.DTO.PolicyDTO;
 import com.InsureHub.CrudApplication.entities.Policy;
 import com.InsureHub.CrudApplication.service.PolicyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/api/policies")
@@ -21,32 +23,54 @@ public class PolicyController {
         this.policyService = policyService;
     }
 
-    // ✅ Create a new policy (Receive Policy Entity, Send DTO)
+    private static final Logger logger = LoggerFactory.getLogger(PolicyController.class);
+
+
+    //  Create a new policy (Receive Policy Entity, Send DTO)
 
     @PostMapping("/createpolicy")
     public ResponseEntity<PolicyDTO> createPolicy(@RequestBody Policy policy) {
         return ResponseEntity.ok(policyService.createPolicy(policy));
     }
+/// policy cache
+    private static ConcurrentHashMap<String, ResponseEntity<List<PolicyDTO>>> cache = new ConcurrentHashMap<>();
+    private static long lastUpdated = 0;
 
-    // ✅ Get all policies (Send DTOs)
     @GetMapping("getallpolicies")
     public ResponseEntity<List<PolicyDTO>> getAllPolicies() {
-        return ResponseEntity.ok(policyService.getAllPolicies());
+        long startTime = System.currentTimeMillis();
+        if (cache.containsKey("policies") && System.currentTimeMillis() - lastUpdated < 300000) { // 5 minutes
+            logger.info("cache hit for policy ");
+            ResponseEntity<List<PolicyDTO>> response = cache.get("policies");
+            long endTime = System.currentTimeMillis();
+            logger.info("Time taken to send response: " + (endTime - startTime) + " milliseconds");
+            return response;
+        } else {
+            logger.warn("cache miss and updating cache");
+            ResponseEntity<List<PolicyDTO>> response = ResponseEntity.ok(policyService.getAllPolicies());
+            cache.put("policies", response);
+            lastUpdated = System.currentTimeMillis();
+            long endTime = System.currentTimeMillis();
+            logger.info("Time taken to send response: " + (endTime - startTime) + " milliseconds");
+            return response;
+        }
     }
 
-    // ✅ Get policy by ID (Send DTO)
+
+
+    //  Get policy by ID (Send DTO)
     @GetMapping("/{id}")
     public ResponseEntity<Optional<PolicyDTO>> getPolicyById(@PathVariable int id) {
         return ResponseEntity.ok(policyService.getPolicyById(id));
     }
 
-    // ✅ Update a policy (Receive Policy Entity, Send DTO)
+    // Update a policy (Receive Policy Entity, Send DTO)
     @PutMapping("/{id}")
     public ResponseEntity<PolicyDTO> updatePolicy(@PathVariable int id, @RequestBody Policy policy) {
         return ResponseEntity.ok(policyService.updatePolicy(id, policy));
     }
 
-    // ✅ Delete a policy
+    // Delete a policy
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePolicy(@PathVariable int id) {
         policyService.deletePolicy(id);

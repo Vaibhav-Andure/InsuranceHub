@@ -22,6 +22,8 @@ public class UserController {
     // User registration endpoint
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
+
+
         System.out.println("Received request: " + user);
         System.out.println("received user data ");
         System.out.println(user.getEmail());

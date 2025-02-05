@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { Formik, Field, Form } from 'formik';
 import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Typography, InputAdornment } from '@mui/material';
 import { makeStyles } from '@mui/styles';
@@ -7,8 +7,9 @@ import PaymentAnimation from './paymenticon';
 import CustomizedSwitches from "../switch/custswitch";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Import axios
+import { useSelector } from 'react-redux';
 
-// Styles
+
 const useStyles = makeStyles({
     container: {
         width: '500px',
@@ -46,6 +47,30 @@ const PaymentGateway = () => {
     const [isSwitchOn, setIsSwitchOn] = useState(false);
     const [seconds, setSeconds] = useState(10);
     const [errors, setErrors] = useState({});
+
+    const Apitransactiondata = useSelector((state) => state.transaction.transactionData );
+console.dir(Apitransactiondata);
+   
+useEffect(() => {
+    const hitTransactionApi = async () => {
+      if (paymentSuccess === true) { // Only hit the API if payment is successful
+        try {
+          const transactionResponse = await axios.post('http://localhost:5555/api/transactions/savetransaction', Apitransactiondata);
+          console.log("api response for payment " + transactionResponse.data);
+        } catch (error) {
+          console.error('Error hitting transaction API:', error);
+        }
+      }
+    };
+
+    // Call the API if paymentSuccess changes to true
+    if (paymentSuccess === true) {
+      hitTransactionApi();
+    }
+  }, [paymentSuccess]);
+
+
+
 
     const initialValues = {
         paymentMethod: 'upi',
@@ -179,8 +204,11 @@ const PaymentGateway = () => {
         setIsSwitchOn(false);
         setErrors({});
     };
+//policy check 
 
-    
+
+
+
       
 
     return (
@@ -256,7 +284,8 @@ height: 'auto', // Maintain aspect ratio
                                     <MenuItem value="netbanking">NetBanking</MenuItem>
                                 </Select>
                             </FormControl>
-
+                            <br/>
+                            <br/>
                             {values.paymentMethod === 'upi' && (
                                 <>
                                     <Field name="upiId" as={TextField} label="Enter UPI ID" fullWidth variant="outlined"
@@ -264,7 +293,8 @@ height: 'auto', // Maintain aspect ratio
                                         error={touched.upiId && errors.upiId ? true : false}
                                         helperText={touched.upiId && errors.upiId}
                                     />
-
+                                      <br/>
+                                      <br/>
                                     <Field name="upiPin" as={TextField} label="Enter UPI PIN" fullWidth variant="outlined" type="password"
                                         className={classes.inputField} InputProps={{ startAdornment: <InputAdornment position="start"><VpnKey /></InputAdornment> }}
                                         error={touched.upiPin && errors.upiPin ? true : false}
@@ -423,10 +453,12 @@ type="password"
 
 
 
-
+  <div>          <Typography variant="h6">Transaction-Amount:{Apitransactiondata.amount}</Typography>  </div>
 
                             <div className={classes.centerSwitch}>
-                                <CustomizedSwitches checked={isSwitchOn} onChange={handleSubmit} trackText={isSwitchOn ? "Processing..." : "Swipe to Pay"} />
+                                <CustomizedSwitches checked={isSwitchOn} onChange={handleSubmit} trackColor="#4CAF50"
+
+trackText={isSwitchOn ? "Processing..." : "Swipe to Pay"} />
                             </div>
                         </Form>
                     )}

@@ -30,6 +30,8 @@ public class PolicyHolderService {
     // Create or update policyholder
     public PolicyHolderDTO createOrUpdatePolicyHolder(PolicyHolder policyHolder) {
         // Extract userId from the nested User object
+
+
         int userId = policyHolder.getUser().getUserId();
 
         // Log to track if the user exists or not

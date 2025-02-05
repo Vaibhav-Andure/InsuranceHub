@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch  , useSelector} from 'react-redux';
 import { loginSuccess, loginFailure } from '../../redux/slices/authSlice';
 
-
+import { setPolicy, clearPolicy } from "../../redux/slices/policiesSlice";
 
 
 export default function LoginPage() {
@@ -37,6 +37,8 @@ export default function LoginPage() {
         const userData = await response.json();
         console.log('Login successful:', userData);
 
+        console.log("user logined in with id" + userData.userId )
+
         // Dispatch loginSuccess with user details
        
         dispatch(loginSuccess({
@@ -45,6 +47,9 @@ export default function LoginPage() {
           email: userData.email, // Extracting email from the response
           uid: userData.userId, // Extracting user ID from the response
         }));
+        
+
+      
         
         // Redirect based on role
         switch (userData.roleName) {

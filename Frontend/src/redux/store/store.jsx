@@ -13,16 +13,17 @@
 // });
 
 // export default store;
-
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from '../slices/authSlice'; // Correct the import to match the usage below
+import authReducer from '../slices/authSlice';
+import policiesReducer from '../slices/policiesSlice';
+import transactionReducer from '../slices/transactionSlice';
 
 const store = configureStore({
   reducer: {
-    auth: authReducer, // Ensure this matches the imported reducer
+    auth: authReducer,
+    transaction: transactionReducer,
+    policies: policiesReducer,
   },
 });
 
 export default store;
-
-

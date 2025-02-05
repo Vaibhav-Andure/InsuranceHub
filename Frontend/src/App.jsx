@@ -8,7 +8,7 @@ import CustomerLandingPage from './components/Pages/Customer/CustomerLandingPage
 import InsurerLandingPage from './components/Pages/Insurer/InsurerLandingPage';
 import Transaction from './components/transaction/transaction';
 import PaymentGateway from './components/payment/payment';
-
+import InsuranceForm from './components/Pages/Customer/PolicyHolder';
 function HomePage() {
   return (
     <div className="container text-center my-5">
@@ -35,6 +35,7 @@ function App() {
             <Route path="/admin" element={<AdminLandingPage />} />
             <Route path="/customer" element={<CustomerLandingPage />} />
             <Route path="/insurer" element={<InsurerLandingPage />} />
+            <Route path="/getquote" element={<InsuranceForm/>} />
             <Route path="/payment" element={< PaymentGateway />} />
             <Route path="/transaction" element={<Transaction/>} />
           </Routes>

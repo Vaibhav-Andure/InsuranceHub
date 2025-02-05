@@ -37,6 +37,14 @@ export default function CustomerLandingPage() {
     dispatch({ type: 'TOGGLE_VIEW_POLICY' });
   };
 
+
+
+
+
+
+
+
+
   if (!isAuthenticated) {
     return (
       <div>

@@ -3,6 +3,8 @@ package com.InsureHub.CrudApplication.controller;
 import com.InsureHub.CrudApplication.DTO.PolicyHolderDTO;
 import com.InsureHub.CrudApplication.entities.PolicyHolder;
 import com.InsureHub.CrudApplication.service.PolicyHolderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +15,17 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/policyholders")
+@CrossOrigin(origins="http://localhost:5173")
 public class PolicyHolderController {
 
     @Autowired
     private PolicyHolderService policyHolderService;
-
+    private static final Logger logger = LoggerFactory.getLogger(PolicyHolderController.class);
     // Register a new policyholder (Create)
     @PostMapping("/register")
     public ResponseEntity<PolicyHolderDTO> registerPolicyHolder(@RequestBody PolicyHolder policyHolder) {
+
+        logger.info("Received PolicyHolder: {}", policyHolder);
         PolicyHolderDTO savedPolicyHolder = policyHolderService.createOrUpdatePolicyHolder(policyHolder);
         return new ResponseEntity<>(savedPolicyHolder, HttpStatus.CREATED);
     }

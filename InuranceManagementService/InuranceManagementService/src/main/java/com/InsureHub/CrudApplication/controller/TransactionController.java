@@ -1,9 +1,12 @@
 package com.InsureHub.CrudApplication.controller;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 
 import com.InsureHub.CrudApplication.entities.Transaction;
 import com.InsureHub.CrudApplication.service.TransactionService;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/transactions")
+@CrossOrigin(origins = "http://localhost:5173")
 public class TransactionController {
 
     @Autowired
@@ -60,9 +64,16 @@ public class TransactionController {
     }
 
     // Get all transactions
-    @GetMapping
+    @GetMapping("/getalltransaction")
     public ResponseEntity<List<Transaction>> getAllTransactions() {
+        System.out.println("fetching all the transactions    ");
+
+
         List<Transaction> transactions = transactionService.getAllTransactions();
+
+
+        transactions.forEach(transaction -> Hibernate.initialize(transaction.getPolicyHolder()));
+
         if (transactions.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(transactions);
         }

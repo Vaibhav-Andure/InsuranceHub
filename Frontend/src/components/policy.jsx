@@ -14,6 +14,9 @@ import {
   Typography
 } from '@mui/material';
 
+import { useDispatch } from "react-redux";
+import { setPolicy, clearPolicy } from "../redux/slices/policiesSlice";
+
 const PolicyBenefits = ({ benefits, onClose }) => {
   const splitBenefits = (benefits) => {
     return benefits.split(',').map((benefit, index) => (
@@ -89,7 +92,7 @@ const PolicyInfo = ({ policy }) => {
       <p><strong>Waiting Period:</strong> {policy.waitingPeriod} days</p>
       <p><strong>Renewal Terms:</strong> {policy.renewalTerms}</p>
       <p><strong>Claim Process:</strong> {policy.claimProcess}</p>
-      <p><strong>Insurer:</strong> {policy.insurer.insurerName}</p>
+      <p><strong>Insurer:</strong> {policy.insurer && policy.insurer.insurerName}</p>
     </div>
   );
 };
@@ -109,7 +112,7 @@ const PolicyComparison = ({ policies, onRemove }) => {
     }}>
       <Typography variant="h6">Compare</Typography>
 
-      <br/>
+    
       <br/>
       <Grid container spacing={2}>
         {policies.map(policy => (
@@ -123,7 +126,7 @@ const PolicyComparison = ({ policies, onRemove }) => {
               flexDirection: 'column',
               transition: 'transform 0.3s ease',
             }}>
-              <img src={policy.insurer.insurerImage} alt="Insurer" style={{
+              <img src={policy.insurer && policy.insurer.insurerImage} alt="Insurer" style={{
                 width: '150px',
                 height: '80px',
                 borderRadius: '50%',
@@ -189,19 +192,25 @@ const ViewPolicy = () => {
   };
 
   const handlebuy = (policyID) => {
-    navigate("/payment");
+    navigate("/getquote");
   };
 
-  const handleSwitchChange = (event, policyID) => {
-    setCheckedPolicies(prevState => ({
+  const dispatch = useDispatch();
+  
+  const handleSwitchChange = (event, policy) => {
+    setCheckedPolicies((prevState) => ({
       ...prevState,
-      [policyID]: event.target.checked,
+      [policy.policyId]: event.target.checked,
     }));
+  
     if (event.target.checked) {
-      setTimeout(() => handlebuy(policyID), 750);
+      dispatch(setPolicy(policy)); // Dispatch the entire policy object
+  
+      setTimeout(() => handlebuy(policy.policyId), 750);
+    } else {
+      dispatch(clearPolicy());
     }
   };
-
   const toggleBenefits = (policyID) => {
     setActiveBenefitsPolicy(activeBenefitsPolicy === policyID ? null : policyID);
   };
@@ -327,7 +336,7 @@ const ViewPolicy = () => {
                     alignItems: 'center',
                     marginBottom: '1rem',
                   }}>
-                    <img src={policy.insurer.insurerImage} alt="Insurer" style={{
+                    <img src={policy.insurer && policy.insurer.insurerImage} alt="Insurer" style={{
                       width: '80px',
                       height: '80px',
                       borderRadius: '50%',
@@ -357,8 +366,8 @@ const ViewPolicy = () => {
                   }}>
                     <CustomizedSwitches
                       checked={checkedPolicies[policy.policyId] || false}
-                      onChange={(event) => handleSwitchChange(event, policy.policyId)}
-                      trackText="Slide to Buy Policy"
+                      onChange={(event) => handleSwitchChange(event, policy)}
+                      trackText="Slide to Get Quote"
                     />
                   </div>
                   <Button
@@ -383,7 +392,7 @@ const ViewPolicy = () => {
                     style={{
                       marginTop: '1rem',
                       padding: '0.5rem 1rem',
- color: 'white',
+                      color: 'white',
                       border: 'none',
                       borderRadius: '0.375rem',
                       cursor: 'pointer',
