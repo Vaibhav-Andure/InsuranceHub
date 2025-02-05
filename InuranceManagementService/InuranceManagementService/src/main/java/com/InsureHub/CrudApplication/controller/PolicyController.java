@@ -58,6 +58,24 @@ public class PolicyController {
 
 
 
+
+ // policy by insurerid
+ @GetMapping("/insurers/{insurerId}")
+    public List<Policy> getPoliciesByInsurerId(@PathVariable int insurerId) {
+        return policyService.getPoliciesByInsurerId(insurerId);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     //  Get policy by ID (Send DTO)
     @GetMapping("/{id}")
     public ResponseEntity<Optional<PolicyDTO>> getPolicyById(@PathVariable int id) {

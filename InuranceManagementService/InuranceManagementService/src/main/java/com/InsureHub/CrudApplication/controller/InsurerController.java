@@ -5,14 +5,19 @@ package com.InsureHub.CrudApplication.controller;
 import com.InsureHub.CrudApplication.DTO.InsurerDTO;
 import com.InsureHub.CrudApplication.entities.Insurer;
 import com.InsureHub.CrudApplication.service.InsurerService;
+import com.InsureHub.CrudApplication.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
+
+
 @RestController
 @RequestMapping("/api/insurers")
+@CrossOrigin(origins="http://localhost:5173")
 public class InsurerController {
 
     private final InsurerService insurerService;

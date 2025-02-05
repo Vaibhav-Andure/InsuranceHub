@@ -1,19 +1,15 @@
 package com.InsureHub.CrudApplication.controller;
-
-import org.springframework.web.bind.annotation.CrossOrigin;
-
-
-
+ // Import the DTO
+import com.InsureHub.CrudApplication.DTO.TransactionDTO;
 import com.InsureHub.CrudApplication.entities.Transaction;
 import com.InsureHub.CrudApplication.service.TransactionService;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -25,66 +21,35 @@ public class TransactionController {
 
     // Create or Update a transaction
     @PostMapping("/savetransaction")
-    public ResponseEntity<String> createOrUpdateTransaction(@RequestBody Transaction transaction) {
-        Transaction savedTransaction = transactionService.saveTransaction(transaction);
-
-        // Custom message to return with the transaction
-        String jsonResponse = "{\"message\": \"Transaction successfully saved\", \"transaction\": " +
-                "{\"transactionId\": \"" + savedTransaction.getTransactionId() + "\", " +
-                "\"amount\": " + savedTransaction.getAmount() + ", " +
-                "\"transactionDate\": \"" + savedTransaction.getTransactionDate() + "\", " +
-                "\"createdAt\": \"" + savedTransaction.getCreatedAt() + "\", " +
-                "\"policyHolder\": {\"policyHolderId\": \"" + savedTransaction.getPolicyHolder().getPolicyHolderId() + "\"}, " +
-                "\"policy\": {\"policyId\": \"" + savedTransaction.getPolicy().getPolicyId() + "\"}}}";
-
-        // Returning the JSON response as a string with status 201 Created
-        return ResponseEntity.status(HttpStatus.CREATED).body(jsonResponse);
+    public ResponseEntity<TransactionDTO> createOrUpdateTransaction(@RequestBody Transaction transaction) {
+        TransactionDTO savedTransactionDTO = transactionService.saveTransaction(transaction);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedTransactionDTO);
     }
-
-
-
 
     // Get transaction by ID
     @GetMapping("/{transactionId}")
-    public ResponseEntity<String> getTransactionById(@PathVariable String transactionId) {
-        Optional<Transaction> transaction = transactionService.getTransactionById(transactionId);
+    public ResponseEntity<TransactionDTO> getTransactionById(@PathVariable String transactionId) {
+        Optional<TransactionDTO> transactionDTO = transactionService.getTransactionById(transactionId);
 
-        if (transaction.isPresent()) {
-            String jsonResponse = "{\"transactionId\": \"" + transaction.get().getTransactionId() + "\", " +
-                    "\"amount\": " + transaction.get().getAmount() + ", " +
-                    "\"transactionDate\": \"" + transaction.get().getTransactionDate() + "\", " +
-                    "\"createdAt\": \"" + transaction.get().getCreatedAt() + "\", " +
-                    "\"policyHolder\": {\"policyHolderId\": \"" + transaction.get().getPolicyHolder().getPolicyHolderId() + "\"}, " +
-                    "\"policy\": {\"policyId\": \"" + transaction.get().getPolicy().getPolicyId() + "\"}}";
-            return ResponseEntity.ok(jsonResponse);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"message\": \"Transaction not found\"}");
-        }
+        return transactionDTO.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(null)); // You can return a custom error response if needed
     }
 
     // Get all transactions
     @GetMapping("/getalltransaction")
-    public ResponseEntity<List<Transaction>> getAllTransactions() {
-        System.out.println("fetching all the transactions    ");
-
-
-        List<Transaction> transactions = transactionService.getAllTransactions();
-
-
-        transactions.forEach(transaction -> Hibernate.initialize(transaction.getPolicyHolder()));
-
-        if (transactions.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(transactions);
+    public ResponseEntity<List<TransactionDTO>> getAllTransactions() {
+        List<TransactionDTO> transactionDTOs = transactionService.getAllTransactions();
+        if (transactionDTOs.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(transactionDTOs);
         }
-        return ResponseEntity.ok(transactions);
+        return ResponseEntity.ok(transactionDTOs);
     }
-
 
     // Delete transaction by ID
     @DeleteMapping("/{transactionId}")
     public ResponseEntity<String> deleteTransaction(@PathVariable String transactionId) {
-        Optional<Transaction> transaction = transactionService.getTransactionById(transactionId);
+        Optional<TransactionDTO> transaction = transactionService.getTransactionById(transactionId);
 
         if (transaction.isPresent()) {
             transactionService.deleteTransaction(transactionId);
@@ -95,5 +60,4 @@ public class TransactionController {
                     .body("{\"message\": \"Transaction not found\"}");
         }
     }
-
 }

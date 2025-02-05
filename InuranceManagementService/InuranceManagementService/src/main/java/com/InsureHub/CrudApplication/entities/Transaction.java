@@ -84,8 +84,8 @@ public class Transaction {
     public void setPolicy(Policy policy) {
         this.policy = policy;
     }
-
-//    // Override equals and hashCode for proper comparison of Transaction entities
+//
+////    // Override equals and hashCode for proper comparison of Transaction entities
 //    @Override
 //    public boolean equals(Object o) {
 //        if (this == o) return true;
@@ -111,4 +111,8 @@ public class Transaction {
 //                ", policy=" + (policy != null ? policy.getPolicyId() : "null") +
 //                '}';
 //    }
+//
+//
+
+
 }

@@ -19,6 +19,22 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
+
+
+
+    @GetMapping("/validate-email")
+    public ResponseEntity<Boolean> validateUserEmail(@RequestParam String email) {
+        boolean userExists = userService.userExistsByEmail(email);
+        return ResponseEntity.ok(userExists);
+    }
+
+
+
+
+
+
+
     // User registration endpoint
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
@@ -43,12 +59,13 @@ public class UserController {
                     .body("{\"message\": \"User already exists. Please sign in.\"}");
         } else {
             try {
-                UserDTO registeredUserDTO = userService.registerUser(user);
-                if (registeredUserDTO == null) {
+                User registeredUser = userService.registerUser(user);
+                if (registeredUser == null) {
                     return ResponseEntity.status(HttpStatus.CONFLICT)
                             .body("{\"message\": \"User already exists. Please sign in.\"}");
                 }
-                return ResponseEntity.ok(registeredUserDTO);
+                UserDTO  SENDUSER =  userService.convertToDTO(registeredUser);
+                return ResponseEntity.ok(SENDUSER);
             } catch (Exception e) {
                 return ResponseEntity.badRequest().body("{\"message\": \"Registration failed. Please try again.\"}");
             }

@@ -29,6 +29,13 @@ public class PolicyService {
     @Autowired
     private InsurerRepository insurerRepository;
 
+
+    public List<Policy> getPoliciesByInsurerId(int insurerId) {
+        return policyRepository.findByInsurer_InsurerId(insurerId);
+    }
+
+
+
     // ✅ Create new policy
     public PolicyDTO createPolicy(Policy policy) {
         if (policy.getInsurer() == null || policy.getInsurer().getInsurerId() == 0) {

@@ -18,12 +18,15 @@ public class Insurer {
     @Column(nullable = false)
     private String insurerName; // Name of the insurer
 
-    @Column(nullable = true)
+    @Column(nullable = true  , unique = true)
     private String licenseNumber; // License number of the insurer
 
     @JsonManagedReference
     @OneToMany(mappedBy = "insurer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Policy> policies = new ArrayList<>(); // Initialize to empty list
+
+    @Column(nullable = false)
+    private String address;
 
 
     @OneToOne
@@ -77,7 +80,13 @@ public class Insurer {
         this.policies = policies;
     }
 
+    public String getAddress() {
+        return address;
+    }
 
+    public void setAddress(String Address) {
+        this.address = Address;
+    }
     public User getUser() {
         return user;
     }

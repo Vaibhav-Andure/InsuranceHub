@@ -30,10 +30,16 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+//if user exisit by email
 
+
+    public boolean userExistsByEmail(String email) {
+        Optional<User> existingUser = findUserByEmail(email);
+        return existingUser.isPresent();
+    }
 
     // Register a new user
-    public UserDTO registerUser(User user) {
+    public User registerUser(User user) {
         // Ensure email uniqueness
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             logger.warn("User with email {} already exists.", user.getEmail());
@@ -55,7 +61,7 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         logger.info("User registered successfully: {}", savedUser.getEmail());
-        return convertToDTO(savedUser);
+        return savedUser ;
     }
 
     // Find a user by email
@@ -136,7 +142,7 @@ public class UserService {
     }
 
     // Convert User entity to UserDTO
-    private UserDTO convertToDTO(User user) {
+    public  UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setUserId(user.getUserId());
         userDTO.setUsername(user.getUsername());

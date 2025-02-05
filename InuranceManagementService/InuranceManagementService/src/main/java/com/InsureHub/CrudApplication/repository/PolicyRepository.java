@@ -11,8 +11,11 @@ import java.util.List;
 public interface PolicyRepository extends JpaRepository<Policy, Integer> {
     // Additional custom queries can be defined here
     Policy findByPolicyNumber(String policyNumber);
-    List<Policy> findByInsurer_InsurerId(Integer insurerId);
 
+
+
+    // Using derived query method
+    List<Policy> findByInsurer_InsurerId(int insurerId);
     // New method to find policy by policyId
     Policy findByPolicyId(int policyId);
 

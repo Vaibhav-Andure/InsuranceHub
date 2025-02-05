@@ -1,14 +1,14 @@
 package com.InsureHub.CrudApplication.controller;
 
-
-
-import com.InsureHub.CrudApplication.entities.Claim;
+import com.InsureHub.CrudApplication.DTO.ClaimDTO; // Import your ClaimDTO
+import com.InsureHub.CrudApplication.entities.Claim; // Import your Claim entity
 import com.InsureHub.CrudApplication.service.ClaimService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -23,7 +23,8 @@ public class ClaimController {
     public ResponseEntity<String> createOrUpdateClaim(@RequestBody Claim claim) {
         try {
             Claim savedClaim = claimService.saveClaim(claim);
-            return ResponseEntity.status(HttpStatus.CREATED).body("{\"message\": \"Claim registered successfully\"}");
+            ClaimDTO claimDTO = claimService.convertToDTO(savedClaim); // Convert to DTO
+            return ResponseEntity.status(HttpStatus.CREATED).body("{\"message\": \"Claim registered successfully\", \"claimId\": " + claimDTO.getClaimId() + "}");
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Failed to register claim\"}");
         }
@@ -31,25 +32,28 @@ public class ClaimController {
 
     // Get claim by Policy ID
     @GetMapping("/policy/{policyId}")
-    public ResponseEntity<Claim> getClaimByPolicyId(@PathVariable int policyId) {
-        Optional<Claim> claim = claimService.getClaimByPolicyId(policyId);
-        return claim.map(ResponseEntity::ok)
+    public ResponseEntity<ClaimDTO> getClaimByPolicyId(@PathVariable int policyId) {
+        Optional<ClaimDTO> claimDTO = claimService.getClaimByPolicyId(policyId);
+        return claimDTO.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     // Get claim by Transaction ID
     @GetMapping("/transaction/{transactionId}")
-    public ResponseEntity<Claim> getClaimByTransactionId(@PathVariable String transactionId) {
-        Optional<Claim> claim = claimService.getClaimByTransactionId(transactionId);
-        return claim.map(ResponseEntity::ok)
+    public ResponseEntity<ClaimDTO> getClaimByTransactionId(@PathVariable String transactionId) {
+        Optional<ClaimDTO> claimDTO = claimService.getClaimByTransactionId(transactionId);
+        return claimDTO.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     // Get all claims
-    @GetMapping
-    public ResponseEntity<Iterable<Claim>> getAllClaims() {
-        Iterable<Claim> claims = claimService.getAllClaims();
-        return ResponseEntity.ok(claims);
+    @GetMapping("/getallclaims")
+    public ResponseEntity<List<ClaimDTO>> getAllClaims() {
+        List<ClaimDTO> claimDTOs = claimService.getAllClaims();
+        if (claimDTOs.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(claimDTOs); // Return 204 No Content if no claims found
+        }
+        return ResponseEntity.ok(claimDTOs); // Return 200 OK with the list of claims
     }
 
     // Delete claim by Claim ID
@@ -65,9 +69,10 @@ public class ClaimController {
 
     // Update claim status
     @PutMapping("/{claimId}/status")
-    public ResponseEntity<Claim> updateClaimStatus(@PathVariable int claimId, @RequestBody String newStatus) {
+    public ResponseEntity<ClaimDTO> updateClaimStatus(@PathVariable int claimId, @RequestBody String newStatus) {
         try {
-            Claim updatedClaim = claimService.updateClaimStatus(claimId, newStatus);
+            ClaimDTO updatedClaim = claimService.updateClaimStatus(claimId, newStatus);
+             // Convert to DTO
             return ResponseEntity.ok(updatedClaim);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

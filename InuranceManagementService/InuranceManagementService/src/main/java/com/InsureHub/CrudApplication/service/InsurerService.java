@@ -1,6 +1,7 @@
 package com.InsureHub.CrudApplication.service;
 
 import com.InsureHub.CrudApplication.DTO.InsurerDTO;
+import com.InsureHub.CrudApplication.DTO.UserDTO;
 import com.InsureHub.CrudApplication.entities.Insurer;
 import com.InsureHub.CrudApplication.entities.Policy;
 import com.InsureHub.CrudApplication.entities.User;
@@ -21,34 +22,21 @@ public class InsurerService {
 
     @Autowired
     private InsurerRepository insurerRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
+
+
     // ✅ Create a new insurer
     public InsurerDTO createInsurer(Insurer insurer) {
 
+        User insureruser = userService.registerUser(insurer.getUser());
 
 
-
-        int userId = insurer.getUser().getUserId();
-
-        // Log to track if the user exists or not
-        logger.info("Fetching user with ID: {}", userId);
+logger.info("saved user with insuree is " ,  insureruser);
 
 
-
-
-
-        if (insurer.getInsurerName() == null || insurer.getLicenseNumber() == null) {
-            throw new IllegalArgumentException("Insurer name and license number are required.");
-
-        }
-
-
-
-        // Fetch the user using userId and set it, using orElseThrow for better error handling
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-        insurer.setUser(user);  // Set the fetched u
+          insurer.setUser(insureruser);
 
         Insurer savedInsurer = insurerRepository.save(insurer);
         return convertToDTO(savedInsurer);

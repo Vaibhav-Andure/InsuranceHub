@@ -1,8 +1,12 @@
 import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is imported
 
 export default function InsurerLandingPage() {
   return (
-    <div className="min-vh-100 bg-light py-5">
+    <div
+      className="min-vh-100 bg-light py-5"
+      style={{ fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif' }}
+    >
       <div className="container">
         <h1 className="text-center">Insurer Dashboard</h1>
         <div className="row mt-5">

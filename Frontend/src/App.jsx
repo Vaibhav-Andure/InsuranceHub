@@ -1,14 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
-import LoginPage from './components/Pages/Loginpage';
-import RegistrationPage from './components/Pages/RegistrationPage';
+import LoginPage from './components/Pages/login-register/Loginpage';
+import RegistrationPage from './components/Pages/login-register/RegistrationPage';
 import AdminLandingPage from './components/Pages/Admin/AdminLandingPage';
 import CustomerLandingPage from './components/Pages/Customer/CustomerLandingPage';
 import InsurerLandingPage from './components/Pages/Insurer/InsurerLandingPage';
 import Transaction from './components/transaction/transaction';
 import PaymentGateway from './components/payment/payment';
 import InsuranceForm from './components/Pages/Customer/PolicyHolder';
+import InsurerRegistrationForm from "./components/Pages/Insurer/InsurerRegistrationForm"
 function HomePage() {
   return (
     <div className="container text-center my-5">
@@ -38,6 +39,11 @@ function App() {
             <Route path="/getquote" element={<InsuranceForm/>} />
             <Route path="/payment" element={< PaymentGateway />} />
             <Route path="/transaction" element={<Transaction/>} />
+            <Route path="/registerinsurer" element={<InsurerRegistrationForm />} />
+
+
+
+
           </Routes>
         </main>
       </div>
