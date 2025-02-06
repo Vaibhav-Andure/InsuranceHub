@@ -1,20 +1,27 @@
 package com.InsureHub.CrudApplication.DTO;
 
-
 import java.math.BigDecimal;
 import java.util.Date;
 
 public class TransactionDTO {
 
     private String transactionId;  // Unique ID of the transaction
+    private String policyHolderName;  // Name of the policy holder
+    private String policyName;  // Name of the policy
     private BigDecimal amount;      // Amount of the transaction
     private Date transactionDate;   // Date of the transaction
-    private Date createdAt;         // Date when the transaction was created
-    private String policyHolderId;  // ID of the associated policy holder
-    private String policyId;        // ID of the associated policy
 
     // Default constructor
     public TransactionDTO() {}
+
+    // Constructor with parameters
+    public TransactionDTO(String transactionId, String policyHolderName, String policyName, BigDecimal amount, Date transactionDate) {
+        this.transactionId = transactionId;
+        this.policyHolderName = policyHolderName;
+        this.policyName = policyName;
+        this.amount = amount;
+        this.transactionDate = transactionDate;
+    }
 
     // Getters and Setters
     public String getTransactionId() {
@@ -23,6 +30,22 @@ public class TransactionDTO {
 
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public String getPolicyHolderName() {
+        return policyHolderName;
+    }
+
+    public void setPolicyHolderName(String policyHolderName) {
+        this.policyHolderName = policyHolderName;
+    }
+
+    public String getPolicyName() {
+        return policyName;
+    }
+
+    public void setPolicyName(String policyName) {
+        this.policyName = policyName;
     }
 
     public BigDecimal getAmount() {
@@ -39,29 +62,5 @@ public class TransactionDTO {
 
     public void setTransactionDate(Date transactionDate) {
         this.transactionDate = transactionDate;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getPolicyHolderId() {
-        return policyHolderId;
-    }
-
-    public void setPolicyHolderId(String policyHolderId) {
-        this.policyHolderId = policyHolderId;
-    }
-
-    public String getPolicyId() {
-        return policyId;
-    }
-
-    public void setPolicyId(String policyId) {
-        this.policyId = policyId;
     }
 }
