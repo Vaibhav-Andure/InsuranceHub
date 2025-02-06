@@ -102,19 +102,32 @@ const InsuranceForm = () => {
 
 
   const validateAadharNumber = (value) => {
-    if (value.length > 12) {
+    if (value.length > 12  ) {
       return "Invalid Aadhar Number. Please enter 12 digits.";
-    } else if (value.length === 12 && !aadharRegex.test(value)) {
+    }  else if (value.length < 12  ) {
+      return "Invalid Aadhar Number. Please minimum 12 digits.";
+    }
+    
+    
+    else if (value.length === 12 && !aadharRegex.test(value)) {
       return "Invalid Aadhar Number. Please enter 12 digits.";
-    } else {
+    }
+    
+    
+    
+    else {
       return "";
     }
   };
 
   const validatePanNumber = (value) => {
-    if (value.length > 10) {
-      return "Invalid PAN Number. Please enter in the format XXXXX1234X (e.g. AAAPZ1234C)";
-    } else if (value.length === 10 && !panRegex.test(value)) {
+    if (value.length >  10) {
+      return "Invalid PAN Number. Please enter in the format XXXXX1234X (e.g. AAAPZ1234C) maximum 10" ;
+    }  if (value.length <  10) {
+      return "Invalid PAN Number. Please enter in the format XXXXX1234X (e.g. AAAPZ1234C) minimum 10" ;
+    }
+    
+    else if (value.length === 10 && !panRegex.test(value)) {
       return "Invalid PAN Number. Please enter in the format XXXXX1234X (e.g. AAAPZ1234C)";
     } else {
       return "";
@@ -408,6 +421,7 @@ const InsuranceForm = () => {
                   helperText={errors.aadharNumber ? validateAadharNumber(formData.aadharNumber) : ""}
                   inputProps={{
                     maxLength: 12,
+                    minLength: 12
                   }}
                 />
               </Grid>
@@ -425,6 +439,7 @@ const InsuranceForm = () => {
                   helperText={errors.panNumber ? validatePanNumber(formData.panNumber) : ""}
                   inputProps={{
                     maxLength: 10,
+                    minLength: 10
                   }}
                 />
               </Grid>
