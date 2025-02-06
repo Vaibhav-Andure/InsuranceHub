@@ -4,6 +4,7 @@ package com.InsureHub.CrudApplication.repository;
 
 import com.InsureHub.CrudApplication.entities.Claim;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -19,4 +20,7 @@ public interface ClaimRepository extends JpaRepository<Claim, Integer> {
 
     // You can add more custom queries based on your requirements, e.g., by ClaimStatus
     Optional<Claim> findByClaimStatus(String claimStatus);
+    
+    @Query("SELECT COUNT(c) FROM Claim c")
+    long count();
 }
