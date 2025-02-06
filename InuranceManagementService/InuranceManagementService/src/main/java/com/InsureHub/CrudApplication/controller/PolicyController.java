@@ -32,9 +32,17 @@ public class PolicyController {
     public ResponseEntity<PolicyDTO> createPolicy(@RequestBody Policy policy) {
         return ResponseEntity.ok(policyService.createPolicy(policy));
     }
+
+
+
+
+
+
 /// policy cache
     private static ConcurrentHashMap<String, ResponseEntity<List<PolicyDTO>>> cache = new ConcurrentHashMap<>();
     private static long lastUpdated = 0;
+
+
 
     @GetMapping("getallpolicies")
     public ResponseEntity<List<PolicyDTO>> getAllPolicies() {
@@ -88,10 +96,10 @@ public class PolicyController {
         return ResponseEntity.ok(policyService.updatePolicy(id, policy));
     }
 
-    // Delete a policy
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePolicy(@PathVariable int id) {
-        policyService.deletePolicy(id);
-        return ResponseEntity.ok("Policy deleted successfully.");
-    }
+//    // Delete a policy
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<String> deletePolicy(@PathVariable int id) {
+//        policyService.deletePolicy(id);
+//        return ResponseEntity.ok("Policy deleted successfully.");
+//    }
 }

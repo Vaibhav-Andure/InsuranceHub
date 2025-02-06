@@ -19,4 +19,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, String
 
 
 
+    // ✅ Method to find transactions by policyHolderId
+    Transaction findByPolicyHolder_PolicyHolderId(int policyHolderId);
 }

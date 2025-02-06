@@ -293,8 +293,8 @@ const ViewPolicy = () => {
             <option value="premium-high-low">Sort by Premium (High to Low)</option>
             <option value="coverage-low-high">Sort by Coverage Amount (Low to High)</option>
             <option value="coverage-high-low">Sort by Coverage Amount (High to Low)</option>
-            <option value="tenure-low-high">Sort by Tenure (Low to High)</option>
-            <option value="tenure-high-low">Sort by Tenure (High to Low)</option>
+            {/* <option value="tenure-low-high">Sort by Tenure (Low to High)</option>
+            <option value="tenure-high-low">Sort by Tenure (High to Low)</option> */}
           </select>
         </div>
       </div>
@@ -336,17 +336,19 @@ const ViewPolicy = () => {
                     alignItems: 'center',
                     marginBottom: '1rem',
                   }}>
-                    <img src={policy.insurer && policy.insurer.insurerImage} alt="Insurer" style={{
+                    {/* <img src={policy.insurer && policy.insurer.insurerImage} alt="Insurer" style={{
                       width: '80px',
                       height: '80px',
                       borderRadius: '50%',
                       marginRight: '1rem',
-                    }} />
+                    }} /> */}
                     <div style={{
                       flex: 1,
                       marginLeft: '1rem',
                     }}>
-                      <Typography variant="h6">{policy.policyName}</Typography>
+                    <Typography variant="h6" align="center">
+                    {policy.policyName}
+</Typography>
                     </div>
                   </div>
                   <div style={{

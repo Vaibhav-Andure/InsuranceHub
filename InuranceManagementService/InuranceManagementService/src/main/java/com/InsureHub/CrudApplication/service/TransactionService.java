@@ -25,6 +25,12 @@ public class TransactionService {
     @Autowired
     private PolicyRepository policyRepository;
 
+
+    //get transaction for particular user
+//    public List<Transaction> getTransactionsByUserId(int userId) {
+//        return transactionRepository.findByPolicyHolder_User_UserId(userId);
+//    }
+
     // Create or update a transaction
     public TransactionDTO saveTransaction(Transaction transaction) {
         // Fetch the associated policy

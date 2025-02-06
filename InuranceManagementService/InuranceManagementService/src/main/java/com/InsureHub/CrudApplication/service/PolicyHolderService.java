@@ -27,6 +27,12 @@ public class PolicyHolderService {
     @Autowired
     private UserRepository userRepository;
 
+
+
+    public PolicyHolder getPolicyHoldersByUserId(int userId) {
+        return policyHolderRepository.findByUser_UserId(userId);
+    }
+
     // Create or update policyholder
     public PolicyHolderDTO createOrUpdatePolicyHolder(PolicyHolder policyHolder) {
         // Extract userId from the nested User object

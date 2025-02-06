@@ -1,6 +1,7 @@
 package com.InsureHub.CrudApplication.controller;
 
 import com.InsureHub.CrudApplication.DTO.ClaimDTO; // Import your ClaimDTO
+import com.InsureHub.CrudApplication.DTO.ClaimRequest;
 import com.InsureHub.CrudApplication.entities.Claim; // Import your Claim entity
 import com.InsureHub.CrudApplication.service.ClaimService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,27 +9,59 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/claims")
+@CrossOrigin(origins="http://localhost:5173")
 public class ClaimController {
 
     @Autowired
     private ClaimService claimService;
 
-    // Create or Update a claim
     @PostMapping("/claimpolicy")
-    public ResponseEntity<String> createOrUpdateClaim(@RequestBody Claim claim) {
-        try {
-            Claim savedClaim = claimService.saveClaim(claim);
-            ClaimDTO claimDTO = claimService.convertToDTO(savedClaim); // Convert to DTO
-            return ResponseEntity.status(HttpStatus.CREATED).body("{\"message\": \"Claim registered successfully\", \"claimId\": " + claimDTO.getClaimId() + "}");
-        } catch (IllegalStateException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"Failed to register claim\"}");
-        }
+    public ResponseEntity<String> createOrUpdateClaim(@RequestBody ClaimRequest claimRequest) {
+
+            // Extract necessary fields from the claimRequest
+            int userId = claimRequest.getUserId();
+            Double claimAmount = claimRequest.getClaimAmount();
+            String incidentDescription = claimRequest.getIncidentDescription();
+            Date incidentDate = claimRequest.getIncidentDate();
+
+            // Call the service to save or update the claim
+            Claim savedClaim = claimService.saveClaim(userId, claimAmount, incidentDescription, incidentDate);
+
+            // Convert saved claim to DTO
+            ClaimDTO claimDTO = claimService.convertToDTO(savedClaim);
+
+            // Return success response with claimId
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    "{\"message\": \"Claim registered successfully\", \"claimId\": " + claimDTO.getClaimId() + "}"
+            );
+
     }
+
+
+
+
+
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ClaimDTO> getClaimsByUserId(@PathVariable int  userId) {
+        ClaimDTO claims = claimService.findClaimsByUserId(userId);
+
+        return ResponseEntity.ok(claims);
+    }
+
+
+
+
+
+
+
+
 
     // Get claim by Policy ID
     @GetMapping("/policy/{policyId}")
