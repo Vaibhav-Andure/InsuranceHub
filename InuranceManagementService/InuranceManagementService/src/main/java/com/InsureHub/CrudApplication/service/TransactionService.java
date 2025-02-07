@@ -74,7 +74,25 @@ public class TransactionService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-   
+
+
+
+
+ //get transaction user user id 
+    public Optional<TransactionDTO> getTransactionByUserId(int userid) {
+        Optional<Transaction> transaction = transactionRepository.findByPolicyHolder_User_UserId(userid);
+        return transaction.map(this::convertToDTO);
+    }
+
+
+
+
+
+
+
+
+
+
     
     //serive code for pagination for fututer prefrence
 // // Get all transactions

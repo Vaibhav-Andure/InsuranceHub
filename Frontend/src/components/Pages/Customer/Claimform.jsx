@@ -16,8 +16,13 @@ import {
 import { Shield } from "lucide-react";
 import LockIcon from '@mui/icons-material/Lock';
 import axios from 'axios';
+import {  useSelector} from 'react-redux';
 
 const ClaimFilingForm = () => {
+   
+    const { user } = useSelector((state) => state.auth);
+
+
   const [formData, setFormData] = useState({
     userId: "",
     claimAmount: "",
@@ -101,7 +106,7 @@ const ClaimFilingForm = () => {
     }
 
     const payload = {
-      userId: 23,
+      userId: user?.uid,
       claimAmount: parseFloat(formData.claimAmount),
       incidentDescription: formData.incidentDescription,
       incidentDate: formData.incidentDate,
