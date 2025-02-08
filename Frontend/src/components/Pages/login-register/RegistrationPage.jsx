@@ -161,7 +161,8 @@ export default function RegistrationPage() {
       password: data.password,
       email: data.email,
       role: {
-        roleName: "Insurer"
+        roleName: "Customer"
+
       }
     };
 
