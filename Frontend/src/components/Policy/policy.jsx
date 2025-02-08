@@ -17,7 +17,7 @@ import {
 import { useDispatch } from "react-redux";
 import { setPolicy, clearPolicy } from "../../redux/slices/policiesSlice";
 
-const PolicyBenefits = ({ benefits, onClose , comparePolicies}) => {
+const PolicyBenefits = ({ benefits , comparePolicies}) => {
   const splitBenefits = (benefits) => {
     return benefits.split(',').map((benefit, index) => (
       <TableRow key={index}>
@@ -103,20 +103,43 @@ const PolicyInfo = ({ policy  , comparePolicies}) => {
 };
 
 const PolicyComparison = ({ policies, onRemove }) => {
+
+
+
+
+
+  const [topMargin, setTopMargin] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      // Adjust the top margin based on scroll position
+      setTopMargin(scrollY > 100 ? scrollY - 100 : 0); // Example: start adjusting after 100px
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   return (
    
     <div style={{
       backgroundColor: 'white',
       borderRadius: '0.5rem',
       padding: '1.5rem',
- 
+      position:"relative",
       display: 'flex',
       flexDirection: 'column',
-      transition: 'transform 0.3s ease',
+      transition: 'transform 3s ease',
+      transition: 'margin-top 0.3s ease',
       width: '500px',
       height: "auto",
-      marginLeft:"200px",
+      marginLeft:"150px",
       maxWidth: '1000px',
+       marginTop: `${topMargin}px`
     }}>
                         <Typography variant="h6" align="center">
                 Compare
@@ -147,6 +170,8 @@ const PolicyComparison = ({ policies, onRemove }) => {
               <p><strong>Waiting Period:</strong> {policy.waitingPeriod} days</p>
               <br/>
               <br/>
+
+
               <Button 
                 onClick={() => onRemove(policy.policyId)} 
                 style={{
@@ -353,6 +378,7 @@ const ViewPolicy = () => {
                   marginLeft:  comparePolicies.length >  0  ?   "100px": "60vh"  ,
                   minWidth:"500px",
                   transition: 'transform 0.3s ease',
+                
                 }}>
                   <div style={{
                     display: 'flex',
@@ -487,13 +513,16 @@ const ViewPolicy = () => {
           border: '1px solid #ddd',
           padding: '1rem',
           borderRadius: '1rem',
+          marginLeft:"10vh"
         }}>
          
             <PolicyComparison 
               policies={comparePolicies.map(id => policies.find(policy => policy.policyId === id))} 
               onRemove={(policyId) => setComparePolicies(comparePolicies.filter(id => id !== policyId))}
             />
-         
+         <br/>
+         <br/>
+         <br />
         </div>  )}
       </div>
     </div>

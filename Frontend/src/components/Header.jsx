@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Shield, User } from 'lucide-react';
@@ -52,13 +54,13 @@ function Header() {
         <div className="d-flex align-items-center">
           <Shield className="text-primary" style={{ width: '30px', height: '30px' }} />
           <Link to={getDashboardLink()} className="h4 text-dark text-decoration-none ms-2">
-             Insurance Hub
+             InsuranceHub
            </Link>
         </div>
         <div className="d-flex align-items-center">
           {!isAuthenticated ? (
             <>
-              <Link to="/login" className="btn btn-outline-primary btn-sm mx-2">
+              <Link to="/login" className="btn btn-outline-primary btn-sm mx-2" >
                 Login
               </Link>
               <Link to="/register" className="btn btn-primary btn-sm mx-2">
@@ -76,7 +78,7 @@ function Header() {
                 <span>{user?.username || 'User'}</span>
               </button>
               {dropdownOpen && (
-                <ul className="dropdown-menu dropdown-menu-end show" style={{ position: 'absolute', right: 0, top: '100%' }}>
+                <ul className="dropdown-menu dropdown-menu-end show" style={{ position: 'absolute', right: 0, top: '100%'  }}>
                   <li>
                     <Link className="dropdown-item" to="/profile">
                       Manage Profile

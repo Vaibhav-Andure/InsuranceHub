@@ -152,6 +152,7 @@ public class ClaimService {
     public ClaimDTO findClaimsByUserId(int  userId) {
 
        Claim claim =  claimRepository.findByTransaction_PolicyHolder_User_UserId(userId);
+
         return convertToDTO(claim);
     }
 

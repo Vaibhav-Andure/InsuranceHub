@@ -101,7 +101,7 @@ navigate("/customer");
 
     return (
       <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-        <div className="card" style={{ width: '100%', maxWidth: '400px' }}>
+        <div className="card" style={{ width: '100%', maxWidth: '50vh' ,height:"60vh" , marginBottom:"20vh" }}>
           <div className="card-body">
             <div className="text-center mb-4">
               <Shield className="text-primary" style={{ width: '40px', height: '40px' }} />
@@ -114,6 +114,7 @@ navigate("/customer");
                 {errorMessage}
               </div>
             )}
+            <br/>
   
             <form onSubmit={handleLogin}>
               <div className="mb-3">
@@ -128,9 +129,11 @@ navigate("/customer");
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   required
+                  style={{height:"60px", minHeight : "60px", maxWidth:"40vh"}}
                 />
               </div>
-  
+   
+   <br/>
               <div className="mb-3">
                 <label htmlFor="password" className="form-label">
                   Password
@@ -143,9 +146,11 @@ navigate("/customer");
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
                   required
+                  style={{height:"50px"}}
                 />
               </div>
-  
+           
+              <br/>
               <button type="submit" className="btn btn-primary w-100">
                 Sign In
               </button>
