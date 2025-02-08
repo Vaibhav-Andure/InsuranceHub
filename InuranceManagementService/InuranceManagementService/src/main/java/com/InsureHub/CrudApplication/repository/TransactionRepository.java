@@ -5,6 +5,7 @@ package com.InsureHub.CrudApplication.repository;
 import com.InsureHub.CrudApplication.entities.Transaction;
 import com.InsureHub.CrudApplication.entities.PolicyHolder;
 import com.InsureHub.CrudApplication.entities.Policy;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -22,7 +23,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, String
 
     @Query("SELECT SUM(t.amount) FROM Transaction t")
     Double sumAmount();
-
+    //sorted transaction
+    List<Transaction> findAll(Sort sort);
     
     Optional<List<Transaction>> findByPolicy_Insurer_User_UserId(int userId);
 

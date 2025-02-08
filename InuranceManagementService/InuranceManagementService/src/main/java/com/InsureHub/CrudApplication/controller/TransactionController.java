@@ -42,9 +42,9 @@ public class TransactionController {
 
 
 //
-    @GetMapping("/user/{userId}")
-    public Optional<TransactionDTO> getTransactionById(@PathVariable int userId) {
-        return transactionService.getTransactionByUserId(userId);
+    @GetMapping("/byuserid/{userId}")
+    public Optional<TransactionDTO> getTransactionByUserId(@PathVariable int userId) {
+        return Optional.ofNullable(transactionService.getTransactionByUserId(userId));
     }
 
 
@@ -86,18 +86,5 @@ public class TransactionController {
     }
     
 
-    // Delete transaction by ID
-    @DeleteMapping("/{transactionId}")
-    public ResponseEntity<String> deleteTransaction(@PathVariable String transactionId) {
-        Optional<TransactionDTO> transaction = transactionService.getTransactionById(transactionId);
 
-        if (transaction.isPresent()) {
-            transactionService.deleteTransaction(transactionId);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body("{\"message\": \"Transaction deleted successfully\"}");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"message\": \"Transaction not found\"}");
-        }
-    }
 }

@@ -10,10 +10,9 @@ import com.InsureHub.CrudApplication.repository.PolicyHolderRepository;
 import com.InsureHub.CrudApplication.repository.PolicyRepository;
 import com.InsureHub.CrudApplication.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,9 +41,7 @@ public class TransactionService {
     private ClaimRepository claimRepository;
 
 
-    //get transaction for particular user
-//    public List<Transaction> getTransactionsByUserId(int userId) {
-//        return transactionRepository.findByPolicyHolder_User_UserId(userId);
+
 //    }
 
     // Create or update a transaction
@@ -67,22 +64,40 @@ public class TransactionService {
         return convertToDTO(savedTransaction);
     }
 
+
+
+
     // Get a transaction by its ID
     public Optional<TransactionDTO> getTransactionById(String transactionId) {
         Optional<Transaction> transaction = transactionRepository.findById(transactionId);
         return transaction.map(this::convertToDTO);
     }
-
-//    // Get all transactions
+    // Method to get all transactions sorted by transaction date in descending order
     public List<TransactionDTO> getAllTransactions() {
-        List<Transaction> transactions = transactionRepository.findAll();
+        // Create a Sort object to sort by transactionDate in descending order
+        Sort sort = Sort.by(Sort.Direction.DESC, "transactionDate");
+
+        // Fetch all transactions sorted by date
+        List<Transaction> transactions = transactionRepository.findAll(sort);
+
+        // Convert to DTO and return
         return transactions.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-   
- // Get transactions by User Id
+
+
+
+
+
+    public TransactionDTO getTransactionByUserId(@PathVariable int userId) {
+        Optional<Transaction> userTransaction = transactionRepository.findByPolicyHolder_User_UserId(userId);
+        return userTransaction.map(this::convertToDTO).orElse(null);
+    }
+
+
+ // Get transactions by User Id insurer user id
     public List<TransactionDTO> getTransactionsByInsurer(int userId) {
         Optional<List<Transaction>> optionalTransactions = transactionRepository.findByPolicy_Insurer_User_UserId(userId);
         List<Transaction> transactions = optionalTransactions.orElseGet(List::of); // Return an empty list if no transactions are found
@@ -90,6 +105,8 @@ public class TransactionService {
                 .map(this::convertToDTO) // Convert to DTO
                 .collect(Collectors.toList());
     }
+
+
 
 
 
@@ -108,10 +125,7 @@ public class TransactionService {
     
     
 
-    // Delete a transaction
-    public void deleteTransaction(String transactionId) {
-        transactionRepository.deleteById(transactionId);
-    }
+
 
     // Convert Transaction entity to TransactionDTO
     private TransactionDTO convertToDTO(Transaction transaction) {
