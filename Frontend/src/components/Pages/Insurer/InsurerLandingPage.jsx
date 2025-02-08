@@ -1,889 +1,527 @@
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-// import {
-//   Users,
-//   FileText,
-//   ClipboardList,
-//   AlertCircle,
-//   Building2,
-//   PlusCircle
-// } from 'lucide-react';
-// import {
-//   Box,
-//   Typography,
-//   Grid,
-//   Paper,
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableContainer,
-//   TableHead,
-//   TableRow,
-//   Button,
-//   IconButton
-// } from '@mui/material';
-// import { useNavigate } from 'react-router-dom';
-
-// const StatCard = ({ title, value, icon: Icon, onClick }) => (
-//   <Paper 
-//     onClick={onClick} 
-//     elevation={3} 
-//     sx={{ 
-//       padding: 2, 
-//       display: 'flex', 
-//       justifyContent: 'space-between', 
-//       alignItems: 'center', 
-//       cursor: onClick ? 'pointer' : 'default', 
-//       flex: 1, 
-//       margin: 1, 
-//       height: 120, // Set a fixed height
-//       minWidth: 150 // Set a minimum width
-//     }} 
-//   >
-//     <div>
-//       <Typography variant="body2" color="text.secondary">{title}</Typography>
-//       <Typography variant="h6" fontWeight="bold">{value}</Typography>
-//     </div>
-//     <Icon sx={{ fontSize: 40, color: 'primary.main' }} />
-//   </Paper>
-// );
-
-// const InsurerDashboard = () => {
-//   const [activeTab, setActiveTab] = useState('overview');
-//   const [claims, setClaims] = useState([]);
-//   const [customers, setCustomers] = useState([]);
-//   const [policies, setPolicies] = useState([]);
-//   const [totalTransactions, setTotalTransactions] = useState(0);
-//   const [insurerPolicies, setInsurerPolicies] = useState([]); // State for insurer policies
-//   const [insurerName, setInsurerName] = useState(''); // State for insurer name
-//   const [insurerLicense, setInsurerLicense] = useState(''); // State for insurer license
-//   const [transactions, setTransactions] = useState([]); // State for transactions
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     const fetchClaims = async () => {
-//       try {
-//         const response = await axios.get('http://localhost:5555/api/claims/by-insurer-user/4');
-//         setClaims(response.data);
-//       } catch (error) {
-//         console.error('Error fetching claims:', error);
-//       }
-//     };
-
-//     const fetchCustomers = async () => {
-//       try {
-//         const response = await axios.get('http://localhost:5555/api/customers');
-//         setCustomers(response.data);
-//       } catch (error) {
-//         console.error('Error fetching customers:', error);
-//       }
-//     };
-
-//     const fetchPolicies = async () => {
-//       try {
-//         const response = await axios.get('http://localhost:5555/api/policies');
-//         setPolicies(response.data);
-//       } catch (error) {
-//         console.error('Error fetching policies:', error);
-//       }
-//     };
-
-//     const fetchTotalTransactions = async () => {
-//       try {
-//         const response = await axios.get('http://localhost:5555/api/transactions'); // Adjust this endpoint as needed
-//         setTotalTransactions(response.data.length); // Assuming the response is an array of transactions
-//       } catch (error) {
-//         console.error('Error fetching transactions:', error);
-//       }
-//     };
-
-//     const fetchInsurerDetails = async () => {
-//       try {
-//         const response = await axios.get('http://localhost:5555/api/insurers/4'); // Adjust this endpoint as needed
-//         setInsurerName(response.data.insurerName); // Assuming the response has an insurerName field
-//         setInsurerLicense(response.data.licenseNumber); // Assuming the response has a licenseNumber field
-//       } catch (error) {
-//         console.error('Error fetching insurer details:', error);
-//       }
-//     };
-
-//     fetchClaims();
-//     fetchCustomers();
-//     fetchPolicies();
-//     fetchTotalTransactions();
-//     fetchInsurerDetails(); // Fetch insurer details
-//   }, []);
-
-//   const handleTabChange = async (tab) => {
-//     setActiveTab(tab);
-//     if (tab === 'totalPolicies') {
-//       // Fetch policies for the specific insurer (userId = 4 in this case)
-//       try {
-//         const response = await axios.get('http://localhost:5555/api/policies/user/4'); // Adjust userId as needed
-//         setInsurerPolicies(response.data); // Set the fetched policies
-//       } catch (error) {
-//         console.error('Error fetching policies for insurer:', error);
-//       }
-//     } else if (tab === 'totalCustomers') {
-//       // Fetch transactions for the specific insurer
-//       try {
-//         const response = await axios.get('http://localhost:5555/api/transactions/insurer/4'); // Adjust this endpoint as needed
-//         setTransactions(response.data); // Set the fetched transactions
-//       } catch (error) {
-//         console.error('Error fetching transactions:', error);
-//       }
-//     }
-//   };
-
-//   const handleStatusChange = async (claimId, status) => {
-//     try {
-//       const response = await axios.put(`http://localhost:5555/api/claims/${claimId}/status`, null, {
-//         params: { newStatus: status }
-//       });
-      
-//       if (response.status === 200) {
-//         setClaims((prevClaims) => {
-//           return prevClaims.map(claim => 
-//             claim.claimId === claimId ? { ...claim, claimStatus: status } : claim
-//           );
-//         });
-//       }
-//     } catch (error) {
-//       console.error('Error updating claim status:', error);
-//     }
-//   };
-
-//   const approvedClaims = claims.filter(c => c.claimStatus === 'Approved');
-//   const pendingClaims = claims.filter(c => c.claimStatus === 'Pending');
-//   const rejectedClaims = claims.filter(c => c.claimStatus === 'Rejected');
-
-//   return (
-//     <Box sx={{ minHeight: '100vh', backgroundColor: 'background.default', padding: 3 }}>
-//       <Box sx={{ maxWidth: 1200, margin: '0 auto' }}>
-//         <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-//           <Typography variant="h4" fontWeight="bold" color="text.primary">Insurer Dashboard</Typography>
-//           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-//             <IconButton color="primary">
-//               <Building2 sx={{ fontSize: 24 }} />
-//             </IconButton>
-//             <Box sx={{ marginLeft: 2 }}>
-//               <Typography variant="body1" fontWeight="bold">{insurerName}</Typography>
-//               <Typography variant="body2" color="text.secondary">License: {insurerLicense}</Typography>
-//             </Box>
-//           </Box>
-//         </Box>
-
-//         <Grid container spacing={2} marginBottom={4}>
-//           <Grid item xs={12} sm={6} md={3}>
-//             <StatCard
-//               title="Total Customers"
-//               value={transactions.length}
-//               icon={Users}
-//               onClick={() => handleTabChange('totalCustomers')}
-//             />
-//           </Grid>
-//           <Grid item xs={12} sm={6} md={3}>
-//             <StatCard
-//               title="Total Policies"
-//               value={insurerPolicies.length}
-//               icon={FileText}
-//               onClick={() => handleTabChange('totalPolicies')}
-//             />
-//           </Grid>
-//           <Grid item xs={12} sm={6} md={3}>
-//             <StatCard
-//               title="Approved Claims"
-//               value={approvedClaims.length}
-//               icon={ClipboardList}
-//               onClick={() => handleTabChange('approved')}
-//             />
-//           </Grid>
-//           <Grid item xs={12} sm={6} md={3}>
-//             <StatCard
-//               title="Pending Claims"
-//               value={pendingClaims.length}
-//               icon={AlertCircle}
-//               onClick={() => handleTabChange('pending')}
-//             />
-//           </Grid>
-//           <Grid item xs={12} sm={6} md={3}>
-//             <StatCard
-//               title="Total Transactions"
-//               value={transactions.length}
-//               icon={ClipboardList}
-//               onClick={() => handleTabChange('totalTransactions')}
-//             />
-//           </Grid>
-//           <Grid item xs={12} sm={6} md={3}>
-//             <StatCard
-//               title="Register Policy"
-//               value=""
-//               icon={PlusCircle}
-//               onClick={() => handleTabChange('registerPolicy')}
-//             />
-//           </Grid>
-//         </Grid>
-
-//         {activeTab === 'totalCustomers' && (
-//           <Paper elevation={3} sx={{ padding: 3 }}>
-//             <Typography variant="h6" fontWeight="bold" marginBottom={2}>Total Customers</Typography>
-//             <TableContainer>
-//               <Table>
-//                 <TableHead>
-//                   <TableRow>
-//                     <TableCell><strong>Policy Holder Name</strong></TableCell>
-//                     <TableCell><strong>Policy Name</strong></TableCell>
-//                   </TableRow>
-//                 </TableHead>
-//                 <TableBody>
-//                   {transactions.map((transaction) => (
-//                     <TableRow key={transaction.transactionId}>
-//                       <TableCell>{transaction.policyHolderName}</TableCell>
-//                       <TableCell>{transaction.policyName}</TableCell>
-//                     </TableRow>
-//                   ))}
-//                 </TableBody>
-//               </Table>
-//             </TableContainer>
-//           </Paper>
-//         )}
-
-//         {activeTab === 'totalPolicies' && (
-//           <Paper elevation={3} sx={{ padding: 3 }}>
-//             <Typography variant="h6" fontWeight="bold" marginBottom={2}>
-//               Policies for {insurerName}
-//             </Typography>
-//             <TableContainer>
-//               <Table>
-//                 <TableHead>
-//                   <TableRow>
-//                     <TableCell><strong>Policy Number</strong></TableCell>
-//                     <TableCell><strong>Policy Name</strong></TableCell>
-//                     <TableCell><strong>Policy Terms</strong></TableCell>
-//                     <TableCell><strong>Premium Amount</strong></TableCell>
-//                     <TableCell><strong>Coverage Amount</strong></TableCell>
-//                     <TableCell><strong>Coverage Type</strong></TableCell>
-//                     <TableCell><strong>Status</strong></TableCell>
-//                   </TableRow>
-//                 </TableHead>
-//                 <TableBody>
-//                   {insurerPolicies.map((policy) => (
-//                     <TableRow key={policy.policyId}>
-//                       <TableCell>{policy.policyNumber}</TableCell>
-//                       <TableCell>{policy.policyName}</TableCell>
-//                       <TableCell>{policy.policyTerms}</TableCell>
-//                       <TableCell>{policy.premiumAmount}</TableCell>
-//                       <TableCell>{policy.coverageAmount}</TableCell>
-//                       <TableCell>{policy.coverageType}</TableCell>
-//                       <TableCell>{policy.status}</TableCell>
-//                     </TableRow>
-//                   ))}
-//                 </TableBody>
-//               </Table>
-//             </TableContainer>
-//           </Paper>
-//         )}
-
-//         {activeTab === 'pending' && (
-//           <Paper elevation={3} sx={{ padding: 3 }}>
-//             <Typography variant="h6" fontWeight="bold" marginBottom={2}>Pending Claims</Typography>
-//             <TableContainer>
-//               <Table>
-//                 <TableHead>
-//                   <TableRow>
-//                     <TableCell><strong>Claim ID</strong></TableCell>
-//                     <TableCell><strong>Claimant Name</strong></TableCell>
-//                     <TableCell><strong>Policy ID</strong></TableCell>
-//                     <TableCell><strong>Claim Amount</strong></TableCell>
-//                     <TableCell><strong>Filed Date</strong></TableCell>
-//                     <TableCell><strong>Status</strong></TableCell>
-//                     <TableCell><strong>Actions</strong></TableCell>
-//                   </TableRow>
-//                 </TableHead>
-//                 <TableBody>
-//                   {pendingClaims.map((claim) => (
-//                     <TableRow key={claim.claimId}>
-//                       <TableCell>{claim.claimId}</TableCell>
-//                       <TableCell>{claim.claimantName}</TableCell>
-//                       <TableCell>{claim.policyId}</TableCell>
-//                       <TableCell>{claim.claimAmount}</TableCell>
-//                       <TableCell>{new Date(claim.filedDate).toLocaleDateString()}</TableCell>
-//                       <TableCell>
-//                         <AlertCircle sx={{ fontSize: 20, color: 'warning.main', marginRight: 1 }} />
-//                         <Typography color="warning.main">Pending</Typography>
-//                       </TableCell>
-//                       <TableCell>
-//                         <Button
-//                           variant="contained"
-//                           color="success"
-//                           onClick={() => handleStatusChange(claim.claimId, 'Approved')}
-//                         >
-//                           Approve
-//                         </Button>
-//                         <Button
-//                           variant="contained"
-//                           color="error"
-//                           sx={{ marginLeft: 1 }}
-//                           onClick={() => handleStatusChange(claim.claimId, 'Rejected')}
-//                         >
-//                           Reject
-//                         </Button>
-//                       </TableCell>
-//                     </TableRow>
-//                   ))}
-//                 </TableBody>
-//               </Table>
-//             </TableContainer>
-//           </Paper>
-//         )}
-
-//         {activeTab === 'approved' && (
-//           <Paper elevation={3} sx={{ padding: 3 }}>
-//             <Typography variant="h6" fontWeight="bold" marginBottom={2}>Approved Claims</Typography>
-//             <TableContainer>
-//               <Table>
-//                 <TableHead>
-//                   <TableRow>
-//                     <TableCell><strong>Claim ID</strong></TableCell>
-//                     <TableCell><strong>Claimant Name</strong></TableCell>
-//                     <TableCell><strong>Policy ID</strong></TableCell>
-//                     <TableCell><strong>Claim Amount</strong></TableCell>
-//                     <TableCell><strong>Filed Date</strong></TableCell>
-//                     <TableCell><strong>Status</strong></TableCell>
-//                   </TableRow>
-//                 </TableHead>
-//                 <TableBody>
-//                   {approvedClaims.map((claim) => (
-//                     <TableRow key={claim.claimId}>
-//                       <TableCell>{claim.claimId}</TableCell>
-//                       <TableCell>{claim.claimantName}</TableCell>
-//                       <TableCell>{claim.policyId}</TableCell>
-//                       <TableCell>{claim.claimAmount}</TableCell>
-//                       <TableCell>{new Date(claim.filedDate).toLocaleDateString()}</TableCell>
-//                       <TableCell>
-//                         <Typography color="success.main">Approved</Typography>
-//                       </TableCell>
-//                     </TableRow>
-//                   ))}
-//                 </TableBody>
-//               </Table>
-//             </TableContainer>
-//           </Paper>
-//         )}
-
-//         {activeTab === 'rejected' && (
-//           <Paper elevation={3} sx={{ padding: 3 }}>
-//             <Typography variant="h6" fontWeight="bold" marginBottom={2}>Rejected Claims</Typography>
-//             <TableContainer>
-//               <Table>
-//                 <TableHead>
-//                   <TableRow>
-//                     <TableCell><strong>Claim ID</strong></TableCell>
-//                     <TableCell><strong>Claimant Name</strong></TableCell>
-//                     <TableCell><strong>Policy ID</strong></TableCell>
-//                     <TableCell><strong>Claim Amount</strong></TableCell>
-//                     <TableCell><strong>Filed Date</strong></TableCell>
-//                     <TableCell><strong>Status</strong></TableCell>
-//                   </TableRow>
-//                 </TableHead>
-//                 <TableBody>
-//                   {rejectedClaims.map((claim) => (
-//                     <TableRow key={claim.claimId}>
-//                       <TableCell>{claim.claimId}</TableCell>
-//                       <TableCell>{claim.claimantName}</TableCell>
-//                       <TableCell>{claim.policyId}</TableCell>
-//                       <TableCell>{claim.claimAmount}</TableCell>
-//                       <TableCell>{new Date(claim.filedDate).toLocaleDateString()}</TableCell>
-//                       <TableCell>
-//                         <Typography color="error.main">Rejected</Typography>
-//                       </TableCell>
-//                     </TableRow>
-//                   ))}
-//                 </TableBody>
-//               </Table>
-//             </TableContainer>
-//           </Paper>
-//         )}
-
-//         {activeTab === 'totalTransactions' && (
-//           <Paper elevation={3} sx={{ padding: 3 }}>
-//             <Typography variant="h6" fontWeight="bold" marginBottom={2}>Total Transactions</Typography>
-//             <TableContainer>
-//               <Table>
-//                 <TableHead>
-//                   <TableRow>
-//                     <TableCell><strong>Transaction ID</strong></TableCell>
-//                     <TableCell><strong>Policy Holder Name</strong></TableCell>
-//                     <TableCell><strong>Policy Name</strong></TableCell>
-//                     <TableCell><strong>Amount</strong></TableCell>
-//                     <TableCell><strong>Transaction Date</strong></TableCell>
-//                   </TableRow>
-//                 </TableHead>
-//                 <TableBody>
-//                   {transactions.map((transaction) => (
-//                     <TableRow key={transaction.transactionId}>
-//                       <TableCell>{transaction.transactionId}</TableCell>
-//                       <TableCell>{transaction.policyHolderName}</TableCell>
-//                       <TableCell>{transaction.policyName}</TableCell>
-//                       <TableCell>{transaction.amount}</TableCell>
-//                       <TableCell>{new Date(transaction.transactionDate).toLocaleString()}</TableCell>
-//                     </TableRow>
-//                   ))}
-//                 </TableBody>
-//               </Table>
-//             </TableContainer>
-//           </Paper>
-//         )}
-//       </Box>
-//     </Box>
-//   );
-// };
-
-// export default InsurerDashboard;
-
-
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-  Users,
-  FileText,
-  ClipboardList,
-  AlertCircle,
-  Building2,
-  PlusCircle
+import { 
+  Users, 
+  FileText, 
+  ClipboardList, 
+  AlertCircle, 
+  Building2, 
+  PlusCircle, 
+  CheckCircle, 
+  XCircle,
+  LayoutDashboard,
+  Settings,
+  LogOut,
+  ChevronLeft,
+  Menu
 } from 'lucide-react';
-import {
-  Box,
-  Typography,
-  Grid,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Button,
-  IconButton
+import { 
+  Box, 
+  Typography, 
+  Grid, 
+  Paper, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow, 
+  Button, 
+  IconButton, 
+  Modal, 
+  Chip,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListItemButton,
+  Divider,
+  useMediaQuery
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 
-const StatCard = ({ title, value, icon: Icon, onClick }) => (
+import PolicyRegistrationForm from './PolicyForm';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { logout } from '../../../redux/slices/authSlice'
+import { useSelector, useDispatch, } from 'react-redux';
+import { useNavigate } from 'react-router-dom'; 
+
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+  typography: {
+    fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+        },
+      },
+    },
+  },
+});
+
+const StatCard = ({ title, value, icon: Icon, onClick, color = "primary" }) => (
   <Paper 
-    onClick={onClick} 
-    elevation={3} 
-    sx={{ 
-      padding: 2, 
-      display: 'flex', 
-      justifyContent: 'space-between', 
-      alignItems: 'center', 
-      cursor: onClick ? 'pointer' : 'default', 
-      flex: 1, 
-      margin: 1, 
-      height: 120, // Set a fixed height
-      minWidth: 150 // Set a minimum width
-    }} 
+    onClick={onClick}
+    elevation={1}
+    sx={{
+      p: 3,
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      cursor: 'pointer',
+      transition: 'all 0.2s',
+      '&:hover': {
+        transform: 'translateY(-2px)',
+        boxShadow: 2,
+      },
+      bgcolor: `${color}.lighter`,
+      color: `${color}.main`,
+    }}
   >
-    <div>
-      <Typography variant="body2" color="text.secondary">{title}</Typography>
-      <Typography variant="h6" fontWeight="bold">{value}</Typography>
-    </div>
-    <Icon sx={{ fontSize: 40, color: 'primary.main' }} />
+    <Box>
+      <Typography variant="body2" color="inherit" sx={{ opacity: 0.8 }}>
+        {title}
+      </Typography>
+      <Typography variant="h4" fontWeight="bold" color="inherit" sx={{ mt: 1 }}>
+        {value}
+      </Typography>
+    </Box>
+    <Icon size={32} style={{ opacity: 0.8 }} />
   </Paper>
 );
 
+const DRAWER_WIDTH = 280;
+
+const Sidebar = ({ open, onClose, onNavigate, activeTab ,handleLogout}) => {
+  const menuItems = [
+    { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'totalPolicies', label: 'Policies', icon: FileText },
+    { id: 'pending', label: 'Pending Claims', icon: AlertCircle },
+    { id: 'approved', label: 'Approved Claims', icon: CheckCircle },
+    { id: 'totalCustomers', label: 'Customers', icon: Users },
+  ];
+
+  return (
+    <Box sx={{ width: DRAWER_WIDTH }}>
+      <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Typography variant="h6" fontWeight="bold" color="primary">
+          InsuranceHub
+        </Typography>
+        <IconButton onClick={onClose} sx={{ display: { sm: 'none' } }}>
+          <ChevronLeft />
+        </IconButton>
+      </Box>
+      <Divider />
+      <List sx={{ px: 2 }}>
+        {menuItems.map((item) => (
+          <ListItem key={item.id} disablePadding>
+            <ListItemButton
+              onClick={() => {
+                onNavigate(item.id);
+                onClose();
+              }}
+              selected={activeTab === item.id}
+              sx={{
+                borderRadius: 2,
+                mb: 1,
+                '&.Mui-selected': {
+                  bgcolor: 'primary.lighter',
+                  color: 'primary.main',
+                  '&:hover': {
+                    bgcolor: 'primary.lighter',
+                  },
+                },
+              }}
+            >
+              <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}>
+                <item.icon size={20} />
+              </ListItemIcon>
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider sx={{ mt: 2 }} />
+      <List sx={{ px: 2, mt: 'auto' }}>
+        {/* <ListItem disablePadding>
+          <ListItemButton sx={{ borderRadius: 2 }}>
+            <ListItemIcon sx={{ minWidth: 40 }}>
+              <Settings size={20} />
+            </ListItemIcon>
+            <ListItemText primary="Settings" />
+          </ListItemButton>
+        </ListItem> */}
+        <ListItem disablePadding>
+          <ListItemButton sx={{ borderRadius: 2, color: 'error.main' }}onClick={handleLogout}>
+            <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+              <LogOut size={20} />
+            </ListItemIcon>
+            <ListItemText primary="Logout" />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
+  );
+};
+
 const InsurerDashboard = () => {
+  const user = useSelector((state) => state.auth.user);
+  const userId = user?.uid;
   const [activeTab, setActiveTab] = useState('overview');
   const [claims, setClaims] = useState([]);
-  const [customers, setCustomers] = useState([]);
-  const [policies, setPolicies] = useState([]);
-  const [totalTransactions, setTotalTransactions] = useState(0);
-  const [insurerPolicies, setInsurerPolicies] = useState([]); // State for insurer policies
-  const [insurerName, setInsurerName] = useState(''); // State for insurer name
-  const [insurerLicense, setInsurerLicense] = useState(''); // State for insurer license
-  const [transactions, setTransactions] = useState([]); // State for transactions
+  const [insurerPolicies, setInsurerPolicies] = useState([]);
+  const [insurerId, setInsurerId] = useState('');
+  const [insurerName, setInsurerName] = useState('');
+  const [insurerLicense, setInsurerLicense] = useState('');
+  const [transactions, setTransactions] = useState([]);
+  const [showRegisterPolicyForm, setShowRegisterPolicyForm] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const isSmUp = useMediaQuery((theme) => theme.breakpoints.up('sm'));
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+ 
+  const handleLogout = () => {
+    dispatch(logout()); // Dispatch the logout action
+    navigate('/'); // Navigate to the home page
+  };
+
 
   useEffect(() => {
+    console.log('User  object:', user); // Log the user object
+    console.log('User  ID:', userId); // Log the user ID
+  }, [user]);
+
+  useEffect(() => {
+    const fetchInsurerData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5555/api/insurers/by-user/${user.uid}`);
+        setInsurerId(response.data.insurerId);
+        setInsurerName(response.data.insurerName);
+        setInsurerLicense(response.data.licenseNumber);
+      } catch (error) {
+        console.error('Error fetching insurer data:', error);
+      }
+    };
+
     const fetchClaims = async () => {
       try {
-        const response = await axios.get('http://localhost:5555/api/claims/by-insurer-user/4');
+        const response = await axios.get(`http://localhost:5555/api/claims/by-insurer-user/${insurerId}`);
         setClaims(response.data);
       } catch (error) {
         console.error('Error fetching claims:', error);
       }
     };
 
-    const fetchCustomers = async () => {
-      try {
-        const response = await axios.get('http://localhost:5555/api/customers');
-        setCustomers(response.data);
-      } catch (error) {
-        console.error('Error fetching customers:', error);
-      }
-    };
-
     const fetchPolicies = async () => {
       try {
-        const response = await axios.get('http://localhost:5555/api/policies');
-        setPolicies(response.data);
+        const response = await axios.get(`http://localhost:5555/api/policies/byinsureruserid/${user.uid}`);
+        setInsurerPolicies(response.data);
       } catch (error) {
         console.error('Error fetching policies:', error);
       }
     };
 
-    const fetchTotalTransactions = async () => {
-      try {
-        const response = await axios.get('http://localhost:5555/api/transactions'); // Adjust this endpoint as needed
-        setTotalTransactions(response.data.length); // Assuming the response is an array of transactions
-      } catch (error) {
-        console.error('Error fetching transactions:', error);
-      }
-    };
-
-    const fetchInsurerDetails = async () => {
-      try {
-        const response = await axios.get('http://localhost:5555/api/insurers/4'); // Adjust this endpoint as needed
-        setInsurerName(response.data.insurerName); // Assuming the response has an insurerName field
-        setInsurerLicense(response.data.licenseNumber); // Assuming the response has a licenseNumber field
-      } catch (error) {
-        console.error('Error fetching insurer details:', error);
-      }
-    };
-
-    const fetchInsurerPolicies = async () => {
-      try {
-        const response = await axios.get('http://localhost:5555/api/policies/byinsureruserid/4'); // Adjust userId as needed
-        setInsurerPolicies(response.data); // Set the fetched policies
-      } catch (error) {
-        console.error('Error fetching policies for insurer:', error);
-      }
-    };
-
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get('http://localhost:5555/api/transactions/byinsureruserid/4'); // Adjust this endpoint as needed
-        setTransactions(response.data); // Set the fetched transactions
+        const response = await axios.get(`http://localhost:5555/api/transactions/byinsureruserid/${insurerId}`);
+        setTransactions(response.data);
       } catch (error) {
         console.error('Error fetching transactions:', error);
       }
     };
 
-    fetchClaims();
-    fetchCustomers();
-    fetchPolicies();
-    fetchTotalTransactions();
-    fetchInsurerDetails(); // Fetch insurer details
-    fetchInsurerPolicies(); // Fetch insurer policies
-    fetchTransactions(); // Fetch transactions
-  }, []);
+    if (userId) {
+      fetchInsurerData();
+    }
+    if (insurerId) {
+      fetchClaims();
+      fetchPolicies();
+      fetchTransactions();
+    }
+  }, [userId, insurerId]);
 
-  const handleTabChange = async (tab) => {
+  const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
 
-  const handleStatusChange = async (claimId, status) => {
+  const handleStatusChange = async (claimId, newStatus) => {
     try {
-      const response = await axios.put(`http://localhost:5555/api/claims/${claimId}/status`, null, {
-        params: { newStatus: status }
-      });
-      
-      if (response.status === 200) {
-        setClaims((prevClaims) => {
-          return prevClaims.map(claim => 
-            claim.claimId === claimId ? { ...claim, claimStatus: status } : claim
-          );
-        });
-      }
+      await axios.patch(`http://localhost:5555/api/claims/${claimId}/status`, { status: newStatus });
+      const updatedClaims = claims.map(claim =>
+        claim.claimId === claimId ? { ...claim, claimStatus: newStatus } : claim
+      );
+      setClaims(updatedClaims);
     } catch (error) {
       console.error('Error updating claim status:', error);
     }
   };
 
-  const approvedClaims = claims.filter(c => c.claimStatus === 'Approved');
-  const pendingClaims = claims.filter(c => c.claimStatus === 'Pending');
-  const rejectedClaims = claims.filter(c => c.claimStatus === 'Rejected');
+  const handleDrawerToggle = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  const approvedClaims = Array.isArray(claims) ? claims.filter(c => c.claimStatus === 'Approved') : [];
+  const pendingClaims = Array.isArray(claims) ? claims.filter(c => c.claimStatus === 'Pending') : [];
+  const rejectedClaims = Array.isArray(claims) ? claims.filter(c => c.claimStatus === 'Rejected') : [];
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: 'background.default', padding: 3 }}>
-      <Box sx={{ maxWidth: 1200, margin: '0 auto' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-          <Typography variant="h4" fontWeight="bold" color="text.primary">Insurer Dashboard</Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton color="primary">
-              <Building2 sx={{ fontSize: 24 }} />
-            </IconButton>
-            <Box sx={{ marginLeft: 2 }}>
-              <Typography variant="body1" fontWeight="bold">{insurerName}</Typography>
-              <Typography variant="body2" color="text.secondary">License: {insurerLicense}</Typography>
+    <ThemeProvider theme={theme}>
+      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+        <Drawer
+          variant={isSmUp ? 'permanent' : 'temporary'}
+          open={isSmUp ? true : drawerOpen}
+          onClose={handleDrawerToggle}
+          sx={{
+            width: DRAWER_WIDTH,
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              width: DRAWER_WIDTH,
+              boxSizing: 'border-box',
+              borderRight: '1px solid',
+              borderColor: 'grey.200',
+            },
+          }}
+        >
+          <Sidebar
+            open={drawerOpen}
+            onClose={handleDrawerToggle}
+            onNavigate={handleTabChange}
+            activeTab={activeTab}
+            handleLogout={handleLogout}
+          />
+        </Drawer>
+
+        <Box sx={{ flexGrow: 1, bgcolor: 'grey.50' }}>
+          <Box sx={{ bgcolor: 'white', borderBottom: 1, borderColor: 'grey.200' }}>
+            <Box sx={{ px: 3, py: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <IconButton
+                  color="inherit"
+                  onClick={handleDrawerToggle}
+                  sx={{ display: { sm: 'none' } }}
+                >
+                  <Menu />
+                </IconButton>
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="h5" fontWeight="bold">
+                    {activeTab === 'overview' ? 'Dashboard Overview' : 
+                     activeTab === 'totalPolicies' ? 'Insurance Policies' :
+                     activeTab === 'pending' ? 'Pending Claims' :
+                     activeTab === 'approved' ? 'Approved Claims' :
+                     'Customers'}
+                  </Typography>
+                </Box>
+                <Button
+                  variant="contained"
+                  startIcon={<PlusCircle size={20} />}
+                  onClick={() => setShowRegisterPolicyForm(true)}
+                  sx={{
+                    borderRadius: '8px',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                  }}
+                >
+                  Add New Policy
+                </Button>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <IconButton color="primary">
+                    <Building2 />
+                  </IconButton>
+                  <Box>
+                    <Typography variant="subtitle2" fontWeight="medium">
+                      {insurerName}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      License: {insurerLicense}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
             </Box>
+          </Box>
+
+          <Box sx={{ p: 3 }}>
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+              <Grid item xs={12} sm={6} md={3}>
+                <StatCard
+                  title="Total Customers"
+                  value={transactions.length}
+                  icon={Users}
+                  onClick={() => handleTabChange('totalCustomers')}
+                  color="primary"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <StatCard
+                  title="Total Policies"
+                  value={insurerPolicies.length}
+                  icon={FileText}
+                  onClick={() => handleTabChange('totalPolicies')}
+                  color="secondary"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <StatCard
+                  title="Approved Claims"
+                  value={approvedClaims.length}
+                  icon={CheckCircle}
+                  onClick={() => handleTabChange('approved')}
+                  color="success"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <StatCard
+                  title="Pending Claims"
+                  value={pendingClaims.length}
+                  icon={AlertCircle}
+                  onClick={() => handleTabChange('pending')}
+                  color="warning"
+                />
+              </Grid>
+            </Grid>
+
+            <Paper elevation={1} sx={{ overflow: 'hidden' }}>
+              {activeTab === 'totalPolicies' && (
+                <Box>
+                  <Box sx={{ p: 3, borderBottom: 1, borderColor: 'grey.200' }}>
+                    <Typography variant="h6" fontWeight="bold">
+                      Active Policies
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      Overview of all insurance policies
+                    </Typography>
+                  </Box>
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Policy Number</TableCell>
+                          <TableCell>Policy Name</TableCell>
+                          <TableCell>Policy Terms</TableCell>
+                          <TableCell>Premium Amount</TableCell>
+                          <TableCell>Coverage Amount</TableCell>
+                          <TableCell>Coverage Type</TableCell>
+                          <TableCell>Status</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {insurerPolicies.map((policy) => (
+                          <TableRow key={policy.policyId} hover>
+                            <TableCell>{policy.policyNumber}</TableCell>
+                            <TableCell>{policy.policyName}</TableCell>
+                            <TableCell>{policy.policyTerms}</TableCell>
+                            <TableCell>${policy.premiumAmount}</TableCell>
+                            <TableCell>${policy.coverageAmount}</TableCell>
+                            <TableCell>{policy.coverageType}</TableCell>
+                            <TableCell>
+                              <Chip
+                                label={policy.status}
+                                color={policy.status === 'Active' ? 'success' : 'default'}
+                                size="small"
+                              />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+              )}
+
+              {activeTab === 'pending' && (
+                <Box>
+                  <Box sx={{ p: 3, borderBottom: 1, borderColor: 'grey.200' }}>
+                    <Typography variant="h6" fontWeight="bold">
+                      Pending Claims
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      Claims requiring your attention
+                    </Typography>
+                  </Box>
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Claim ID</TableCell>
+                          <TableCell>Claimant</TableCell>
+                          <TableCell>Amount</TableCell>
+                          <TableCell>Filed Date</TableCell>
+                          <TableCell>Actions</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {pendingClaims.map((claim) => (
+                          <TableRow key={claim.claimId} hover>
+                            <TableCell>{claim.claimId}</TableCell>
+                            <TableCell>{claim.claimantName}</TableCell>
+                            <TableCell>${claim.claimAmount}</TableCell>
+                            <TableCell>
+                              {new Date(claim.filedDate).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              <Box sx={{ display: 'flex', gap: 1 }}>
+                                <Button
+                                  variant="contained"
+                                  color="success"
+                                  size="small"
+                                  onClick={() => handleStatusChange(claim.claimId, 'Approved')}
+                                >
+                                  Approve
+                                </Button>
+                                <Button
+                                  variant="contained"
+                                  color="error"
+                                  size="small"
+                                  onClick={() => handleStatusChange(claim.claimId, 'Rejected')}
+                                >
+                                  Reject
+                                </Button>
+                              </Box>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+              )}
+            </Paper>
           </Box>
         </Box>
 
-        <Grid container spacing={2} marginBottom={4}>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatCard
-              title="Total Customers"
-              value={transactions.length}
-              icon={Users}
-              onClick={() => handleTabChange('totalCustomers')}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatCard
-              title="Total Policies"
-              value={insurerPolicies.length}
-              icon={FileText}
-              onClick={() => handleTabChange('totalPolicies')}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatCard
-              title="Approved Claims"
-              value={approvedClaims.length}
-              icon={ClipboardList}
-              onClick={() => handleTabChange('approved')}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatCard
-              title="Pending Claims"
-              value={pendingClaims.length}
-              icon={AlertCircle}
-              onClick={() => handleTabChange('pending')}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatCard
-              title="Total Transactions"
-              value={transactions.length}
-              icon={ClipboardList}
-              onClick={() => handleTabChange('totalTransactions')}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatCard
-              title="Register Policy"
-              value=""
-              icon={PlusCircle}
-              onClick={() => handleTabChange('registerPolicy')}
-            />
-          </Grid>
-        </Grid>
-
-        {activeTab === 'totalCustomers' && (
-          <Paper elevation={3} sx={{ padding: 3 }}>
-            <Typography variant="h6" fontWeight="bold" marginBottom={2}>Total Customers</Typography>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell><strong>Policy Holder Name</strong></TableCell>
-                    <TableCell><strong>Policy Name</strong></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {transactions.map((transaction) => (
-                    <TableRow key={transaction.transactionId}>
-                      <TableCell>{transaction.policyHolderName}</TableCell>
-                      <TableCell>{transaction.policyName}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        )}
-
-        {activeTab === 'totalPolicies' && (
-          <Paper elevation={3} sx={{ padding: 3 }}>
-            <Typography variant="h6" fontWeight="bold" marginBottom={2}>
-              Policies for {insurerName}
-            </Typography>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell><strong>Policy Number</strong></TableCell>
-                    <TableCell><strong>Policy Name</strong></TableCell>
-                    <TableCell><strong>Policy Terms</strong></TableCell>
-                    <TableCell><strong>Premium Amount</strong></TableCell>
-                    <TableCell><strong>Coverage Amount</strong></TableCell>
-                    <TableCell><strong>Coverage Type</strong></TableCell>
-                    <TableCell><strong>Status</strong></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {insurerPolicies.map((policy) => (
-                    <TableRow key={policy.policyId}>
-                      <TableCell>{policy.policyNumber}</TableCell>
-                      <TableCell>{policy.policyName}</TableCell>
-                      <TableCell>{policy.policyTerms}</TableCell>
-                      <TableCell>{policy.premiumAmount}</TableCell>
-                      <TableCell>{policy.coverageAmount}</TableCell>
-                      <TableCell>{policy.coverageType}</TableCell>
-                      <TableCell>{policy.status}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        )}
-
-        {activeTab === 'pending' && (
-          <Paper elevation={3} sx={{ padding: 3 }}>
-            <Typography variant="h6" fontWeight="bold" marginBottom={2}>Pending Claims</Typography>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell><strong>Claim ID</strong></TableCell>
-                    <TableCell><strong>Claimant Name</strong></TableCell>
-                    <TableCell><strong>Policy ID</strong></TableCell>
-                    <TableCell><strong>Claim Amount</strong></TableCell>
-                    <TableCell><strong>Filed Date</strong></TableCell>
-                    <TableCell><strong>Status</strong></TableCell>
-                    <TableCell><strong>Actions</strong></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {pendingClaims.map((claim) => (
-                    <TableRow key={claim.claimId}>
-                      <TableCell>{claim.claimId}</TableCell>
-                      <TableCell>{claim.claimantName}</TableCell>
-                      <TableCell>{claim.policyId}</TableCell>
-                      <TableCell>{claim.claimAmount}</TableCell>
-                      <TableCell>{new Date(claim.filedDate).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <AlertCircle sx={{ fontSize: 20, color: 'warning.main', marginRight: 1 }} />
-                        <Typography color="warning.main">Pending</Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="contained"
-                          color="success"
-                          onClick={() => handleStatusChange(claim.claimId, 'Approved')}
-                        >
-                          Approve
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="error"
-                          sx={{ marginLeft: 1 }}
-                          onClick={() => handleStatusChange(claim.claimId, 'Rejected')}
-                        >
-                          Reject
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        )}
-
-        {activeTab === 'approved' && (
-          <Paper elevation={3} sx={{ padding: 3 }}>
-            <Typography variant="h6" fontWeight="bold" marginBottom={2}>Approved Claims</Typography>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell><strong>Claim ID</strong></TableCell>
-                    <TableCell><strong>Claimant Name</strong></TableCell>
-                    <TableCell><strong>Policy ID</strong></TableCell>
-                    <TableCell><strong>Claim Amount</strong></TableCell>
-                    <TableCell><strong>Filed Date</strong></TableCell>
-                    <TableCell><strong>Status</strong></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {approvedClaims.map((claim) => (
-                    <TableRow key={claim.claimId}>
-                      <TableCell>{claim.claimId}</TableCell>
-                      <TableCell>{claim.claimantName}</TableCell>
-                      <TableCell>{claim.policyId}</TableCell>
-                      <TableCell>{claim.claimAmount}</TableCell>
-                      <TableCell>{new Date(claim.filedDate).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <Typography color="success.main">Approved</Typography>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        )}
-
-        {activeTab === 'rejected' && (
-          <Paper elevation={3} sx={{ padding: 3 }}>
-            <Typography variant="h6" fontWeight="bold" marginBottom={2}>Rejected Claims</Typography>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell><strong>Claim ID</strong></TableCell>
-                    <TableCell><strong>Claimant Name</strong></TableCell>
-                    <TableCell><strong>Policy ID</strong></TableCell>
-                    <TableCell><strong>Claim Amount</strong></TableCell>
-                    <TableCell><strong>Filed Date</strong></TableCell>
-                    <TableCell><strong>Status</strong></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rejectedClaims.map((claim) => (
-                    <TableRow key={claim.claimId}>
-                      <TableCell>{claim.claimId}</TableCell>
-                      <TableCell>{claim.claimantName}</TableCell>
-                      <TableCell>{claim.policyId}</TableCell>
-                      <TableCell>{claim.claimAmount}</TableCell>
-                      <TableCell>{new Date(claim.filedDate).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <Typography color="error.main">Rejected</Typography>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        )}
-
-        {activeTab === 'totalTransactions' && (
-          <Paper elevation={3} sx={{ padding: 3 }}>
-            <Typography variant="h6" fontWeight="bold" marginBottom={2}>Total Transactions</Typography>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell><strong>Transaction ID</strong></TableCell>
-                    <TableCell><strong>Policy Holder Name</strong></TableCell>
-                    <TableCell><strong>Policy Name</strong></TableCell>
-                    <TableCell><strong>Amount</strong></TableCell>
-                    <TableCell><strong>Transaction Date</strong></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {transactions.map((transaction) => (
-                    <TableRow key={transaction.transactionId}>
-                      <TableCell>{transaction.transactionId}</TableCell>
-                      <TableCell>{transaction.policyHolderName}</TableCell>
-                      <TableCell>{transaction.policyName}</TableCell>
-                      <TableCell>{transaction.amount}</TableCell>
-                      <TableCell>{new Date(transaction.transactionDate).toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        )}
+        <Modal
+          open={showRegisterPolicyForm}
+          onClose={() => setShowRegisterPolicyForm(false)}
+          aria-labelledby="register-policy-modal"
+        >
+          <Box sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '100%',
+            maxWidth: 800,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+          }}>
+            <PolicyRegistrationForm />
+          </Box>
+        </Modal>
       </Box>
-    </Box>
+    </ThemeProvider>
   );
 };
 

@@ -51,6 +51,14 @@ public class InsurerController {
     public ResponseEntity<InsurerDTO> updateInsurer(@PathVariable int id, @RequestBody Insurer insurer) {
         return ResponseEntity.ok(insurerService.updateInsurer(id, insurer));
     }
+    
+    
+    @GetMapping("/by-user/{userId}")
+    public ResponseEntity<InsurerDTO> getInsurerByUser_Id(@PathVariable int userId) {
+        Optional<InsurerDTO> insurerDTO = insurerService.getInsurerByUser_Id(userId);
+        return insurerDTO.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
     // ✅ Delete an insurer
     @DeleteMapping("/{id}")
@@ -62,5 +70,7 @@ public class InsurerController {
             return ResponseEntity.notFound().build();
         }
     }
+    
+    
 }
 

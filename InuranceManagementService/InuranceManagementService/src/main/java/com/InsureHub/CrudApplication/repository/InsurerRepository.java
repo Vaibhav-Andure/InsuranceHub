@@ -14,4 +14,5 @@ public interface InsurerRepository extends JpaRepository<Insurer, Integer> {
     Insurer findByInsurerId(int insurerId); // Custom query for insurerId
 
     Insurer findByUser_UserId(int userId);
+    
 }

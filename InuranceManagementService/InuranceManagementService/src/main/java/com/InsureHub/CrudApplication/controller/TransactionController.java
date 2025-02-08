@@ -40,12 +40,12 @@ public class TransactionController {
 
 
 
-
 //
-    @GetMapping("/user/{userId}")
-    public Optional<TransactionDTO> getTransactionById(@PathVariable int userId) {
-        return transactionService.getTransactionByUserId(userId);
-    }
+////
+//    @GetMapping("/user/{userId}")
+//    public Optional<TransactionDTO> getTransactionById(@PathVariable int userId) {
+//        return transactionService.getTransactionByUserId(userId);
+//    }
 
 
 //    // Get all transactions

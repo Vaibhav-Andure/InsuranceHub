@@ -10,6 +10,46 @@ import TransactionPage from './components/transaction/transaction';
 import PaymentGateway from './components/payment/payment';
 import InsuranceForm from './components/Pages/Customer/PolicyHolder';
 import InsurerRegistrationForm from "./components/Pages/Insurer/InsurerRegistrationForm"
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import InsurerDashboard from './components/Pages/Insurer/InsurerLandingPage';
+
+
+
+
+
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+  typography: {
+    fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+        },
+      },
+    },
+  },
+});
+
+
+
+
+
+
+
+
+
+
 function HomePage() {
   return (
     <div className="container text-center my-5">
@@ -24,9 +64,10 @@ function HomePage() {
 function App() {
   
   return (
-
+<ThemeProvider theme={theme}>
     <Router>
       <div className="min-vh-100 bg-light">
+         
         <Header />
         <main>
           <Routes>
@@ -48,6 +89,7 @@ function App() {
         </main>
       </div>
     </Router>
+    </ThemeProvider>
   );
 }
 

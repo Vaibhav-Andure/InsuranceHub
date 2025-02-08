@@ -42,12 +42,19 @@ logger.info("saved user with insuree is " ,  insureruser);
         return convertToDTO(savedInsurer);
     }
 
-
+   
 
     public Insurer getInsurerByUserId(int userId) {
         return insurerRepository.findByUser_UserId(userId);
     }
 
+
+
+    // ✅ Get insurer by user ID
+    public Optional<InsurerDTO> getInsurerByUser_Id(int userId) {
+        Insurer insurer = insurerRepository.findByUser_UserId(userId); // Ensure this method exists in the repository
+        return Optional.ofNullable(insurer).map(this::convertToDTO);
+    }
 
 
     // ✅ Update an existing insurer
@@ -87,6 +94,7 @@ logger.info("saved user with insuree is " ,  insureruser);
         insurerRepository.deleteById(id);
         return true;  // Deleted successfully
     }
+    
 
     private InsurerDTO convertToDTO(Insurer insurer) {
         List<Policy> policies = insurer.getPolicies();  // Directly get the list of Policy entities
@@ -99,5 +107,9 @@ logger.info("saved user with insuree is " ,  insureruser);
         );
     }
 
+    
+  
 
+    
+    
 }

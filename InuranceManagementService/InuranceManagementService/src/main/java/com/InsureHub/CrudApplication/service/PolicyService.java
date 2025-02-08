@@ -36,24 +36,57 @@ public class PolicyService {
 
 
 
-    // ✅ Create new policy
-    public PolicyDTO createPolicy(Policy policy) {
-//        if (policy.getInsurer() == null || policy.getInsurer().getInsurerId() == 0) {
-//            throw new IllegalArgumentException("Insurer is required to create a policy.");
+//    // ✅ Create new policy
+//    public PolicyDTO createPolicy(Policy policy) {
+////        if (policy.getInsurer() == null || policy.getInsurer().getInsurerId() == 0) {
+////            throw new IllegalArgumentException("Insurer is required to create a policy.");
+////        }
+//
+//        Insurer insurer = insurerRepository.findByUser_UserId(policy.getInsurer().getUser().getUserId());
+//        if (insurer == null) {
+//            throw new IllegalArgumentException("insurer is not available ");
 //        }
+//        policy.setStatus("Active");
+//        policy.setInsurer(insurer);
+//        policy.setCreatedDate(new Date());
+//        policy.setModifiedDate(new Date());
+//        Policy savedPolicy = policyRepository.save(policy);
+//        return convertToDTO(savedPolicy);
+//    }
 
+    public PolicyDTO createPolicy(Policy policy) {
+        // Validate that the policy and insurer are not null
+        if (policy == null) {
+            throw new IllegalArgumentException("Policy cannot be null.");
+        }
+
+        // Validate that the insurer is provided and has a valid user
+        if (policy.getInsurer() == null || policy.getInsurer().getUser() == null) {
+            throw new IllegalArgumentException("Insurer and associated user are required to create a policy.");
+        }
+
+        // Fetch the insurer from the database using the user ID
         Insurer insurer = insurerRepository.findByUser_UserId(policy.getInsurer().getUser().getUserId());
         if (insurer == null) {
-            throw new IllegalArgumentException("insurer is not available ");
+            throw new IllegalArgumentException("Insurer not found for the provided user.");
         }
-        policy.setStatus("Active");
+
+        // Set the insurer, status, and dates for the policy
         policy.setInsurer(insurer);
+        policy.setStatus("Active");
         policy.setCreatedDate(new Date());
         policy.setModifiedDate(new Date());
+
+        // Save the policy to the database
         Policy savedPolicy = policyRepository.save(policy);
+
+        // Convert the saved policy to a DTO and return it
         return convertToDTO(savedPolicy);
     }
-
+    
+    
+    
+    
     // ✅ Update existing policy
     public PolicyDTO updatePolicy(int id, Policy updatedPolicy) {
         Optional<Policy> existingPolicyOpt = policyRepository.findById(id);
