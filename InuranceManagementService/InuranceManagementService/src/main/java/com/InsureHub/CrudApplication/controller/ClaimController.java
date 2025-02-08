@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins="http://localhost:5173")
+
 @RequestMapping("/api/claims")
 @CrossOrigin(origins="http://localhost:5173")
 public class ClaimController {
