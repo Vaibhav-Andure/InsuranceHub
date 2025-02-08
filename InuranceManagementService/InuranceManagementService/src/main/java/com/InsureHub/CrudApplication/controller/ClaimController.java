@@ -95,16 +95,7 @@ public class ClaimController {
         return ResponseEntity.ok(claimDTOs); // Return 200 OK with the list of claims
     }
 
-    // Delete claim by Claim ID
-    @DeleteMapping("/{claimId}")
-    public ResponseEntity<String> deleteClaim(@PathVariable int claimId) {
-        try {
-            claimService.deleteClaim(claimId);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Claim deleted successfully");
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Claim not found");
-        }
-    }
+
 
     // Update claim status
     @PutMapping("/{claimId}/status")

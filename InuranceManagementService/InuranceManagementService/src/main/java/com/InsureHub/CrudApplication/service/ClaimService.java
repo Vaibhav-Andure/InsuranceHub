@@ -58,10 +58,6 @@ public class ClaimService {
         // Set the filed date to current date
         claim.setFiledDate(new Date());
 
-        // Check if a claim already exists for this policy or transaction
-//        if (claimRepository.findByPolicy_PolicyId(claim.getPolicy().getPolicyId()).isPresent()) {
-//            throw new IllegalStateException("A claim already exists for this policy.");
-//        }
         if (claimRepository.findByTransaction_TransactionId(claim.getTransaction().getTransactionId()).isPresent()) {
             throw new IllegalStateException("A claim already exists for this transaction.");
         }
@@ -131,16 +127,6 @@ public class ClaimService {
   
     
     
-    // Delete a claim by Claim ID
-    public void deleteClaim(int claimId) {
-        // Check if the claim exists before deleting
-        Optional<Claim> existingClaim = claimRepository.findById(claimId);
-        if (existingClaim.isPresent()) {
-            claimRepository.deleteById(claimId);
-        } else {
-            throw new IllegalArgumentException("Claim not found with ID " + claimId);
-        }
-    }
 
 
 

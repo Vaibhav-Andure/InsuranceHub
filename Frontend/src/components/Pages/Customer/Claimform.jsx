@@ -16,12 +16,10 @@ import {
 import { Shield } from "lucide-react";
 import LockIcon from '@mui/icons-material/Lock';
 import axios from 'axios';
-import {  useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const ClaimFilingForm = () => {
-   
-    const { user } = useSelector((state) => state.auth);
-
+  const { user } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     userId: "",
@@ -39,6 +37,7 @@ const ClaimFilingForm = () => {
 
   const [loading, setLoading] = useState(false);
   const [filingStatus, setFilingStatus] = useState(null);
+  const [filingMessage, setFilingMessage] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
@@ -117,6 +116,7 @@ const ClaimFilingForm = () => {
         console.log(response);
         setLoading(false);
         setFilingStatus("success");
+        setFilingMessage(response.data.message); // Get message from response
         setFormData({
           claimAmount: "",
           incidentDescription: "",
@@ -132,6 +132,9 @@ const ClaimFilingForm = () => {
         console.error(error);
         setLoading(false);
         setFilingStatus("error");
+        // Check if error response has a message
+        const errorMessage = error.response?.data?.message || "Claim filing failed. Please try again.";
+        setFilingMessage(errorMessage); // Set error message from response
       });
   };
 
@@ -147,14 +150,9 @@ const ClaimFilingForm = () => {
           </Box>
           <Container>
             <Box display="flex" justifyContent="center" alignItems="center" minHeight="10vh">
-              {filingStatus === "success" && (
-                <Alert severity="success" sx={{ mb: 2 }}>
-                  Claim filed successfully!
-                </Alert>
-              )}
-              {filingStatus === "error" && (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                  Claim filing failed. Please try again.
+              {filingMessage && (
+                <Alert severity={filingStatus === "success" ? "success" : "error"} sx={{ mb: 2 }}>
+                  {filingMessage}
                 </Alert>
               )}
             </Box>
