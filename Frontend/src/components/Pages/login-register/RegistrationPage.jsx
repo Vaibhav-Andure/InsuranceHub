@@ -161,7 +161,7 @@ export default function RegistrationPage() {
       password: data.password,
       email: data.email,
       role: {
-        roleName: "Admin"
+        roleName: "Customer"
       }
     };
 

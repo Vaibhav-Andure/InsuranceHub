@@ -23,6 +23,8 @@ import ViewPolicy from "../../Policy/policy";
 import ClaimForm from "./Claimform";
 import ClaimStatus from "./claimstatus";
 import TransactionStatus from "./TransactionStatus"; // Import the TransactionStatus component
+import { logout } from '../../../redux/slices/authSlice';
+import { useDispatch } from 'react-redux';
 
 const drawerWidth = 280;
 
@@ -49,6 +51,7 @@ const reducer = (state, action) => {
 };
 
 const CustomerLandingPage = () => {
+  const sendlogout = useDispatch();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [open, setOpen] = useState(false);
@@ -91,19 +94,23 @@ const CustomerLandingPage = () => {
             </Toolbar>
             <Divider />
             <List>
-              <ListItem button onClick={() => dispatch({ type: "TOGGLE_VIEW_POLICY" })} sx={{ '&:hover': { backgroundColor: "#ccc" }, backgroundColor: state.showViewPolicy ? "#ccc" : "inherit" }}>
+              <ListItem button onClick={() => dispatch({ type: "TOGGLE_VIEW_POLICY" }  , setOpen(!open))} sx= {{ '&:hover': { backgroundColor: "#cbeffd" }, backgroundColor: state.showViewPolicy ? "#ccc" : "inherit" }}>
                 <ListItemIcon><Policy /></ListItemIcon>
                 <ListItemText primary="View Policy" sx={{ fontFamily: "Segoe UI" }} />
               </ListItem>
-              <ListItem button onClick={() => dispatch({ type: "TOGGLE_CLAIM_FORM" })} sx={{ '&:hover': { backgroundColor: "#ccc" }, backgroundColor: state.showClaimForm ? "#ccc" : "inherit" }}>
+              <ListItem button onClick={() => dispatch({ type: "TOGGLE_CLAIM_FORM" } ,
+                setOpen(!open)
+              )} sx={{ '&:hover': { backgroundColor: "#cbeffd" }, backgroundColor: state.showClaimForm ? "#ccc" : "inherit" }}>
                 <ListItemIcon><Assignment /></ListItemIcon>
                 <ListItemText primary="File a Claim" sx={{ fontFamily: "Segoe UI" }} />
               </ListItem>
-              <ListItem button onClick={() => dispatch({ type: "TOGGLE_CLAIM_STATUS" })} sx={{ '&:hover': { backgroundColor: "#ccc" }, backgroundColor: state.showClaimStatus ? "#ccc" : "inherit" }}>
+              <ListItem button onClick={() => dispatch({ type: "TOGGLE_CLAIM_STATUS" } ,
+                setOpen(!open)
+              ) } sx={{ '&:hover': { backgroundColor: "#cbeffd" }, backgroundColor: state.showClaimStatus ? "#ccc" : "inherit" }}>
                 <ListItemIcon><ReceiptLong /></ListItemIcon>
                 <ListItemText primary=" Claim Status" sx={{ fontFamily: "Segoe UI" }} />
               </ListItem>
-              <ListItem button onClick={() => dispatch({ type: "TOGGLE_TRANSACTION_STATUS" })} sx={{ '&:hover': { backgroundColor: "#ccc" }, backgroundColor: state.showTransactionStatus ? "#ccc" : "inherit" }}>
+              <ListItem button onClick={() => dispatch({ type: "TOGGLE_TRANSACTION_STATUS" } ,  setOpen(!open))} sx={{ '&:hover': { backgroundColor: "#cbeffd " }, backgroundColor: state.showTransactionStatus ? "#ccc" : "inherit" }}>
                 <ListItemIcon><ReceiptLong /></ListItemIcon>
                 <ListItemText primary="View Transactions" sx={{ fontFamily: "Segoe UI" }} />
               </ListItem>
@@ -111,7 +118,7 @@ const CustomerLandingPage = () => {
           </Box>
           <List>
             <Divider />
-            <ListItem button sx={{ backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }}>
+            <ListItem button sx={{ backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }  } onClick={()=> sendlogout(logout())}>
               <ListItemIcon><Logout style={{ color: "white" }} /></ListItemIcon>
               <ListItemText primary="Logout" sx={{ fontFamily: "Segoe UI", color: "white" }} />
             </ListItem>

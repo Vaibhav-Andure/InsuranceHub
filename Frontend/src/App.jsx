@@ -6,7 +6,7 @@ import RegistrationPage from './components/Pages/login-register/RegistrationPage
 import AdminLandingPage from './components/Pages/Admin/AdminLandingPage';
 import CustomerLandingPage from './components/Pages/Customer/CustomerLandingPage';
 import InsurerLandingPage from './components/Pages/Insurer/InsurerLandingPage';
-import Transaction from './components/transaction/transaction';
+import TransactionPage from './components/transaction/transaction';
 import PaymentGateway from './components/payment/payment';
 import InsuranceForm from './components/Pages/Customer/PolicyHolder';
 import InsurerRegistrationForm from "./components/Pages/Insurer/InsurerRegistrationForm"
@@ -38,7 +38,7 @@ function App() {
             <Route path="/insurer" element={<InsurerLandingPage />} />
             <Route path="/getquote" element={<InsuranceForm/>} />
             <Route path="/payment" element={< PaymentGateway />} />
-            <Route path="/transaction" element={<Transaction/>} />
+            <Route path="/transaction" element={<TransactionPage/>} />
             <Route path="/registerinsurer" element={<InsurerRegistrationForm />} />
 
 

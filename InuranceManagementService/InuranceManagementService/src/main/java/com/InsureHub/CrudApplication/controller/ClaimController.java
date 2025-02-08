@@ -49,8 +49,13 @@ public class ClaimController {
 
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<ClaimDTO> getClaimsByUserId(@PathVariable int  userId) {
+    public ResponseEntity<?> getClaimsByUserId(@PathVariable int  userId) {
         ClaimDTO claims = claimService.findClaimsByUserId(userId);
+        if (claims == null) {
+            // Return a JSON response indicating that the claim is not available
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"message\": \"Claim is not available for the customer\"}");
+        }
 
         return ResponseEntity.ok(claims);
     }

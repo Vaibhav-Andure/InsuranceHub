@@ -44,6 +44,8 @@ const PaymentGateway = () => {
     const navigate = useNavigate();
 
     const [paymentSuccess, setPaymentSuccess] = useState(null);
+
+    
     const [isSwitchOn, setIsSwitchOn] = useState(false);
     const [seconds, setSeconds] = useState(10);
     const [errors, setErrors] = useState({});
@@ -57,6 +59,10 @@ useEffect(() => {
         try {
           const transactionResponse = await axios.post('http://localhost:5555/api/transactions/savetransaction', Apitransactiondata);
           console.log("api response for payment " + transactionResponse.data);
+
+          console.log(transactionResponse.ok)
+
+          
         } catch (error) {
           console.error('Error hitting transaction API:', error);
         }

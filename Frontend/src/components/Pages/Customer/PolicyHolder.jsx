@@ -35,7 +35,9 @@ const InsuranceForm = () => {
   const selectedPolicy = useSelector((state) => state.policies.selectedPolicy);
 
   // Current user id 
+  
   const Currentuserid = user.uid;
+console.log(Currentuserid + "current policy holder user id is ")
 
   const [formData, setFormData] = useState({
     policyHolderName: "",
@@ -394,7 +396,7 @@ const InsuranceForm = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Date of Birth"
+                
                   name="dateOfBirth"
                   type="date"
                   value={formData.dateOfBirth}
@@ -506,7 +508,7 @@ const InsuranceForm = () => {
                     sx={{ fontFamily: "Segoe UI", mr: 1 }}
                   />
                   <TextField
-                    label="Date of Birth"
+                   
                     name={`nominees.${index}.dateOfBirth`}
                     type="date"
                     value={nominee.dateOfBirth}
@@ -556,7 +558,7 @@ const InsuranceForm = () => {
                     sx={{ fontFamily: "Segoe UI", mr: 1 }}
                   />
                   <TextField
-                    label="Date of Birth"
+                   
                     name={`insuredMembers.${index}.dateOfBirth`}
                     type="date"
                     value={member.dateOfBirth}

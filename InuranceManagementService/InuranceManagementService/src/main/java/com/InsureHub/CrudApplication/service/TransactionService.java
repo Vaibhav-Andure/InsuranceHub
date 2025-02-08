@@ -3,6 +3,7 @@ package com.InsureHub.CrudApplication.service;
 import com.InsureHub.CrudApplication.DTO.TransactionDTO;
 
 import com.InsureHub.CrudApplication.entities.Policy;
+import com.InsureHub.CrudApplication.entities.PolicyHolder;
 import com.InsureHub.CrudApplication.entities.Transaction;
 import com.InsureHub.CrudApplication.repository.ClaimRepository;
 import com.InsureHub.CrudApplication.repository.PolicyHolderRepository;
@@ -25,10 +26,11 @@ import java.util.stream.Collectors;
 @Service
 public class TransactionService {
 
-   
+
 
     @Autowired
-    private PolicyHolderRepository policyHolderRepository; 
+    private PolicyHolderRepository policyHolderRepository;
+
     
     @Autowired
     private TransactionRepository transactionRepository;
@@ -52,8 +54,12 @@ public class TransactionService {
         transaction.setPolicy(policy);
 
         // Generate a unique transaction ID
-        transaction.setTransactionId("ihb" + UUID.randomUUID().toString().replace("-", "").substring(0, 10));
 
+
+
+        transaction.setTransactionId("ihb" + UUID.randomUUID().toString().replace("-", "").substring(0, 10));
+        //save policyholder first before saving transaction in data base
+        PolicyHolder policyHolder = policyHolderRepository.save(transaction.getPolicyHolder());
         // Save the transaction
         Transaction savedTransaction = transactionRepository.save(transaction);
 

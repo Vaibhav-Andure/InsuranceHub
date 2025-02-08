@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import { Table, TableHead, TableRow, TableCell, TableBody ,Typography } from '@mui/material';
 import { Pending, CheckCircle, Cancel } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -27,6 +27,7 @@ const ClaimStatus = () => {
     const fetchClaimData = async () => {
       try {
         const response = await axios.get(`http://localhost:5555/api/claims/user/${user?.uid}`);
+
         setClaim(response.data);
         setLoading(false);
       } catch (error) {
@@ -42,8 +43,13 @@ const ClaimStatus = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
-  }
+    return (
+        <Typography variant="h6" align="center" style={{ fontWeight: 'bold' }}>
+           Claim is not available for the customer
+        </Typography>
+    );
+}
+
 
   return (
     <Table sx={{ fontFamily: "Segoe UI" }}>
