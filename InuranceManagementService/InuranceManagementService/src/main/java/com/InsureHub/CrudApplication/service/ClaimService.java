@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -108,6 +109,20 @@ public class ClaimService {
         return claimDTOs;
     }
 
+    
+ // Get all claims by Insurer's UserId
+    public List<ClaimDTO> getClaimsByInsurerUserId(int userId) {
+        List<ClaimDTO> claimDTOs = new ArrayList<>();
+        
+        claimRepository.findByPolicy_Insurer_User_UserId(userId)
+                       .orElse(Collections.emptyList()) // Ensure an empty list if no claims exist
+                       .forEach(claim -> claimDTOs.add(convertToDTO(claim))); // Convert each claim to DTO
+        
+        return claimDTOs;
+    }
+  
+    
+    
     // Delete a claim by Claim ID
     public void deleteClaim(int claimId) {
         // Check if the claim exists before deleting
@@ -126,7 +141,7 @@ public class ClaimService {
             Claim claim = existingClaim.get();
             claim.setClaimStatus(newStatus);
             if ("Approved".equals(newStatus)) {
-                claim.setApprovedDate(new Date());
+                claim.setApprovedDate(new Date());  // Sets current date if status is 'Approved'
             }
             // Save the updated claim and convert to DTO
             return convertToDTO(claimRepository.save(claim));

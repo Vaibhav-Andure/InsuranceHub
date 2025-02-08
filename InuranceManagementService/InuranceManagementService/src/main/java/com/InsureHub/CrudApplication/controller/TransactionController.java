@@ -49,6 +49,14 @@ public class TransactionController {
     }
     
     
+ // ✅ Get transactions by User Id
+    @GetMapping("/byinsureruserid/{userId}")
+    public ResponseEntity<List<TransactionDTO>> getTransactionsByInsurer(@PathVariable int userId) {
+        List<TransactionDTO> transactions = transactionService.getTransactionsByInsurer(userId);
+        return ResponseEntity.ok(transactions); // Return the list of TransactionDTOs
+    }
+    
+    
     
 //    futrue scope for pagination
 // // Get all transactions

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,6 +21,8 @@ public interface ClaimRepository extends JpaRepository<Claim, Integer> {
 
     // You can add more custom queries based on your requirements, e.g., by ClaimStatus
     Optional<Claim> findByClaimStatus(String claimStatus);
+    
+    Optional<List<Claim>> findByPolicy_Insurer_User_UserId(int userId);
     
     @Query("SELECT COUNT(c) FROM Claim c")
     long count();

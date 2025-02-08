@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins="http://localhost:5173")
 @RequestMapping("/api/claims")
 public class ClaimController {
 
@@ -69,13 +70,27 @@ public class ClaimController {
 
     // Update claim status
     @PutMapping("/{claimId}/status")
-    public ResponseEntity<ClaimDTO> updateClaimStatus(@PathVariable int claimId, @RequestBody String newStatus) {
+    public ResponseEntity<ClaimDTO> updateClaimStatus(@PathVariable int claimId, @RequestParam String newStatus) {
         try {
             ClaimDTO updatedClaim = claimService.updateClaimStatus(claimId, newStatus);
-             // Convert to DTO
+            // Convert to DTO
             return ResponseEntity.ok(updatedClaim);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }
+
+    
+ // Get all claims by Insurer's UserId
+    @GetMapping("/by-insurer-user/{userId}")
+    public ResponseEntity<List<ClaimDTO>> getClaimsByInsurerUser(@PathVariable int userId) {
+        
+        List<ClaimDTO> claims = claimService.getClaimsByInsurerUserId(userId);
+        
+        if (claims.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Return 204 No Content if no claims found
+        }
+        
+        return ResponseEntity.ok(claims);
     }
 }

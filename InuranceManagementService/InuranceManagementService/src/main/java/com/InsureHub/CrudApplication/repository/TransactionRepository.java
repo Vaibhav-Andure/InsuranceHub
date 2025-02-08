@@ -23,6 +23,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, String
     @Query("SELECT SUM(t.amount) FROM Transaction t")
     Double sumAmount();
     
+    Optional<List<Transaction>> findByPolicy_Insurer_User_UserId(int userId);
 
 
 }

@@ -104,6 +104,22 @@ public class PolicyService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+    
+ // ✅ Get all policies by User Id
+    public List<PolicyDTO> getPoliciesByUserId(int userId) {
+        // Fetch policies using the repository method
+        Optional<List<Policy>> optionalPolicies = policyRepository.findByInsurer_User_UserId(userId);
+        
+        // Return an empty list if no policies are found
+        List<Policy> policies = optionalPolicies.orElseGet(List::of);
+        
+        // Convert the list of Policy entities to PolicyDTOs and return
+        return policies.stream()
+                .map(this::convertToDTO) // Assuming convertToDTO is a method that converts Policy to PolicyDTO
+                .collect(Collectors.toList());
+    }
+    
+ 
 
     // ✅ Delete policy by ID
     public boolean deletePolicy(int id) {

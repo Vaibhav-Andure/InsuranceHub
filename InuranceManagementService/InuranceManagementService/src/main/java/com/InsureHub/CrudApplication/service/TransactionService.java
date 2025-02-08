@@ -69,6 +69,14 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
    
+ // Get transactions by User Id
+    public List<TransactionDTO> getTransactionsByInsurer(int userId) {
+        Optional<List<Transaction>> optionalTransactions = transactionRepository.findByPolicy_Insurer_User_UserId(userId);
+        List<Transaction> transactions = optionalTransactions.orElseGet(List::of); // Return an empty list if no transactions are found
+        return transactions.stream()
+                .map(this::convertToDTO) // Convert to DTO
+                .collect(Collectors.toList());
+    }
     
     //serive code for pagination for fututer prefrence
 // // Get all transactions

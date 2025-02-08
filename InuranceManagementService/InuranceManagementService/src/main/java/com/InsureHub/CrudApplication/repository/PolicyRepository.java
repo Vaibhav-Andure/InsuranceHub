@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PolicyRepository extends JpaRepository<Policy, Integer> {
@@ -19,6 +20,9 @@ public interface PolicyRepository extends JpaRepository<Policy, Integer> {
     List<Policy> findByInsurer_InsurerId(int insurerId);
     // New method to find policy by policyId
     Policy findByPolicyId(int policyId);
+    
+ // Optional method to find policies by UserId
+    Optional<List<Policy>> findByInsurer_User_UserId(int userId);
 
     
     

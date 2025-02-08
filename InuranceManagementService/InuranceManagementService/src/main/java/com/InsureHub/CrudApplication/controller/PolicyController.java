@@ -55,6 +55,12 @@ public class PolicyController {
             return response;
         }
     }
+ // ✅ Get all policies by User Id
+    @GetMapping("/byinsureruserid/{userId}")
+    public ResponseEntity<List<PolicyDTO>> getPoliciesByUserId(@PathVariable int userId) {
+        List<PolicyDTO> policies = policyService.getPoliciesByUserId(userId);
+        return ResponseEntity.ok(policies); // Return the list of PolicyDTOs
+    }
 
 
 
@@ -66,6 +72,7 @@ public class PolicyController {
     }
 
 
+ 	
 
 
 
