@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CustomizedSwitches from './switch/custswitch.jsx';
+import CustomizedSwitches from '../switch/custswitch';
 import { 
   Table, 
   TableBody, 
@@ -15,9 +15,9 @@ import {
 } from '@mui/material';
 
 import { useDispatch } from "react-redux";
-import { setPolicy, clearPolicy } from "../redux/slices/policiesSlice";
+import { setPolicy, clearPolicy } from "../../redux/slices/policiesSlice";
 
-const PolicyBenefits = ({ benefits, onClose }) => {
+const PolicyBenefits = ({ benefits, onClose , comparePolicies}) => {
   const splitBenefits = (benefits) => {
     return benefits.split(',').map((benefit, index) => (
       <TableRow key={index}>
@@ -35,8 +35,10 @@ const PolicyBenefits = ({ benefits, onClose }) => {
       display: 'flex',
       flexDirection: 'column',
       transition: 'transform 0.3s ease',
-      width: '100%',
-      maxWidth: '500px',
+      width:"500px",
+      height: "520px",
+      marginLeft:  comparePolicies.length >  0  ?   "100px": "60vh"  ,
+      maxWidth: "500px",
     }}>
       <Typography variant="h6">Policy Benefits</Typography>
       <TableContainer component={Paper} style={{
@@ -54,7 +56,7 @@ const PolicyBenefits = ({ benefits, onClose }) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button 
+      {/* <Button 
         onClick={onClose} 
         style={{
           padding: '0.5rem 1rem',
@@ -67,12 +69,12 @@ const PolicyBenefits = ({ benefits, onClose }) => {
         }}
       >
         ×
-      </Button>
+      </Button> */}
     </div>
   );
 };
 
-const PolicyInfo = ({ policy }) => {
+const PolicyInfo = ({ policy  , comparePolicies}) => {
   return (
     <div style={{
       backgroundColor: 'white',
@@ -82,7 +84,10 @@ const PolicyInfo = ({ policy }) => {
       display: 'flex',
       flexDirection: 'column',
       transition: 'transform 0.3s ease',
-      width: '100%',
+      width: 'auto',
+      height: "520px",
+      width:"500px",
+      marginLeft:  comparePolicies.length >  0  ?   "100px": "60vh"  ,
       maxWidth: '500px',
     }}>
       <Typography variant="h6">Policy Information</Typography>
@@ -99,18 +104,23 @@ const PolicyInfo = ({ policy }) => {
 
 const PolicyComparison = ({ policies, onRemove }) => {
   return (
+   
     <div style={{
       backgroundColor: 'white',
-      borderRadius: '1rem',
+      borderRadius: '0.5rem',
       padding: '1.5rem',
-      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+ 
       display: 'flex',
       flexDirection: 'column',
       transition: 'transform 0.3s ease',
-      width: '100%',
-      maxWidth: '500px',
+      width: '500px',
+      height: "auto",
+      marginLeft:"200px",
+      maxWidth: '1000px',
     }}>
-      <Typography variant="h6">Compare</Typography>
+                        <Typography variant="h6" align="center">
+                Compare
+</Typography>
 
     
       <br/>
@@ -123,21 +133,20 @@ const PolicyComparison = ({ policies, onRemove }) => {
               padding: '1.5rem',
               boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
               display: 'flex',
+              width:"450px",
+              height:"45vh",
               flexDirection: 'column',
               transition: 'transform 0.3s ease',
             }}>
-              <img src={policy.insurer && policy.insurer.insurerImage} alt="Insurer" style={{
-                width: '150px',
-                height: '80px',
-                borderRadius: '50%',
-                marginRight: '1rem',
-              }} />
+              
               <Typography variant="h6"> <strong> {policy.policyName} </strong></Typography>
               <p><strong>Base Premium:</strong> {policy.premiumAmount}</p>
               <p><strong>Terms:</strong> {policy.policyTerms} years</p>
               <p><strong>Coverage Amount:</strong> {policy.coverageAmount}</p>
               <p><strong>Coverage Type:</strong> {policy.coverageType}</p>
               <p><strong>Waiting Period:</strong> {policy.waitingPeriod} days</p>
+              <br/>
+              <br/>
               <Button 
                 onClick={() => onRemove(policy.policyId)} 
                 style={{
@@ -156,7 +165,9 @@ const PolicyComparison = ({ policies, onRemove }) => {
           </Grid>
         ))}
       </Grid>
+     
     </div>
+   
   );
 };
 
@@ -269,7 +280,9 @@ const ViewPolicy = () => {
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column',
+    
       alignItems: 'flex-start',
+    
     }}>
       <div style={{
         display: 'flex',
@@ -277,8 +290,15 @@ const ViewPolicy = () => {
         alignItems: 'center',
         width: '100%',
         marginBottom: '2rem',
+
+        
       }}>
-        <Typography variant="h4">Policy Details</Typography>
+
+
+
+
+
+        <Typography variant="h4"></Typography>
         <div style={{
           marginLeft: 'auto',
         }}>
@@ -293,8 +313,8 @@ const ViewPolicy = () => {
             <option value="premium-high-low">Sort by Premium (High to Low)</option>
             <option value="coverage-low-high">Sort by Coverage Amount (Low to High)</option>
             <option value="coverage-high-low">Sort by Coverage Amount (High to Low)</option>
-            <option value="tenure-low-high">Sort by Tenure (Low to High)</option>
-            <option value="tenure-high-low">Sort by Tenure (High to Low)</option>
+            {/* <option value="tenure-low-high">Sort by Tenure (Low to High)</option>
+            <option value="tenure-high-low">Sort by Tenure (High to Low)</option> */}
           </select>
         </div>
       </div>
@@ -329,6 +349,9 @@ const ViewPolicy = () => {
                   boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                   display: 'flex',
                   flexDirection: 'column',
+                  maxWidth:"500px",
+                  marginLeft:  comparePolicies.length >  0  ?   "100px": "60vh"  ,
+                  minWidth:"500px",
                   transition: 'transform 0.3s ease',
                 }}>
                   <div style={{
@@ -336,17 +359,19 @@ const ViewPolicy = () => {
                     alignItems: 'center',
                     marginBottom: '1rem',
                   }}>
-                    <img src={policy.insurer && policy.insurer.insurerImage} alt="Insurer" style={{
+                    {/* <img src={policy.insurer && policy.insurer.insurerImage} alt="Insurer" style={{
                       width: '80px',
                       height: '80px',
                       borderRadius: '50%',
                       marginRight: '1rem',
-                    }} />
+                    }} /> */}
                     <div style={{
                       flex: 1,
                       marginLeft: '1rem',
                     }}>
-                      <Typography variant="h6">{policy.policyName}</Typography>
+                    <Typography variant="h6" align="center">
+                    {policy.policyName}
+</Typography>
                     </div>
                   </div>
                   <div style={{
@@ -429,6 +454,7 @@ const ViewPolicy = () => {
                     <PolicyBenefits 
                       benefits={policy.benefits} 
                       onClose={() => setActiveBenefitsPolicy(null)}
+                      comparePolicies={comparePolicies}
                     />
                   </div>
                 )}
@@ -437,6 +463,7 @@ const ViewPolicy = () => {
                     <PolicyInfo 
                       policy={policy} 
                       onClose={() => setActiveInfoPolicy(null)}
+                      comparePolicies={comparePolicies}
                     />
                   </div>
                 )}
@@ -450,6 +477,7 @@ const ViewPolicy = () => {
             }}>Loading...</p>
           )}
         </div>
+        {comparePolicies.length > 0 && (
         <div style={{
           display: 'flex',
           flexDirection: 'column',
@@ -460,13 +488,13 @@ const ViewPolicy = () => {
           padding: '1rem',
           borderRadius: '1rem',
         }}>
-          {comparePolicies.length > 0 && (
+         
             <PolicyComparison 
               policies={comparePolicies.map(id => policies.find(policy => policy.policyId === id))} 
               onRemove={(policyId) => setComparePolicies(comparePolicies.filter(id => id !== policyId))}
             />
-          )}
-        </div>
+         
+        </div>  )}
       </div>
     </div>
   );

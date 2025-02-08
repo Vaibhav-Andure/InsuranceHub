@@ -38,15 +38,15 @@ public class PolicyService {
 
     // ✅ Create new policy
     public PolicyDTO createPolicy(Policy policy) {
-        if (policy.getInsurer() == null || policy.getInsurer().getInsurerId() == 0) {
-            throw new IllegalArgumentException("Insurer is required to create a policy.");
-        }
+//        if (policy.getInsurer() == null || policy.getInsurer().getInsurerId() == 0) {
+//            throw new IllegalArgumentException("Insurer is required to create a policy.");
+//        }
 
-        Insurer insurer = insurerRepository.findByInsurerId(policy.getInsurer().getInsurerId());
+        Insurer insurer = insurerRepository.findByUser_UserId(policy.getInsurer().getUser().getUserId());
         if (insurer == null) {
-            throw new IllegalArgumentException("Invalid Insurer ID.");
+            throw new IllegalArgumentException("insurer is not available ");
         }
-
+        policy.setStatus("Active");
         policy.setInsurer(insurer);
         policy.setCreatedDate(new Date());
         policy.setModifiedDate(new Date());
@@ -91,6 +91,19 @@ public class PolicyService {
         return convertToDTO(savedPolicy);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     // ✅ Get policy by ID
     public Optional<PolicyDTO> getPolicyById(int id) {
         Optional<Policy> policy = policyRepository.findById(id);
@@ -121,14 +134,14 @@ public class PolicyService {
     
  
 
-    // ✅ Delete policy by ID
-    public boolean deletePolicy(int id) {
-        if (!policyRepository.existsById(id)) {
-            return false;  // Policy not found
-        }
-        policyRepository.deleteById(id);
-        return true;  // Successfully deleted
-    }
+//    // ✅ Delete policy by ID
+//    public boolean deletePolicy(int id) {
+//        if (!policyRepository.existsById(id)) {
+//            return false;  // Policy not found
+//        }
+//        policyRepository.deleteById(id);
+//        return true;  // Successfully deleted
+//    }
 
     // 🔹 Convert Policy Entity to PolicyDTO
     private PolicyDTO convertToDTO(Policy policy) {

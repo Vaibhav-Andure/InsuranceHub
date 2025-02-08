@@ -39,6 +39,12 @@ public class TransactionService {
     @Autowired
     private ClaimRepository claimRepository;
 
+
+    //get transaction for particular user
+//    public List<Transaction> getTransactionsByUserId(int userId) {
+//        return transactionRepository.findByPolicyHolder_User_UserId(userId);
+//    }
+
     // Create or update a transaction
     public TransactionDTO saveTransaction(Transaction transaction) {
         // Fetch the associated policy
@@ -68,6 +74,7 @@ public class TransactionService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
    
  // Get transactions by User Id
     public List<TransactionDTO> getTransactionsByInsurer(int userId) {
@@ -77,6 +84,9 @@ public class TransactionService {
                 .map(this::convertToDTO) // Convert to DTO
                 .collect(Collectors.toList());
     }
+
+
+
     
     //serive code for pagination for fututer prefrence
 // // Get all transactions

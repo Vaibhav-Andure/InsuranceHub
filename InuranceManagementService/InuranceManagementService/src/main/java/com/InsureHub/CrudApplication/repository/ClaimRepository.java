@@ -18,7 +18,8 @@ public interface ClaimRepository extends JpaRepository<Claim, Integer> {
 
     // Custom query to find a claim by TransactionID (should only be one claim per transaction)
     Optional<Claim> findByTransaction_TransactionId(String transactionId);
-
+    // Custom query to find claims by userId
+    Claim findByTransaction_PolicyHolder_User_UserId(int  userId);
     // You can add more custom queries based on your requirements, e.g., by ClaimStatus
     Optional<Claim> findByClaimStatus(String claimStatus);
     

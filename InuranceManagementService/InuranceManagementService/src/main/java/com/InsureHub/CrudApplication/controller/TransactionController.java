@@ -38,6 +38,16 @@ public class TransactionController {
                         .body(null)); // You can return a custom error response if needed
     }
 
+
+
+
+//
+    @GetMapping("/user/{userId}")
+    public Optional<TransactionDTO> getTransactionById(@PathVariable int userId) {
+        return transactionService.getTransactionByUserId(userId);
+    }
+
+
 //    // Get all transactions
     @GetMapping("/getalltransaction")
     public ResponseEntity<List<TransactionDTO>> getAllTransactions() {

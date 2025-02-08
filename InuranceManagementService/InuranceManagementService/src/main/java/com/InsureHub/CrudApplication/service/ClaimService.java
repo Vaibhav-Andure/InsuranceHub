@@ -2,6 +2,7 @@ package com.InsureHub.CrudApplication.service;
 
 import com.InsureHub.CrudApplication.DTO.ClaimDTO; // Import your ClaimDTO
 import com.InsureHub.CrudApplication.entities.Claim;
+import com.InsureHub.CrudApplication.entities.PolicyHolder;
 import com.InsureHub.CrudApplication.entities.Transaction;
 import com.InsureHub.CrudApplication.repository.ClaimRepository;
 import com.InsureHub.CrudApplication.repository.TransactionRepository;
@@ -23,43 +24,49 @@ public class ClaimService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    // Save or update a claim
-    public Claim saveClaim(Claim claim) {
-        // Check if the transaction is null, and if so, throw an exception
-        if (claim.getTransaction() == null) {
-            throw new IllegalArgumentException("Transaction must not be null for creating a claim.");
+    @Autowired
+    private PolicyHolderService policyHolderService;
+
+    public Claim saveClaim(int userId,  Double claimAmount, String incidentDescription, Date incidentDate) {
+        // Fetch PolicyHolder by userId
+        PolicyHolder policyHolder = policyHolderService.getPolicyHoldersByUserId(userId);
+
+        if (policyHolder == null) {
+            throw new IllegalArgumentException("No PolicyHolder found for the given userId.");
         }
 
-        // Ensure that the transaction exists in the database
-        Transaction transaction = transactionRepository.findByTransactionId(claim.getTransaction().getTransactionId());
+        // Fetch the associated Transaction using PolicyHolder
+        Transaction transaction =  transactionRepository.findByPolicyHolder_PolicyHolderId(policyHolder.getPolicyHolderId());
+
         if (transaction == null) {
-            throw new IllegalArgumentException("Transaction with ID " + claim.getTransaction().getTransactionId() + " does not exist.");
+            throw new IllegalArgumentException("No Transaction found for the given PolicyHolder.");
         }
 
-        // Set the transaction and policy based on the transaction data
+        // Create a new Claim and set the relevant fields
+        Claim claim = new Claim();
+        claim.setClaimAmount(claimAmount);
+        claim.setIncidentDescription(incidentDescription);
+        claim.setIncidentDate(incidentDate);  // Set the incidentDate here
+
+        // Set the transaction and policy for the claim
         claim.setTransaction(transaction);
         claim.setPolicy(transaction.getPolicy());
-        claim.setClaimantName(transaction.getPolicyHolder().getPolicyHolderName());
 
-        // Set the filed date to the current date
+        // Set claimant name from the PolicyHolder
+        claim.setClaimantName(policyHolder.getPolicyHolderName());
+  claim.setApprovedDate(new Date(0));
+        // Set the filed date to current date
         claim.setFiledDate(new Date());
 
-        // Check if a claim already exists for this policy
-        if (claim.getPolicy() != null && claimRepository.findByPolicy_PolicyId(claim.getPolicy().getPolicyId()).isPresent()) {
-            throw new IllegalStateException("A claim already exists for this policy.");
-        }
-
-        // Check if a claim already exists for this transaction
-        if (claim.getTransaction() != null && claimRepository.findByTransaction_TransactionId(claim.getTransaction().getTransactionId()).isPresent()) {
+        // Check if a claim already exists for this policy or transaction
+//        if (claimRepository.findByPolicy_PolicyId(claim.getPolicy().getPolicyId()).isPresent()) {
+//            throw new IllegalStateException("A claim already exists for this policy.");
+//        }
+        if (claimRepository.findByTransaction_TransactionId(claim.getTransaction().getTransactionId()).isPresent()) {
             throw new IllegalStateException("A claim already exists for this transaction.");
         }
 
-        // Set the filed date if not already set
-        if (claim.getFiledDate() == null) {
-            claim.setFiledDate(new Date());  // Set current date if not already set
-        }
-
-        // Set the default claim status if not already set
+        // Set default claim status if not set
         if (claim.getClaimStatus() == null) {
             claim.setClaimStatus("Pending");
         }
@@ -67,6 +74,7 @@ public class ClaimService {
         // Save the claim to the repository
         return claimRepository.save(claim);
     }
+
 
     // Convert Claim entity to ClaimDTO
     public ClaimDTO convertToDTO(Claim claim) {
@@ -133,6 +141,24 @@ public class ClaimService {
             throw new IllegalArgumentException("Claim not found with ID " + claimId);
         }
     }
+
+
+
+
+    // update get claim by user id
+
+
+
+    public ClaimDTO findClaimsByUserId(int  userId) {
+
+       Claim claim =  claimRepository.findByTransaction_PolicyHolder_User_UserId(userId);
+        return convertToDTO(claim);
+    }
+
+
+
+
+
 
     // Update claim status (if needed) and set approval date when approved
     public ClaimDTO updateClaimStatus(int claimId, String newStatus) {

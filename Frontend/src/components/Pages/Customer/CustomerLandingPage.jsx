@@ -1,121 +1,190 @@
-import React, { useReducer } from 'react';
-import { useSelector } from 'react-redux';
-import ViewPolicy from '../../policy';
-import { useNavigate } from 'react-router-dom';
+import React, { useReducer, useState } from "react";
+import { useSelector } from "react-redux";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Button,
+  Grid,
+  Card,
+  CardContent,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Box,
+  Divider,
+} from "@mui/material";
+import { Menu, Policy, Assignment, Logout, ReceiptLong } from "@mui/icons-material";
+import "bootstrap/dist/css/bootstrap.min.css";
+import ViewPolicy from "../../Policy/policy";
+import ClaimForm from "./Claimform";
+import ClaimStatus from "./claimstatus";
+import TransactionStatus from "./TransactionStatus"; // Import the TransactionStatus component
 
-// Define the initial state
+const drawerWidth = 280;
+
 const initialState = {
-  showViewPolicy: false,
-  showClaims: true,
-  showAsst: true,
-  showPolicy: true,
+  showViewPolicy: true,
+  showClaimForm: false,
+  showClaimStatus: false,
+  showTransactionStatus: false, // Add this line
 };
 
-// Define the reducer function
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'TOGGLE_VIEW_POLICY':
-      return {
-        ...state,
-        showViewPolicy: !state.showViewPolicy,
-        showClaims: !state.showClaims,
-        showAsst: !state.showAsst,
-        showPolicy: !state.showPolicy,
-      };
+    case "TOGGLE_VIEW_POLICY":
+      return { showViewPolicy: true, showClaimForm: false, showClaimStatus: false, showTransactionStatus: false };
+    case "TOGGLE_CLAIM_FORM":
+      return { showClaimForm: true, showViewPolicy: false, showClaimStatus: false, showTransactionStatus: false };
+    case "TOGGLE_CLAIM_STATUS":
+      return { showClaimStatus: true, showViewPolicy: false, showClaimForm: false, showTransactionStatus: false };
+    case "TOGGLE_TRANSACTION_STATUS":
+      return { showTransactionStatus: true, showViewPolicy: false, showClaimForm: false, showClaimStatus: false };
     default:
       return state;
   }
 };
 
-export default function CustomerLandingPage() {
+const CustomerLandingPage = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const navigate = useNavigate();
-
-  // Toggle function to show/hide the ViewPolicy component
-  const toggleViewPolicy = () => {
-    dispatch({ type: 'TOGGLE_VIEW_POLICY' });
-  };
-
-
-
-
-
-
-
-
+  const [open, setOpen] = useState(false);
 
   if (!isAuthenticated) {
     return (
-      <div>
-        <p className="text-danger">
+      <div className="d-flex flex-column align-items-center mt-5">
+        <Typography variant="h6" color="error" sx={{ fontFamily: "Segoe UI" }}>
           You're not allowed to access this page without signing in!
-        </p>
-        <button className="btn btn-info" onClick={() => navigate('/login')}>
-          login
-        </button>
+        </Typography>
+        <Button variant="contained" color="primary" className="mt-3">Login</Button>
       </div>
     );
   }
 
   return (
-    <div className="min-vh-100 bg-light py-5">
-      <div className="container">
-        <h1 className="text-center">Welcome, {user?.username}</h1>
+    <Box sx={{ display: "flex", height: "auto" }}>
+      {/* Sidebar */}
+      <Drawer
+        variant="temporary"
+        open={open}
+        onClose={() => setOpen(false)}
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: drawerWidth,
+            boxSizing: "border-box",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            height: "99vh",
+          },
+        }}
+      >
+        <Box sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+          <Box>
+            <Toolbar>
+              <Typography variant="h6" sx={{ fontFamily: "Segoe UI" }}>Dashboard</Typography>
+            </Toolbar>
+            <Divider />
+            <List>
+              <ListItem button onClick={() => dispatch({ type: "TOGGLE_VIEW_POLICY" })} sx={{ '&:hover': { backgroundColor: "#ccc" }, backgroundColor: state.showViewPolicy ? "#ccc" : "inherit" }}>
+                <ListItemIcon><Policy /></ListItemIcon>
+                <ListItemText primary="View Policy" sx={{ fontFamily: "Segoe UI" }} />
+              </ListItem>
+              <ListItem button onClick={() => dispatch({ type: "TOGGLE_CLAIM_FORM" })} sx={{ '&:hover': { backgroundColor: "#ccc" }, backgroundColor: state.showClaimForm ? "#ccc" : "inherit" }}>
+                <ListItemIcon><Assignment /></ListItemIcon>
+                <ListItemText primary="File a Claim" sx={{ fontFamily: "Segoe UI" }} />
+              </ListItem>
+              <ListItem button onClick={() => dispatch({ type: "TOGGLE_CLAIM_STATUS" })} sx={{ '&:hover': { backgroundColor: "#ccc" }, backgroundColor: state.showClaimStatus ? "#ccc" : "inherit" }}>
+                <ListItemIcon><ReceiptLong /></ListItemIcon>
+                <ListItemText primary=" Claim Status" sx={{ fontFamily: "Segoe UI" }} />
+              </ListItem>
+              <ListItem button onClick={() => dispatch({ type: "TOGGLE_TRANSACTION_STATUS" })} sx={{ '&:hover': { backgroundColor: "#ccc" }, backgroundColor: state.showTransactionStatus ? "#ccc" : "inherit" }}>
+                <ListItemIcon><ReceiptLong /></ListItemIcon>
+                <ListItemText primary="View Transactions" sx={{ fontFamily: "Segoe UI" }} />
+              </ListItem>
+            </List>
+          </Box>
+          <List>
+            <Divider />
+            <ListItem button sx={{ backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }}>
+              <ListItemIcon><Logout style={{ color: "white" }} /></ListItemIcon>
+              <ListItemText primary="Logout" sx={{ fontFamily: "Segoe UI", color: "white" }} />
+            </ListItem>
+          </List>
+        </Box>
+      </Drawer>
 
-        {state.showViewPolicy ? (
-          <div className="row mt-5">
-            <div className="col-md-12">
-              <button className="btn btn-primary mb-3" onClick={toggleViewPolicy}>
-                Back to main menu
-              </button>
-              <div style={{ height: '100vh', overflowY: 'auto' }}>
-                <ViewPolicy />
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="row mt-5">
-            {state.showPolicy && (
-              <div className="col-md-4 d-flex">
-                <div className="card shadow mb-4 flex-fill">
-                  <div className="card-body text-center">
-                    <h4>Your Policies</h4>
-                    <p>View and manage your insurance policies</p>
-                    <button className="btn btn-primary mb-3" onClick={toggleViewPolicy}>
-                      view policies
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+      {/* Main Content */}
+      <Box component="main" sx={{ flexGrow: 1, p: 3, height: "100%", overflowY: "auto" }}>
+        <Toolbar>
+          <IconButton
+            onClick={() => setOpen(!open)}
+            sx={{
+              color: "#ADD8E6",
+              backgroundColor: "black",
+              '&:hover': {
+                backgroundColor: "#e0e0e0",
+              }
+            }}
+          >
+            <Menu />
+          </IconButton>
+        </Toolbar>
 
-            {state.showClaims && (
-              <div className="col-md-4 d-flex">
-                <div className="card shadow mb-4 flex-fill">
-                  <div className="card-body text-center">
-                    <h4>Claims</h4>
-                    <p>Track your insurance claims</p>
-                    <button className="btn btn-primary">View Claims</button>
-                  </div>
-                </div>
-              </div>
-            )}
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ fontFamily: "Segoe UI", textAlign: "center" }}
+        >
+          Welcome, {user?.username}
+        </Typography>
 
-            {state.showAsst && (
-              <div className="col-md-4 d-flex">
-                <div className="card shadow mb-4 flex-fill">
-                  <div className="card-body text-center">
-                    <h4>Contact Support</h4>
-                    <p>Reach out for any assistance</p>
-                    <button className="btn btn-primary">Contact Support</button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
+        <Grid container spacing={2} className="mt-5" sx={{ height: "100%", overflowY: "auto" }}>
+          {state.showViewPolicy && (
+            <Grid item xs={12} sx={{ height: "100%", overflowY: "auto" }}>
+              <Card sx={{ boxShadow: 3, height: "100%" }}>
+                <CardContent sx={{ height: "100%", overflowY: "auto" }}>
+                  <ViewPolicy />
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+          {state.showClaimForm && (
+            <Grid item xs={12} sx={{ height: "100%", overflowY: "auto" }}>
+              <Card sx={{ boxShadow: 3, height: "100%" }}>
+                <CardContent sx={{ height: "100%", overflowY: "auto" }}>
+                  <ClaimForm />
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+          {state.showClaimStatus && (
+            <Grid item xs={12} sx={{ height: "100%", overflowY: "auto" }}>
+              <Card sx={{ boxShadow: 3, height: "100%" }}>
+                <CardContent sx={{ height: "100%", overflowY: "auto" }}>
+                  <ClaimStatus />
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+          {state.showTransactionStatus && (
+            <Grid item xs={12} sx={{ height: "100%", overflowY: "auto" }}>
+              <Card sx={{ boxShadow: 3, height: "100%" }}>
+                <CardContent sx={{ height: "100%", overflowY: "auto" }}>
+                  <TransactionStatus />
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+        </Grid>
+      </Box>
+    </Box>
   );
-}
+};
+
+export default CustomerLandingPage;

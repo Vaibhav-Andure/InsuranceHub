@@ -1,8 +1,7 @@
 // Sidebar.jsx
+
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { 
   Box, 
   Drawer, 
   List, 
@@ -38,7 +37,6 @@ const StyledListItem = styled(ListItemButton)(({ theme, selected }) => ({
 }));
 
 const menuItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
   { icon: Users, label: 'Customers', path: '/admin/customers' },
   { icon: FileText, label: 'Policies', path: '/admin/policies' },
   { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
@@ -46,7 +44,6 @@ const menuItems = [
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
 ];
 
-export function Sidebar() {
   const location = useLocation();
 
   return (
@@ -75,17 +72,14 @@ export function Sidebar() {
       <List sx={{ flex: 1 }}>
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
           
           return (
             <StyledListItem
-              key={item.path}
               component={Link}
               to={item.path}
               selected={isActive}
             >
               <ListItemIcon>
-                <Icon size={20} color={isActive ? '#1976d2' : '#666'} />
               </ListItemIcon>
               <ListItemText primary={item.label} />
             </StyledListItem>
@@ -101,10 +95,10 @@ export function Sidebar() {
           fullWidth
           startIcon={<LogOut size={20} />}
           sx={{ justifyContent: 'flex-start', color: 'error.main' }}
+          onClick={handleLogout} // Call handleLogout on click
         >
           Logout
         </Button>
       </Box>
     </Drawer>
   );
-}

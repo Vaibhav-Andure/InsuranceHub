@@ -44,7 +44,9 @@ logger.info("saved user with insuree is " ,  insureruser);
 
 
 
-
+    public Insurer getInsurerByUserId(int userId) {
+        return insurerRepository.findByUser_UserId(userId);
+    }
 
 
 
