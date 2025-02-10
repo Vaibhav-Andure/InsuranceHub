@@ -13,6 +13,8 @@ import InsurerRegistrationForm from "./components/Pages/Insurer/InsurerRegistrat
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import InsurerDashboard from './components/Pages/Insurer/InsurerLandingPage';
 
+import Homepage from './components/Homepage/Homepage';
+
 
 
 
@@ -50,16 +52,6 @@ const theme = createTheme({
 
 
 
-function HomePage() {
-  return (
-    <div className="container text-center my-5">
-      <h1 className="display-4 font-weight-bold">Welcome to Insurance Portal</h1>
-      <p className="lead text-muted">
-        Your trusted partner in protecting what matters most. Discover our range of insurance solutions tailored to your needs.
-      </p>
-    </div>
-  );
-}
 
 function App() {
   
@@ -71,7 +63,7 @@ function App() {
         <Header />
         <main>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<Homepage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegistrationPage />} />
             <Route path="/admin" element={<AdminLandingPage />} />

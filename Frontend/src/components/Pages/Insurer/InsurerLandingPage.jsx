@@ -446,6 +446,71 @@ const InsurerDashboard = () => {
                 </Box>
               )}
 
+              {activeTab === 'totalCustomers' && (
+                <Box>
+                  <Box sx={{ p: 3, borderBottom: 1, borderColor: 'grey.200' }}>
+                    <Typography variant="h6" fontWeight="bold">
+                      Total Customers
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      Overview of all customers
+                    </Typography>
+                  </Box>
+                  {/* <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Customer ID</TableCell>
+                          <TableCell>Customer Name</TableCell>
+                          <TableCell>Policy Number</TableCell>
+                          <TableCell>Policy Name</TableCell>
+                          <TableCell>Transaction Date</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {transactions.map((transaction) => (
+                          <TableRow key={transaction.transactionId} hover>
+                            <TableCell>{transaction.customerId}</TableCell>
+                            <TableCell>{transaction.customerName}</TableCell>
+                            <TableCell>{transaction.policyNumber}</TableCell>
+                            <TableCell>{transaction.policyName}</TableCell>
+                            <TableCell>{new Date(transaction.transactionDate).toLocaleDateString()}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer> */}
+                  <TableContainer>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Transaction ID</TableCell>
+                            <TableCell>Policy Holder Name</TableCell>
+                            <TableCell>Policy Name</TableCell>
+                            <TableCell>Amount</TableCell>
+                            <TableCell>Transaction Date</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {transactions.map((transaction) => (
+                            <TableRow key={transaction.transactionId} hover>
+                              <TableCell>{transaction.transactionId}</TableCell>
+                              <TableCell>{transaction.policyHolderName}</TableCell>
+                              <TableCell>{transaction.policyName}</TableCell>
+                              <TableCell>&#8377;{transaction.amount}</TableCell>
+                              <TableCell>{new Date(transaction.transactionDate).toLocaleDateString()}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+            
+                </Box>
+              )}
+
+
+
+
               {activeTab === 'pending' && (
                 <Box>
                   <Box sx={{ p: 3, borderBottom: 1, borderColor: 'grey.200' }}>
