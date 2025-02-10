@@ -135,12 +135,18 @@ console.log(Currentuserid + "current policy holder user id is ")
       return "";
     }
   };
-
   const validateDateOfBirth = (value) => {
     const date = new Date(value);
     const today = new Date();
     const age = today.getFullYear() - date.getFullYear();
     const m = today.getMonth() - date.getMonth();
+  
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
+      return "Invalid date";
+    }
+  
+    // Check for minimum age of 5 years
     if (m < 0 || (m === 0 && today.getDate() < date.getDate())) {
       if (age < 5) {
         return "Age should be at least 5 years";
@@ -150,9 +156,14 @@ console.log(Currentuserid + "current policy holder user id is ")
         return "Age should be at least 5 years";
       }
     }
+  
+    // Check for maximum age of 60 years
+    if (age > 60 || (age === 60 && (m > 0 || (m === 0 && today.getDate() > date.getDate())))) {
+      return "Age should not exceed 60 years";
+    }
+  
     return "";
   };
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -396,7 +407,7 @@ console.log(Currentuserid + "current policy holder user id is ")
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                
+                  label="Date Of Birth"
                   name="dateOfBirth"
                   type="date"
                   value={formData.dateOfBirth}
@@ -407,6 +418,11 @@ console.log(Currentuserid + "current policy holder user id is ")
                   sx={{ fontFamily: "Segoe UI" }}
                   error={errors.dateOfBirth}
                   helperText={errors.dateOfBirth ? validateDateOfBirth(formData.dateOfBirth) : ""}
+                  InputLabelProps={{
+
+                    shrink: true // Shrink the label if there is a value
+                
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -491,6 +507,11 @@ console.log(Currentuserid + "current policy holder user id is ")
                     margin="normal"
                     required
                     sx={{ fontFamily: "Segoe UI", mr: 1 }}
+                    InputLabelProps={{
+
+                      shrink: true // Shrink the label if there is a value
+                  
+                    }}
                   >
                     {relationships.map((relationship) => (
                       <MenuItem key={relationship} value={relationship}>
@@ -508,7 +529,7 @@ console.log(Currentuserid + "current policy holder user id is ")
                     sx={{ fontFamily: "Segoe UI", mr: 1 }}
                   />
                   <TextField
-                   
+                    label="Date of Birth"
                     name={`nominees.${index}.dateOfBirth`}
                     type="date"
                     value={nominee.dateOfBirth}
@@ -517,6 +538,11 @@ console.log(Currentuserid + "current policy holder user id is ")
                     required
                     min={minDate.toISOString().split('T')[0]}
                     sx={{ fontFamily: "Segoe UI", mr: 1 }}
+                    InputLabelProps={{
+
+                      shrink: true // Shrink the label if there is a value
+                  
+                    }}
                   />
                   <Button variant="outlined" color="secondary" onClick={() => handleRemoveNominee(index)}>
                     Remove
@@ -558,7 +584,7 @@ console.log(Currentuserid + "current policy holder user id is ")
                     sx={{ fontFamily: "Segoe UI", mr: 1 }}
                   />
                   <TextField
-                   
+                   label ="Date of Birth"
                     name={`insuredMembers.${index}.dateOfBirth`}
                     type="date"
                     value={member.dateOfBirth}
@@ -567,6 +593,12 @@ console.log(Currentuserid + "current policy holder user id is ")
                     required
                     min={minDate.toISOString().split('T')[0]}
                     sx={{ fontFamily: "Segoe UI", mr: 1 }}
+
+                    InputLabelProps={{
+
+                      shrink: true // Shrink the label if there is a value
+                  
+                    }}
                   />
                   <Button variant="outlined" color="secondary" onClick={() => handleRemoveInsuredMember(index)}>
                     Remove

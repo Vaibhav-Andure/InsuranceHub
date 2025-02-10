@@ -305,7 +305,8 @@ const ViewPolicy = () => {
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column',
-    
+      overflow: 'hidden',
+        
       alignItems: 'flex-start',
     
     }}>
@@ -315,7 +316,7 @@ const ViewPolicy = () => {
         alignItems: 'center',
         width: '100%',
         marginBottom: '2rem',
-
+        overflow: 'auto',
         
       }}>
 

@@ -59,7 +59,7 @@ const InsurerRegistrationForm = ({ onClose }) => {
     try {
 
    
-      const response = await axios.get(`http://localhost:5555/api/license/check-license-number?licenseNumber=${sanitizedLicenseNumber}`);
+      const response = await axios.get(`http://localhost:8251/insurance/license/check-license-number?licenseNumber=${sanitizedLicenseNumber}`);
       
     
       if (response.data) {
@@ -168,7 +168,7 @@ const InsurerRegistrationForm = ({ onClose }) => {
     if (formData.email === "") {
         newErrors.email = "Email is required. Please enter a valid email address.";
         isValid = false;
-      } else if (!/^[a-zA-Z._%+-]+@[a-zA-Z0-9.-]+\.(com|in|io|org|net|edu|gov)$/.test(formData.email.toLowerCase())|| formData.email.length > 45 ) {
+      } else if (!/^[a-zA-Z._%+-]+@[a-zA-Z.-]+\.(com|in|io|org|net|edu|gov)$/.test(formData.email.toLowerCase())|| formData.email.length > 30 ) {
         newErrors.email = "Invalid email address. Please ensure that your email address is in the correct format (e.g. a@b.com) and that the domain is one of the following: .com, .in, .io, .org, .net, .edu, .gov.";
         isValid = false;
       }else {
@@ -244,7 +244,7 @@ useEffect(() => {
     };
 
 
-    axios.post('http://localhost:5555/api/insurers/registerinsurer', payload)
+    axios.post('http://localhost:8251/insurance/insurers/registerinsurer', payload)
     .then((response) => {
       console.log(response);
       setLoading(false);

@@ -55,7 +55,13 @@ const TransactionStatus = () => {
             <TableCell>{transactions.transactionId}</TableCell>
             <TableCell>{transactions.policyHolderName}</TableCell>
             <TableCell>{transactions.policyName}</TableCell>
-            <TableCell>{transactions.amount.toFixed(2)}</TableCell>
+            <TableCell>
+
+  {"₹" + transactions.amount.toFixed(2)}
+
+</TableCell>
+
+           
             <TableCell>{new Date(transactions.transactionDate).toLocaleString()}</TableCell>
           </TableRow>
     

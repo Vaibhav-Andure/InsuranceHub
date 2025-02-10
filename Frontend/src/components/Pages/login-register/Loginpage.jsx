@@ -101,7 +101,7 @@ navigate("/customer");
 
     return (
       <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-        <div className="card" style={{ width: '100%', maxWidth: '50vh' ,height:"60vh" , marginBottom:"20vh" }}>
+        <div className="card" style={{ width: '100%', maxWidth: '60vh' ,height:"70vh" , minHeight : "90vh" , marginBottom:"20vh" , marginTop:"20vh"}}>
           <div className="card-body">
             <div className="text-center mb-4">
               <Shield className="text-primary" style={{ width: '40px', height: '40px' }} />
@@ -129,7 +129,7 @@ navigate("/customer");
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   required
-                  style={{height:"60px", minHeight : "60px", maxWidth:"40vh"}}
+                  style={{height:"50px"}}
                 />
               </div>
    
@@ -150,7 +150,6 @@ navigate("/customer");
                 />
               </div>
            
-              <br/>
               <button type="submit" className="btn btn-primary w-100">
                 Sign In
               </button>
