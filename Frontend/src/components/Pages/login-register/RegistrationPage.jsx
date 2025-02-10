@@ -167,7 +167,7 @@ export default function RegistrationPage() {
     };
 
     try {
-      const response = await fetch('http://localhost:5555/users/register', {
+      const response = await fetch('http://localhost:8251/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

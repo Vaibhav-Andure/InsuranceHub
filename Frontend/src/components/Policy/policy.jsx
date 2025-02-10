@@ -218,7 +218,7 @@ const ViewPolicy = () => {
 
   const fetchPolicies = async () => {
     try {
-      const response = await fetch('http://localhost:5555/api/policies/getallpolicies');
+      const response = await fetch('http://localhost:8251/insurance/policies/getallpolicies');
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
       setPolicies(data);

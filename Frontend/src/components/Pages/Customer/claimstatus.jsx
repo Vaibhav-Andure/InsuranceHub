@@ -26,7 +26,7 @@ const ClaimStatus = () => {
   useEffect(() => {
     const fetchClaimData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5555/api/claims/user/${user?.uid}`);
+        const response = await axios.get(`http://localhost:8251/insurance/claims/user/${user?.uid}`);
 
         setClaim(response.data);
         setLoading(false);

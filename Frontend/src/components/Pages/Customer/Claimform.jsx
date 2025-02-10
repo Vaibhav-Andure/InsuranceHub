@@ -111,7 +111,7 @@ const ClaimFilingForm = () => {
       incidentDate: formData.incidentDate,
     };
 
-    axios.post('http://localhost:5555/api/claims/claimpolicy', payload)
+    axios.post('http://localhost:8251/insurance/claims/claimpolicy', payload)
       .then((response) => {
         console.log(response);
         setLoading(false);

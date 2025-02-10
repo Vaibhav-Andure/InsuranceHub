@@ -90,7 +90,7 @@ const InsurerRegistrationForm = ({ onClose }) => {
   const validateEmail = async (email) => {
     setEmailChecking(true);
     try {
-      const response = await axios.get(`http://localhost:5555/users/validate-email?email=${email}`);
+      const response = await axios.get(`http://localhost:8251/auth/validate-email?email=${email}`);
       console.log("api hit for email validation ")
       if (response.data) {
         setEmailValid(false);

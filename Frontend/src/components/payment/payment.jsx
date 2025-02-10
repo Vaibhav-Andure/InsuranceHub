@@ -57,7 +57,7 @@ useEffect(() => {
     const hitTransactionApi = async () => {
       if (paymentSuccess === true) { // Only hit the API if payment is successful
         try {
-          const transactionResponse = await axios.post('http://localhost:5555/api/transactions/savetransaction', Apitransactiondata);
+          const transactionResponse = await axios.post('http://localhost:8251/insurance/transactions/savetransaction', Apitransactiondata);
           console.log("api response for payment " + transactionResponse.data);
 
           console.log(transactionResponse.ok)
@@ -144,7 +144,7 @@ useEffect(() => {
     
             console.log("Payload (stringified):", JSON.stringify(payload)); // Check payload
     
-            const response = await axios.post('https://localhost:7277/api/Payment/CheckPayment', payload, {
+            const response = await axios.post('http://localhost:8251/Payment/CheckPayment', payload, {
                 headers: { 'Content-Type': 'application/json' },
             });
     

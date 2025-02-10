@@ -12,7 +12,7 @@ const TransactionStatus = () => {
   useEffect(() => {
     const fetchTransactionData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5555/api/transactions/byuserid/${user?.uid}`);
+        const response = await axios.get(`http://localhost:8251/insurance/transactions/byuserid/${user?.uid}`);
         setTransactions(response.data); // Assuming the response is an array of transactions
         setLoading(false);
       } catch (error) {

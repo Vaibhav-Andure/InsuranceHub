@@ -205,7 +205,7 @@ const InsurerDashboard = () => {
   useEffect(() => {
     const fetchInsurerData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5555/api/insurers/by-user/${user.uid}`);
+        const response = await axios.get(`http://localhost:8253/api/insurers/by-user/${user.uid}`);
         setInsurerId(response.data.insurerId);
         setInsurerName(response.data.insurerName);
         setInsurerLicense(response.data.licenseNumber);
@@ -216,7 +216,7 @@ const InsurerDashboard = () => {
 
     const fetchClaims = async () => {
       try {
-        const response = await axios.get(`http://localhost:5555/api/claims/by-insurer-user/${insurerId}`);
+        const response = await axios.get(`http://localhost:8253/api/claims/by-insurer-user/${user.uid}`);
         setClaims(response.data);
       } catch (error) {
         console.error('Error fetching claims:', error);
@@ -225,7 +225,7 @@ const InsurerDashboard = () => {
 
     const fetchPolicies = async () => {
       try {
-        const response = await axios.get(`http://localhost:5555/api/policies/byinsureruserid/${user.uid}`);
+        const response = await axios.get(`http://localhost:8253/api/policies/byinsureruserid/${user.uid}`);
         setInsurerPolicies(response.data);
       } catch (error) {
         console.error('Error fetching policies:', error);
@@ -234,8 +234,11 @@ const InsurerDashboard = () => {
 
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get(`http://localhost:5555/api/transactions/byinsureruserid/${insurerId}`);
+        const response = await axios.get(`http://localhost:8251/insurance/transactions/byinsureruserid/${user.uid}`);
         setTransactions(response.data);
+
+
+        
       } catch (error) {
         console.error('Error fetching transactions:', error);
       }
@@ -257,7 +260,11 @@ const InsurerDashboard = () => {
 
   const handleStatusChange = async (claimId, newStatus) => {
     try {
-      await axios.patch(`http://localhost:5555/api/claims/${claimId}/status`, { status: newStatus });
+    
+      await axios.put(`http://localhost:8253/api/claims/${claimId}/status`, null, {
+        params: { newStatus }
+      });
+  
       const updatedClaims = claims.map(claim =>
         claim.claimId === claimId ? { ...claim, claimStatus: newStatus } : claim
       );

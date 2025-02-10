@@ -642,7 +642,7 @@ const PolicyRegistrationForm = () => {
     }
 
     try {
-      const response = await axios.get(`http://localhost:5555/api/insurers/by-user/${user.uid}`);
+      const response = await axios.get(`http://localhost:8251/insurance/insurers/by-user/${user.uid}`);
       console.log('API Response:', response.data); // Log the response data
       if (response.data && response.data.insurerId) {
         setInsurerId(response.data.insurerId);
@@ -708,7 +708,7 @@ const PolicyRegistrationForm = () => {
     console.log('Payload:', payload); // Log the payload
 
     try {
-      const response = await axios.post('http://localhost:5555/api/policies/createpolicy', payload);
+      const response = await axios.post('http://localhost:8251/insurance/policies/createpolicy', payload);
       console.log('Response:', response.data); // Log the response data
       setLoading(false);
       setRegistrationStatus("success");

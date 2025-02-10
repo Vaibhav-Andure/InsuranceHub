@@ -24,7 +24,7 @@ const AdminLandingPage = () => {
 
   const fetchPolicyholders = async () => {
     try {
-      const response = await axios.get('http://localhost:5555/api/policyholders/getallpolicyholders');
+      const response = await axios.get('http://localhost:8251/insurance/policyholders/getallpolicyholders');
       setPolicyholders(response.data);
     } catch (err) {
       console.error('Error fetching policyholders:', err);
@@ -34,7 +34,7 @@ const AdminLandingPage = () => {
 
   const fetchTransactions = async () => {
     try {
-      const response = await axios.get('http://localhost:5555/api/transactions/getalltransaction');
+      const response = await axios.get('http://localhost:8251/insurance/transactions/getalltransaction');
       setTransactions(response.data);
     } catch (err) {
       console.error('Error fetching transactions:', err);
@@ -44,7 +44,7 @@ const AdminLandingPage = () => {
 
   const fetchPolicies = async () => {
     try {
-      const response = await axios.get('http://localhost:5555/api/policies/getallpolicies');
+      const response = await axios.get('http://localhost:8251/insurance/policies/getallpolicies');
       setPolicies(response.data);
     } catch (err) {
       console.error('Error fetching policies:', err);
@@ -54,7 +54,7 @@ const AdminLandingPage = () => {
 
   const fetchInsurers = async () => {
     try {
-      const response = await axios.get('http://localhost:5555/api/insurers/getallinsurer'); 
+      const response = await axios.get('http://localhost:8251/insurance/insurers/getallinsurer'); 
       setInsurers(response.data);
     } catch (err) {
       console.error('Error fetching insurers:', err);
@@ -64,7 +64,7 @@ const AdminLandingPage = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('http://localhost:5555/api/transactions/stats');
+      const response = await axios.get('http://localhost:8251/insurance/transactions/stats');
       setStatsData(response.data);
     } catch (err) {
       console.error('Error fetching stats:', err);

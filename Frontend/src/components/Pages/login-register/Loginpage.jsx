@@ -22,7 +22,7 @@ export default function LoginPage() {
     setErrorMessage(''); // Clear previous errors
 
     try {
-      const response = await fetch('http://localhost:5555/users/login', {
+      const response = await fetch('http://localhost:8251/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

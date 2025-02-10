@@ -21,7 +21,7 @@ const TransactionPage = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:5555/api/transactions/byuserid/${user.uid}`); // Replace with your API endpoint
+        const response = await fetch(`http://localhost:8251/insurance/transactions/byuserid/${user.uid}`); // Replace with your API endpoint
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -48,13 +48,13 @@ const TransactionPage = () => {
 
     // Centered title
     doc.setFontSize(16);
-    const title = 'Insure Hub';
+    const title = 'InsuranceHub';
     const titleWidth = doc.getTextWidth(title);
     doc.text(title, (doc.internal.pageSize.getWidth() - titleWidth) / 2, 70);
 
     // Centered subtitle
     doc.setFontSize(12);
-    const subtitle = 'Transaction Report';
+    const subtitle = 'Transaction Invoice';
     const subtitleWidth = doc.getTextWidth(subtitle);
     doc.text(subtitle, (doc.internal.pageSize.getWidth() - subtitleWidth) / 2, 80);
 
@@ -75,7 +75,7 @@ const TransactionPage = () => {
     y += 10;
     doc.text(policyNameText, (doc.internal.pageSize.getWidth() - doc.getTextWidth(policyNameText)) / 2, y);
     y += 10;
-    doc.text(`Amount: Rupees ${transaction.amount}`, (doc.internal.pageSize.getWidth() - doc.getTextWidth(`Amount: ₹${transaction.amount}`)) / 2, y);
+    doc.text(`Amount: ₹ ${transaction.amount}`, (doc.internal.pageSize.getWidth() - doc.getTextWidth(`Amount: ₹${transaction.amount}`)) / 2, y);
     y += 10;
     doc.text(transactionDateText, (doc.internal.pageSize.getWidth() - doc.getTextWidth(transactionDateText )) / 2, y);
     y += 20;
