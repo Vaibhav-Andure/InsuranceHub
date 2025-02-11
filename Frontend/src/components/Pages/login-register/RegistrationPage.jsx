@@ -1,285 +1,369 @@
-// import React from 'react';
-// import { useDispatch } from 'react-redux';
-// import { useForm } from 'react-hook-form';
-// import { setUser } from '../../redux/actions/userAction';
-// import { loginUser } from '../../redux/actions/userAction';
-// import { Link, useNavigate } from 'react-router-dom';
-// import { Shield } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  Grid,
+  Container,
+  Alert,
+  CircularProgress,
+  InputAdornment,
+} from "@mui/material";
+import { Shield } from "lucide-react"; // Import Shield from lucide-react
+import CheckIcon from "@mui/icons-material/Check";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
-// export default function RegistrationPage() {
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate();
+const RegistrationPage = () => {
+   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    uname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-//   const { register, handleSubmit, formState: { errors } } = useForm();
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [emailValid, setEmailValid] = useState(false);
+  const [emailChecking, setEmailChecking] = useState(false);
+  const [registrationStatus, setRegistrationStatus] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
+     const [seconds, setSeconds] = useState(10);
 
-//   const onSubmit = async (data) => {
-//     try {
-//       const response = await fetch('http://localhost:5000/register', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify(data),
-//       });
+//count for redirection
+     const startCountdown = () => {
+      setSeconds(10);
+      const interval = setInterval(() => {
+          setSeconds((prevSec) => {
+              if (prevSec > 1) return prevSec - 1;
+              clearInterval(interval);
+              retryPayment();
+              return 0;
+          });
+      }, 1000);
+  };
 
-//       if (response.ok) {
-//         const userData = await response.json();
-//         dispatch(setUser(userData));
-//         console.log('Registration successful:', userData);
-//         navigate('/login'); // Redirect to login after successful registration
-//       } else {
-//         const errorText = await response.json();
-//         console.error('Error:', errorText.message || 'Registration failed.');
-//       }
-//     } catch (err) {
-//       console.error('Registration error:', err);
-//     }
-//   };
-
-//   return (
-//     <div className="min-vh-100 bg-light py-5">
-//       <div className="container">
-//         <div className="row justify-content-center">
-//           <div className="col-md-6">
-//             <div className="bg-white rounded shadow-lg p-5">
-//               <div className="text-center mb-4">
-//                 <Shield className="text-primary mb-3" size={48} />
-//                 <h2 className="h4">User Registration</h2>
-//                 <p className="text-muted">Join our insurance platform</p>
-//               </div>
-
-//               <form onSubmit={handleSubmit(onSubmit)}>
-//                 {/* Username Field */}
-//                 <div className="mb-3">
-//                   <label htmlFor="uname" className="form-label">Username</label>
-//                   <input
-//                     type="text"
-//                     className="form-control"
-//                     id="uname"
-//                     {...register('uname', { required: 'Username is required', minLength: { value: 2, message: 'Username must have at least 2 characters' } })}
-//                   />
-//                   {errors.uname && <p className="text-danger">{errors.uname.message}</p>}
-//                 </div>
-
-//                 {/* Email Field */}
-//                 <div className="mb-3">
-//                   <label htmlFor="email" className="form-label">Email Address</label>
-//                   <input
-//                     type="email"
-//                     className="form-control"
-//                     id="email"
-//                     {...register('email', {
-//                       required: 'Email is required',
-//                       pattern: { value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, message: 'Invalid email address' },
-//                     })}
-//                   />
-//                   {errors.email && <p className="text-danger">{errors.email.message}</p>}
-//                 </div>
-
-//                 {/* Password Field */}
-//                 <div className="mb-3">
-//                   <label htmlFor="password" className="form-label">Password</label>
-//                   <input
-//                     type="password"
-//                     className="form-control"
-//                     id="password"
-//                     {...register('password', {
-//                       required: 'Password is required',
-//                       pattern: { value: /^[A-Za-z0-9*%$_@.-]{8,12}$/, message: 'Password must be 8-12 characters and include valid symbols' },
-//                     })}
-//                   />
-//                   {errors.password && <p className="text-danger">{errors.password.message}</p>}
-//                 </div>
-
-//                 {/* Address Field */}
-//                 <div className="mb-3">
-//                   <label htmlFor="address" className="form-label">Address</label>
-//                   <input
-//                     type="text"
-//                     className="form-control"
-//                     id="address"
-//                     {...register('address', { required: 'Address is required' })}
-//                   />
-//                   {errors.address && <p className="text-danger">{errors.address.message}</p>}
-//                 </div>
-
-//                 {/* Role Field */}
-//                 <div className="mb-3">
-//                   <label htmlFor="role" className="form-label">Role</label>
-//                   <select
-//                     className="form-control"
-//                     id="role"
-//                     {...register('role', { required: 'Role is required' })}
-//                   >
-//                     <option value="Customer">Customer</option>
-//                     <option value="Insurer">Insurer</option>
-//                   </select>
-//                   {errors.role && <p className="text-danger">{errors.role.message}</p>}
-//                 </div>
-
-//                 {/* Submit Button */}
-//                 <button type="submit" className="btn btn-primary w-100">
-//                   Register
-//                 </button>
-//               </form>
-
-//               <div className="mt-3 text-center">
-//                 <p>
-//                   Already have an account?{' '}
-//                   <Link to="/login" className="text-primary">Sign in</Link>
-//                 </p>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
+  const retryPayment = () => {
+      setPaymentSuccess(null);
+      setIsSwitchOn(false);
+      setErrors({});
+  };
 
 
 
 
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useForm } from 'react-hook-form';
-import { loginSuccess } from '../../../redux/slices/authSlice';
-import { Link, useNavigate } from 'react-router-dom';
-import { Shield } from 'lucide-react';
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|io|org|net|edu|gov)$/;
 
-export default function RegistrationPage() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState();
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const [registrationmessage, setregistrationmessage] = useState("");
+  // Validate email format
+  const validateEmailFormat = (email) => {
+    return emailRegex.test(email.toLowerCase()) && email.length >= 20;
+  };
 
-  const onSubmit = async (data) => {
-    // Ensure the data matches the required format
-
-    console.log(data);
-    const payload = {
-      username: data.uname,
-      password: data.password,
-      email: data.email,
-      role: {
-        roleName: "Customer"
-
+  // Check if email exists in the database
+  const checkEmailExists = async (email) => {
+    setEmailChecking(true);
+    await new Promise((resolve) => setTimeout(resolve, 4000)); // Simulate a delay
+    try {
+      const response = await axios.get(
+        `http://localhost:8251/auth/validate-email?email=${email}`
+      );
+      if (response.data) {
+        setEmailValid(false);
+        setErrors((prev) => ({
+          ...prev,
+          email: "Email already exists",
+        }));
+      } else {
+        setEmailValid(true);
+        setErrors((prev) => ({
+          ...prev,
+          email: "", // Clear error if email is valid
+        }));
       }
+    } catch (error) {
+      console.error(error);
+      setEmailValid(false);
+      setErrors((prev) => ({
+        ...prev,
+        email: "Error checking email",
+      }));
+    } finally {
+      setEmailChecking(false);
+    }
+  };
+
+  // Validate each field
+  const validateField = (name, value) => {
+    let newErrors = { ...errors };
+
+    if (name === "uname") {
+      if (!value) {
+        newErrors.uname = "Username is required";
+      } else if (value.length < 8) {
+        newErrors.uname = "Username must be at least 8 characters long";
+      } else {
+        newErrors.uname = ""; // Clear error if valid
+      }
+    }
+
+    if (name === "email") {
+      newErrors.email = value ? "" : "Email is required";
+    }
+
+    if (name === "password") {
+      if (!value) {
+        newErrors.password = "Password is required";
+      } else if (
+        !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+          value
+        )
+      ) {
+        newErrors.password =
+          "Password must be at least 8 characters, contain at least one uppercase letter, one lowercase letter, one number, and one special character";
+      } else {
+        newErrors.password = ""; // Clear error if valid
+      }
+    }
+
+    if (name === "confirmPassword") {
+      if (!value) {
+        newErrors.confirmPassword = "Confirm Password is required";
+      } else if (value === formData.password) {
+        newErrors.confirmPassword = ""; // Clear error if passwords match
+      } else {
+        newErrors.confirmPassword = "Passwords do not match";
+      }
+    }
+
+    setErrors(newErrors);
+    return newErrors;
+  };
+
+  // useEffect to validate fields whenever they change
+  useEffect(() => {
+    const { uname, email, password, confirmPassword } = formData;
+    validateField("uname", uname);
+    validateField("email", email);
+    validateField("password", password);
+    validateField("confirmPassword", confirmPassword);
+  }, [formData]);
+
+  // useEffect to check email existence when email changes
+  useEffect(() => {
+    const email = formData.email;
+    if (email) {
+      if (validateEmailFormat(email)) {
+        checkEmailExists(email); // Call API only if email format is valid
+      } else {
+        setEmailValid(false);
+        setErrors((prev) => ({
+          ...prev,
+          email: "Invalid email format or must be at least 20 characters long",
+        }));
+        setEmailChecking(false); // Stop checking if email is invalid
+      }
+    } else {
+      setEmailValid(false);
+      setErrors((prev) => ({
+        ...prev,
+        email: "Email is required",
+      }));
+      setEmailChecking(false); // Stop checking if email is empty
+    }
+  }, [formData.email]);
+
+  // useEffect to determine if the form is valid
+  useEffect(() => {
+    const isValid = Object.values(errors).every((err) => err === "") && 
+                    emailValid && 
+                    Object.values(formData).every((field) => field !== ""); // Ensure all fields are filled
+    setIsFormValid(isValid);
+  }, [errors, emailValid, formData]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (!isFormValid) {
+      setLoading(false);
+      return;
+    }
+
+    const payload = {
+      username: formData.uname,
+      password: formData.password,
+      email: formData.email,
+      role: { roleName: "Customer" },
     };
 
     try {
-      const response = await fetch('http://localhost:8251/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        const userData = await response.json();
-        
-        // Dispatch the loginSuccess action if you want to automatically log the user in after registration
-        // dispatch(loginSuccess(userData)); // Assuming userData contains the necessary user info (e.g., role, name)
-        
-        console.log('Registration successful:', userData);
-        setregistrationmessage(" Registration successful! You will be navigated to the login page. Please sign in.")
-    
-    
-        setTimeout(() => navigate("/login"), 3000);
-        
-        // Redirect to login after successful registration
-      } else {
-        // Handle error (such as a conflict 409 error)
-        const errorText = await response.json(); // Parse the error message returned from backend
-        console.log('Error:', errorText.message);
-        setErrorMessage(errorText.message);
-      
+      const response = await axios.post(
+        "http://localhost:8251/auth/register",
+        payload
+      );
+      if (response.status === 200) {
+        setRegistrationStatus("success");
+        console.log("registration sucessfully ")
+        setFormData({
+          uname: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+        });
+        setErrors({});
+        setEmailValid(false);
+        setIsFormValid(false);
+        startCountdown();
+        setTimeout(() => navigate('/login'), 10000);
       }
-    } catch (err) {
-      console.error('Registration error:', err);
-      setErrorMessage('An unexpected error occurred during registration.');
+    } catch (error) {
+      console.error("Registration error:", error);
+      setRegistrationStatus("error");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-vh-100 bg-light py-5">
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-md-6">
-            <div className="bg-white rounded shadow-lg p-5">
-              <div className="text-center mb-4">
-                <Shield className="text-primary mb-3" size={48} />
-                <h2 className="h4">User Registration</h2>
-                <p className="text-muted">Join our insurance platform</p>
-              </div>
-             <div>
-              {registrationmessage && (
-            <div className="alert alert-success text-center" role="alert">
- <div style={{ fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", textAlign: 'center', padding: '15px', borderRadius: '5px' }}>
-      {registrationmessage}
-    </div>
-              </div>
-              ) 
-            }   </div>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                {/* Username Field */}
-                {errorMessage && 
-                <div className="alert alert-danger">{errorMessage}</div>}
-                <div className="mb-3">
-                  <label htmlFor="uname" className="form-label">Username</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="uname"
-                    {...register('uname', { required: 'Username is required', minLength: { value: 2, message: 'Username must have at least 2 characters' } })}
-                  />
-                  {errors.uname && <p className="text-danger">{errors.uname.message}</p>}
-                </div>
+    <Container
+      maxWidth="lg"
+      sx={{
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Card sx={{ width: "100%", maxWidth: 600, p: 5, borderRadius: 3 }}>
+        <CardContent>
+         <Box sx={{ textAlign: "center", mb: 4, fontFamily: "Segoe UI" }}>
+                     <Shield sx={{ width: 40, height: 40, color: "primary.main" }} />
+                     <Typography variant="h5" sx={{ mt: 3, fontWeight: "bold", fontFamily: "Segoe UI" }}>
+                       User Registration 
+                     </Typography>
+                   </Box>
 
-                {/* Email Field */}
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label">Email Address</label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="email"
-                    {...register('email', {
-                      required: 'Email is required',
-                      pattern: { value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, message: 'Invalid email address' },
-                    })}
-                  />
-                  {errors.email && <p className="text-danger">{errors.email.message}</p>}
-                </div>
-
-                {/* Password Field */}
-                <div className="mb-3">
-                  <label htmlFor="password" className="form-label">Password</label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    id="password"
-                    {...register('password', {
-                      required: 'Password is required',
-                      pattern: { value: /^[A-Za-z0-9*%$_@.-]{8,12}$/, message: 'Password must be 8-12 characters and include valid symbols' },
-                    })}
-                  />
-                  {errors.password && <p className="text-danger">{errors.password.message}</p>}
-                </div>
-
-                {/* Submit Button */}
-                <button type="submit" className="btn btn-primary w-100">
-                  Register
-                </button>
-              </form>
-
-              <div className="mt-3 text-center">
-                <p>
-                  Already have an account?{' '}
-                  <Link to="/login" className="text-primary">Sign in</Link>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                   {registrationStatus === "success" && (
+            <Alert severity="success">
+              Registration successful!
+              <Typography variant="h6" sx={{ fontFamily: "Segoe UI" }}>
+                You will be redirected to the login page in {seconds} seconds.
+              </Typography>
+            </Alert>
+          )}
+          {registrationStatus === "error" && (
+            <Alert severity="error">Registration failed. Try again.</Alert>
+          )}
+<br/>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Username"
+                  name="uname"
+                  value={formData.uname}
+                  onChange={handleChange}
+                  error={!!errors.uname}
+                  helperText={errors.uname}
+                  sx={{ "& .MuiFormHelperText-root": { color: "red" } }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  error={!!errors.email}
+                  helperText={
+                    errors.email ||
+                    (emailChecking ? "Checking..." : emailValid ? "Email available" : "")
+                  }
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {emailChecking ? (
+                          <CircularProgress size={20} />
+                        ) : emailValid ? (
+                          <CheckIcon color="success" />
+                        ) : null}
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ "& .MuiFormHelperText-root": { color: errors.email ? "red" : emailValid ? "green" : "black" } }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={handleChange}
+                  error={!!errors.password}
+                  helperText={errors.password}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end" onClick={() => setShowPassword(!showPassword)}>
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ "& .MuiFormHelperText-root": { color: "red" } }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  error={!!errors.confirmPassword}
+                  helperText={errors.confirmPassword}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ "& .MuiFormHelperText-root": { color: "red" } }}
+                />
+              </Grid>
+            </Grid>
+            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={loading || !isFormValid || emailChecking || !emailValid} // Disable if loading, form is invalid, email is being checked, or email is not valid
+              >
+                {loading ? "Registering..." : "Register"}
+              </Button>
+            </Box>
+          </form>
+        </CardContent>
+      </Card>
+    </Container>
   );
-}
+};
+
+
+export default RegistrationPage;

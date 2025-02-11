@@ -62,7 +62,7 @@ const CustomerLandingPage = () => {
         <Typography variant="h6" color="error" sx={{ fontFamily: "Segoe UI" }}>
           You're not allowed to access this page without signing in!
         </Typography>
-        <Button variant="contained" color="primary" className="mt-3">Login</Button>
+        {/* <Button variant="contained" color="primary" className="mt-3">Login</Button> */}
       </div>
     );
   }
