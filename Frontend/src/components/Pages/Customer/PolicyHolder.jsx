@@ -536,6 +536,11 @@ console.log(Currentuserid + "current policy holder user id is ")
                     onChange={handleChange}
                     margin="normal"
                     required
+
+                    inputProps={{
+                      min: new Date(new Date().setFullYear(new Date().getFullYear() - 60)).toISOString().split('T')[0],
+                      max: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().split('T')[0]
+                    }}
                     min={minDate.toISOString().split('T')[0]}
                     sx={{ fontFamily: "Segoe UI", mr: 1 }}
                     InputLabelProps={{
@@ -599,6 +604,13 @@ console.log(Currentuserid + "current policy holder user id is ")
                       shrink: true // Shrink the label if there is a value
                   
                     }}
+
+                    inputProps={{
+                      min: new Date(new Date().setFullYear(new Date().getFullYear() - 60)).toISOString().split('T')[0],
+                      max: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().split('T')[0]
+                    }}
+
+
                   />
                   <Button variant="outlined" color="secondary" onClick={() => handleRemoveInsuredMember(index)}>
                     Remove

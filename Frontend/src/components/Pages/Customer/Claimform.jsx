@@ -52,13 +52,6 @@ const ClaimFilingForm = () => {
       newErrors.claimAmount = "";
     }
 
-    if (formData.incidentDescription === "") {
-      newErrors.incidentDescription = "Incident description is required";
-      isValid = false;
-    } else {
-      newErrors.incidentDescription = "";
-    }
-
     if (formData.incidentDate === null) {
       newErrors.incidentDate = "Incident date is required";
       isValid = false;
@@ -70,19 +63,24 @@ const ClaimFilingForm = () => {
       today.setHours(0, 0, 0, 0);
       incidentDate.setHours(0, 0, 0, 0);
       
-      // Calculate the date one month ago
-      const oneMonthAgo = new Date();
-      oneMonthAgo.setMonth(today.getMonth() - 1);
-      
-      // Check if the incident date is more than one month old
-      if (incidentDate < oneMonthAgo) {
-        newErrors.incidentDate = "Incident date should not be more than one month old";
+      // Check if the incident date is in the future
+      if (incidentDate > today) {
+        newErrors.incidentDate = "Incident date should not be in the future";
         isValid = false;
       } else {
-        newErrors.incidentDate = "";
+        // Calculate the date one month ago
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(today.getMonth() - 1);
+        
+        // Check if the incident date is more than one month old
+        if (incidentDate < oneMonthAgo) {
+          newErrors.incidentDate = "Incident date should not be more than one month old";
+          isValid = false;
+        } else {
+          newErrors.incidentDate = "";
+        }
       }
     }
-
     setErrors(newErrors);
     setIsFormValid(isValid);
     return isValid;
