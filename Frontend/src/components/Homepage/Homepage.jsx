@@ -1,44 +1,9 @@
-// import React from 'react';
-// import { useNavigate } from 'react-router-dom';
-
-
-// const Homepage = () => {
-//   const navigate = useNavigate();
-
-
-//   return (
-//     <div className="homepage-container">
-//       <header className="homepage-header">
-//         <div className="header-title">InsureHub</div>
-//         <div className="header-buttons">
-//           <button className="header-button" onClick={() => navigate('/login')}>Login</button>
-//           <button className="header-button" onClick={() => navigate('/register')}>Register</button>
-//         </div>
-//       </header>
-//       <main className="homepage-main">
-//         <section className="welcome-section">
-//           <h1>Welcome to InsuranceHub</h1>
-//           <p>Your one-stop solution for all insurance needs. Secure your future today!</p>
-//           <button className="cta-button">Explore Now</button>
-
-          
-//         </section>s
-
- 
-
-//       </main>
-//     </div>
-//   );
-// };
-
-// export default Homepage;
-
-
 import { AppBar, Toolbar, Typography, Button, Container, Grid, Card, CardContent, Box } from "@mui/material"
 import { Link, useNavigate } from 'react-router-dom';
 import { styled } from "@mui/system"
 import { Shield, Umbrella, Favorite, Group } from "@mui/icons-material"
-import insurerImage from "./insurer.png";
+
+import insurerImage from "./insurer.jpg";
 
 
 
@@ -110,9 +75,11 @@ const Homepage = () => {
         </Container>
       </HeroSection>
 
-      <Container maxWidth="lg" sx={{ my: 8 }}>
+
+
+<Container maxWidth="lg" sx={{ my: 8 }}>
         <Typography variant="h3" component="h2" align="center" gutterBottom>
-          Why Choose InsureHub?
+          Why Choose InsuranceHub?
         </Typography>
         <Grid container spacing={4} sx={{ mt: 4 }}>
           {[
@@ -142,10 +109,23 @@ const Homepage = () => {
                   flexDirection: "column",
                   alignItems: "center",
                   textAlign: "center",
+                  transition: "transform 0.3s, box-shadow 0.3s",
+                  "&:hover": {
+                    transform: "scale(1.05)",
+                    boxShadow: 3,
+                  },
                 }}
               >
                 <CardContent>
-                  <FeatureIcon>{feature.icon}</FeatureIcon>
+                  <FeatureIcon
+                    sx={{
+                      "&:hover": {
+                        color: "secondary.main",
+                      },
+                    }}
+                  >
+                    {feature.icon}
+                  </FeatureIcon>
                   <Typography variant="h5" component="h3" gutterBottom>
                     {feature.title}
                   </Typography>
@@ -159,7 +139,7 @@ const Homepage = () => {
         </Grid>
       </Container>
 
-      <Box sx={{ bgcolor: "grey.100", py: 8 }}>
+      {/* <Box sx={{ bgcolor: "grey.100", py: 8 }}>
         <Container maxWidth="lg">
           <Typography variant="h3" component="h2" align="center" gutterBottom>
             What Our Customers Say
@@ -194,14 +174,63 @@ const Homepage = () => {
             ))}
           </Grid>
         </Container>
-      </Box>
+      </Box> */}
+      <Box sx={{ bgcolor: "grey.100", py: 8 }}>
+  <Container maxWidth="lg">
+    <Typography variant="h3" component="h2" align="center" gutterBottom>
+      What Our Customers Say
+    </Typography>
+    <Grid container spacing={4} sx={{ mt: 4 }}>
+      {[
+        {
+          name: "Abhay D. Tambe",
+          quote: "InsuranceHub made finding the right insurance plan a breeze. Highly recommended!",
+        },
+        {
+          name: "Vaibhav Andure",
+          quote: "The customer service at InsuranceHub is top-notch. They really care about their clients.Best Insurance platfrom",
+        },
+        {
+          name: "Ajinkya Purekar",
+          quote: "I feel secure knowing that InsuranceHub has my back. Great coverage at affordable prices and Easy to manage",
+        },
+      ].map((testimonial, index) => (
+        <Grid item xs={12} md={4} key={index}>
+          <Card
+            elevation={2}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              height: '100%', // Ensures all cards are the same height
+              transition: "transform 0.3s, box-shadow 0.3s",
+              "&:hover": {
+                transform: "scale(1.05)",
+                boxShadow: 4,
+              },
+            }}
+          >
+            <CardContent sx={{ flexGrow: 1 }}>
+              <Typography variant="body1" paragraph>
+                "{testimonial.quote}"
+              </Typography>
+              <Typography variant="subtitle1" color="primary">
+                {testimonial.name}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
+  </Container>
+</Box>
 
       <Box component="footer" sx={{ bgcolor: "grey.900", color: "white", py: 6 }}>
         <Container maxWidth="lg">
           <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
               <Typography variant="h6" gutterBottom>
-                InsureHub
+                InsuranceHub
               </Typography>
               <Typography variant="body2">Securing your future, one policy at a time.</Typography>
             </Grid>
@@ -232,26 +261,38 @@ const Homepage = () => {
                 Connect With Us
               </Typography>
               <Typography variant="body2">
-                <Box component="span" sx={{ display: "block", mb: 1 }}>
-                  <Button color="inherit" sx={{ p: 0 }}>
-                    Facebook
-                  </Button>
-                </Box>
-                <Box component="span" sx={{ display: "block", mb: 1 }}>
-                  <Button color="inherit" sx={{ p: 0 }}>
-                    Twitter
-                  </Button>
-                </Box>
+              
                 <Box component="span" sx={{ display: "block" }}>
+                <a href="https://www.linkedin.com/in/abhay-tambe-39a675251" target="_blank" rel="noopener noreferrer">
+    
                   <Button color="inherit" sx={{ p: 0 }}>
-                    LinkedIn
+                    Abhay Tambe
                   </Button>
+                  </a>
+                </Box>
+
+                <Box component="span" sx={{ display: "block" }}>
+                <a href="https://www.linkedin.com/in/vaibhav-andure-aab4b725b" target="_blank" rel="noopener noreferrer">
+    
+                  <Button color="inherit" sx={{ p: 0 }}>
+                   Vaibhav Andure
+                  </Button>
+                  </a>
+                </Box>
+
+                <Box component="span" sx={{ display: "block" }}>
+                <a href="https://www.linkedin.com/in/ajinkya-purekar-67527b256" target="_blank" rel="noopener noreferrer">
+    
+                  <Button color="inherit" sx={{ p: 0 }}>
+                    Ajinkya Purekar
+                  </Button>
+                  </a>
                 </Box>
               </Typography>
             </Grid>
           </Grid>
           <Typography variant="body2" color="grey.500" align="center" sx={{ mt: 4 }}>
-            © 2025 InsureHub. All rights reserved.
+            © 2025 InsuranceHub. All rights reserved.
           </Typography>
         </Container>
       </Box>
