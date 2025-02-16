@@ -5,6 +5,7 @@ import { Card, CardContent, Typography, Table, TableHead, TableRow, TableCell, T
 import axios from 'axios';
 import { Users, FileText, BarChart3, Shield } from 'lucide-react';
 import InsurerRegistrationForm from '../Insurer/InsurerRegistrationForm';
+import { useSelector } from 'react-redux';
 
 const RupeeSign = () => {
   return <span style={{ fontSize: 30, color: 'green' }}>&#8377;</span>;
@@ -21,7 +22,12 @@ const AdminLandingPage = () => {
   const [error, setError] = useState(null);
   const [selectedPolicyholder, setSelectedPolicyholder] = useState(null); 
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+  const { user  , isAuthenticated} = useSelector((state) => state.auth);
 
+
+  console.log(user)
+
+  const roleName = user?.role;
   const fetchPolicyholders = async () => {
     try {
       const response = await axios.get('http://localhost:8251/insurance/policyholders/getallpolicyholders');
@@ -115,7 +121,44 @@ const AdminLandingPage = () => {
         <Typography variant="h6" color="error">{error}</Typography>
       </div>
     );
+
+
+//role based control for login 
+
+      
+    
   }
+
+
+ if (!isAuthenticated) {
+    return (
+      <div className="d-flex flex-column align-items-center mt-5">
+        <Typography variant="h6" color="error" sx={{ fontFamily: "Segoe UI" }}>
+          You're not allowed to access this page without signing in!
+        </Typography>
+        {/* <Button variant="contained" color="primary" className="mt-3">Login</Button> */}
+      </div>
+    );
+  }
+
+   
+  if (roleName != "Admin" ) {
+    return (
+      <div className="d-flex flex-column align-items-center mt-5">
+        <Typography variant="h6" color="error" sx={{ fontFamily: "Segoe UI" }}>
+          You're not authorize to access this page !!
+        </Typography>
+        {/* <Button variant="contained" color="primary" className="mt-3">Login</Button> */}
+      </div>
+    );
+  }
+
+
+
+
+
+
+
 
   return (
     <div style={{ display: 'flex', height: '100vh', backgroundColor: '#f4f6f8' }}>
@@ -256,7 +299,7 @@ const AdminLandingPage = () => {
                       <TableCell>Policy Name</TableCell>
                       <TableCell>Amount</TableCell>
                       <TableCell>Transaction Date</TableCell>
-                      <TableCell>Earning</TableCell>
+                      <TableCell>Earning </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

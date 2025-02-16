@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { useNavigate } from "react-router-dom";
+
 const TransactionStatus = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,7 +12,7 @@ const TransactionStatus = () => {
   useEffect(() => {
     const fetchTransactionData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8251/insurance/transactions/byuserid/${user?.uid}`);
+        const response = await axios.get(`http://localhost:8251/insurance/transactions/byuserid/${user.uid}`);
         setTransactions(response.data); // Assuming the response is an array of transactions
         setLoading(false);
       } catch (error) {
@@ -20,25 +20,19 @@ const TransactionStatus = () => {
         setLoading(false);
       }
     };
-
     if (user?.uid) {
       fetchTransactionData();
     }
   }, [user]);
-
   if (loading) {
     return <div>Loading...</div>;
   }
-
   if (error) {
     return <div>Error: {error}</div>;
   }
-
   return (
-
 <div>
     
-
     <Table sx={{ fontFamily: "Segoe UI" }}>
       <TableHead>
         <TableRow>
@@ -55,13 +49,7 @@ const TransactionStatus = () => {
             <TableCell>{transactions.transactionId}</TableCell>
             <TableCell>{transactions.policyHolderName}</TableCell>
             <TableCell>{transactions.policyName}</TableCell>
-            <TableCell>
-
-  {"₹" + transactions.amount.toFixed(2)}
-
-</TableCell>
-
-           
+            <TableCell>&#8377; {transactions.amount.toFixed(2)}</TableCell>
             <TableCell>{new Date(transactions.transactionDate).toLocaleString()}</TableCell>
           </TableRow>
     
@@ -69,5 +57,4 @@ const TransactionStatus = () => {
     </Table> </div>
   );
 };
-
 export default TransactionStatus;

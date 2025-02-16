@@ -12,7 +12,7 @@ import InsuranceForm from './components/Pages/Customer/PolicyHolder';
 import InsurerRegistrationForm from "./components/Pages/Insurer/InsurerRegistrationForm"
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import InsurerDashboard from './components/Pages/Insurer/InsurerLandingPage';
-
+import ClaimStatus from './components/Pages/Customer/claimstatus';
 import Homepage from './components/Homepage/Homepage';
 
 
@@ -73,9 +73,9 @@ function App() {
             <Route path="/payment" element={< PaymentGateway />} />
             <Route path="/transaction" element={<TransactionPage/>} />
             <Route path="/registerinsurer" element={<InsurerRegistrationForm />} />
+           
 
-
-
+           
 
           </Routes>
         </main>

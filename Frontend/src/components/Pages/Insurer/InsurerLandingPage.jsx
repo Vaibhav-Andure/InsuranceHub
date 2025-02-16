@@ -190,6 +190,12 @@ const InsurerDashboard = () => {
   const isSmUp = useMediaQuery((theme) => theme.breakpoints.up('sm'));
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
+
+
+
+  const roleName = user?.role
  
   const handleLogout = () => {
     dispatch(logout()); // Dispatch the logout action
@@ -281,6 +287,45 @@ const InsurerDashboard = () => {
   const approvedClaims = Array.isArray(claims) ? claims.filter(c => c.claimStatus === 'Approved') : [];
   const pendingClaims = Array.isArray(claims) ? claims.filter(c => c.claimStatus === 'Pending') : [];
   const rejectedClaims = Array.isArray(claims) ? claims.filter(c => c.claimStatus === 'Rejected') : [];
+
+
+
+
+
+
+  if (!isAuthenticated) {
+    return (
+      <div className="d-flex flex-column align-items-center mt-5">
+        <Typography variant="h6" color="error" sx={{ fontFamily: "Segoe UI" }}>
+          You're not allowed to access this page without signing in!
+        </Typography>
+        {/* <Button variant="contained" color="primary" className="mt-3">Login</Button> */}
+      </div>
+    );
+  }
+
+
+   
+  if (roleName != "Insurer" ) {
+    return (
+      <div className="d-flex flex-column align-items-center mt-5">
+        <Typography variant="h6" color="error" sx={{ fontFamily: "Segoe UI" }}>
+          You're not authorize to access this page !!
+        </Typography>
+        {/* <Button variant="contained" color="primary" className="mt-3">Login</Button> */}
+      </div>
+    );
+  }
+
+
+
+
+
+
+
+
+
+
 
   return (
     <ThemeProvider theme={theme}>

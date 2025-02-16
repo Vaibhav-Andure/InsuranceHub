@@ -19,8 +19,8 @@ public class PolicyDTO {
     private String claimProcess;
     private String status;
     private Date createdDate;
-   private Date modifiedDate;
-private InsurerDTO insurer;  // Add InsurerDTO field
+    private Date modifiedDate;
+    private InsurerDTO insurer;  // Add InsurerDTO field
 
     // Default constructor
     public PolicyDTO() {}
@@ -32,8 +32,8 @@ private InsurerDTO insurer;  // Add InsurerDTO field
                      Date createdDate, Date modifiedDate, InsurerDTO insurer) {
         this.policyId = policyId;
         this.policyNumber = policyNumber;
-  this.policyName = policyName;
-  this.policyTerms = policyTerms;
+        this.policyName = policyName;
+        this.policyTerms = policyTerms;
         this.premiumAmount = premiumAmount;
         this.coverageAmount = coverageAmount;
         this.coverageType = coverageType;
@@ -43,8 +43,8 @@ private InsurerDTO insurer;  // Add InsurerDTO field
         this.renewalTerms = renewalTerms;
         this.claimProcess = claimProcess;
         this.status = status;
-     this.createdDate = createdDate;
-     this.modifiedDate = modifiedDate;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
         this.insurer = insurer;  // Set InsurerDTO
     }
 

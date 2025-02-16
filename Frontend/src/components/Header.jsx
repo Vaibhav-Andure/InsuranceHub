@@ -85,12 +85,12 @@ function Header() {
                     </Link>
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/transactions">
+                    <Link className="dropdown-item" to="/">
                       My Transactions
                     </Link>
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/claims">
+                    <Link className="dropdown-item" to="/">
                       View Claims
                     </Link>
                   </li>

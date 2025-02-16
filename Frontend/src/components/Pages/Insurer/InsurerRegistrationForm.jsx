@@ -24,6 +24,7 @@ import BusinessIcon from '@mui/icons-material/Business';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import axios from 'axios';
 
+
 const InsurerRegistrationForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
     insurerName: "",
@@ -51,6 +52,7 @@ const InsurerRegistrationForm = ({ onClose }) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [registrationStatus, setRegistrationStatus] = useState(null);
   const [timeoutId, setTimeoutId] = useState(null);
+ ;
 
   const validateLicenseNumber = async (licenseNumber) => {
     setLicenseNumberChecking(true);
@@ -58,7 +60,7 @@ const InsurerRegistrationForm = ({ onClose }) => {
     const sanitizedLicenseNumber = encodeURIComponent(licenseNumber);
     try {
 
-   
+      await new Promise((resolve) => setTimeout(resolve, 4000)); // Simulate a delay
       const response = await axios.get(`http://localhost:8251/insurance/license/check-license-number?licenseNumber=${sanitizedLicenseNumber}`);
       
     
@@ -90,6 +92,7 @@ const InsurerRegistrationForm = ({ onClose }) => {
   const validateEmail = async (email) => {
     setEmailChecking(true);
     try {
+      await new Promise((resolve) => setTimeout(resolve, 4000)); // Simulate a delay
       const response = await axios.get(`http://localhost:8251/auth/validate-email?email=${email}`);
       console.log("api hit for email validation ")
       if (response.data) {
@@ -168,7 +171,7 @@ const InsurerRegistrationForm = ({ onClose }) => {
     if (formData.email === "") {
         newErrors.email = "Email is required. Please enter a valid email address.";
         isValid = false;
-      } else if (!/^[a-zA-Z._%+-]+@[a-zA-Z.-]+\.(com|in|io|org|net|edu|gov)$/.test(formData.email.toLowerCase())|| formData.email.length > 30 ) {
+      } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|io|org|net|edu|gov)$/.test(formData.email.toLowerCase())|| formData.email.length < 10 ) {
         newErrors.email = "Invalid email address. Please ensure that your email address is in the correct format (e.g. a@b.com) and that the domain is one of the following: .com, .in, .io, .org, .net, .edu, .gov.";
         isValid = false;
       }else {
@@ -311,6 +314,10 @@ useEffect(() => {
 
     setLoading(false);
   };
+
+
+
+
 
   return (
     <Container maxWidth="lg" sx={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", fontFamily: "Segoe UI" }}>
@@ -501,7 +508,7 @@ useEffect(() => {
                 variant="contained"
                 disableElevation
                 color="primary"
-                disabled={loading || !isFormValid || !emailValid || !licenseNumberValid }
+                disabled={loading || !isFormValid || !emailValid || !licenseNumberValid || emailChecking}
                 sx={{ fontFamily: "Segoe UI" }}
               >
                 {loading ? "Registering..." : "Register"}

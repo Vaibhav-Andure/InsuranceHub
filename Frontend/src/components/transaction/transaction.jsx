@@ -10,6 +10,9 @@ const TransactionPage = () => {
   const [transaction, setTransaction] = useState(null); // State to hold the single transaction
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+   const { isAuthenticated } = useSelector((state) => state.auth);
+
+   const roleName  = user?.role;
 
   useEffect(() => {
     // Fetch transaction data from the API
@@ -91,6 +94,43 @@ const TransactionPage = () => {
     // Save the PDF with the transaction ID and policy holder name as the filename
     doc.save(filename);
   };
+
+
+
+
+  if (!isAuthenticated) {
+    return (
+      <div className="d-flex flex-column align-items-center mt-5">
+        <Typography variant="h6" color="error" sx={{ fontFamily: "Segoe UI" }}>
+          You're not allowed to access this page without signing in!
+        </Typography>
+        {/* <Button variant="contained" color="primary" className="mt-3">Login</Button> */}
+      </div>
+    );
+  }
+
+
+   
+  if (roleName != "Customer" ) {
+    return (
+      <div className="d-flex flex-column align-items-center mt-5">
+        <Typography variant="h6" color="error" sx={{ fontFamily: "Segoe UI" }}>
+          You're not authorize to access this page !!
+        </Typography>
+        {/* <Button variant="contained" color="primary" className="mt-3">Login</Button> */}
+      </div>
+    );
+  }
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div style={{ padding: '20px', textAlign: 'center', marginTop: "10vh" }}>
