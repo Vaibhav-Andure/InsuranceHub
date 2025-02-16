@@ -92,7 +92,7 @@ const PolicyInfo = ({ policy  , comparePolicies}) => {
     }}>
       <Typography variant="h6">Policy Information</Typography>
       <p><strong>Policy Number:</strong> {policy.policyNumber}</p>
-      <p><strong>Coverage Amount:</strong> {policy.coverageAmount}</p>
+      <p><strong>Coverage Amount:</strong> &#8377;{policy.coverageAmount}</p>
       <p><strong>Coverage Type:</strong> {policy.coverageType}</p>
       <p><strong>Waiting Period:</strong> {policy.waitingPeriod} days</p>
       <p><strong>Renewal Terms:</strong> {policy.renewalTerms}</p>
@@ -163,9 +163,9 @@ const PolicyComparison = ({ policies, onRemove }) => {
             }}>
               
               <Typography variant="h6"> <strong> {policy.policyName} </strong></Typography>
-              <p><strong>Base Premium:</strong> {policy.premiumAmount}</p>
+              <p><strong>Base Premium:</strong> &#8377;{policy.premiumAmount}</p>
               <p><strong>Terms:</strong> {policy.policyTerms} years</p>
-              <p><strong>Coverage Amount:</strong> {policy.coverageAmount}</p>
+              <p><strong>Coverage Amount:</strong>&#8377; {policy.coverageAmount}</p>
               <p><strong>Coverage Type:</strong> {policy.coverageType}</p>
               <p><strong>Waiting Period:</strong> {policy.waitingPeriod} days</p>
               <br/>
@@ -405,9 +405,9 @@ const ViewPolicy = () => {
                     marginBottom: '1rem',
                     flex: '1',
                   }}>
-                    <p><strong>Base Premium:</strong> {policy.premiumAmount}</p>
+                    <p><strong>Base Premium:</strong> &#8377;{policy.premiumAmount}</p>
                     <p><strong>Terms:</strong> {policy.policyTerms} years</p>
-                    <p><strong>Coverage Amount:</strong> {policy.coverageAmount}</p>
+                    <p><strong>Coverage Amount:</strong> &#8377;{policy.coverageAmount}</p>
                     <p><strong>Coverage Type:</strong> {policy.coverageType}</p>
                     <p><strong>Waiting Period:</strong> {policy.waitingPeriod} days</p>
                   </div>

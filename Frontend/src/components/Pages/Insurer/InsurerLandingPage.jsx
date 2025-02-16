@@ -473,8 +473,8 @@ const InsurerDashboard = () => {
                             <TableCell>{policy.policyNumber}</TableCell>
                             <TableCell>{policy.policyName}</TableCell>
                             <TableCell>{policy.policyTerms}</TableCell>
-                            <TableCell>${policy.premiumAmount}</TableCell>
-                            <TableCell>${policy.coverageAmount}</TableCell>
+                            <TableCell>&#8377;{policy.premiumAmount}</TableCell>
+                            <TableCell>&#8377;{policy.coverageAmount}</TableCell>
                             <TableCell>{policy.coverageType}</TableCell>
                             <TableCell>
                               <Chip
@@ -582,7 +582,7 @@ const InsurerDashboard = () => {
                           <TableRow key={claim.claimId} hover>
                             <TableCell>{claim.claimId}</TableCell>
                             <TableCell>{claim.claimantName}</TableCell>
-                            <TableCell>${claim.claimAmount}</TableCell>
+                            <TableCell>&#8377;{claim.claimAmount}</TableCell>
                             <TableCell>
                               {new Date(claim.filedDate).toLocaleDateString()}
                             </TableCell>

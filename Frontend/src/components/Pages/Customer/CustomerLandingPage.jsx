@@ -25,6 +25,7 @@ import ClaimStatus from "./claimstatus";
 import TransactionStatus from "./TransactionStatus"; // Import the TransactionStatus component
 import { logout } from '../../../redux/slices/authSlice';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 280;
 
@@ -51,6 +52,7 @@ const reducer = (state, action) => {
 };
 
 const CustomerLandingPage = () => {
+  const navigate = useNavigate();
   const sendlogout = useDispatch();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -118,7 +120,7 @@ const CustomerLandingPage = () => {
           </Box>
           <List>
             <Divider />
-            <ListItem button sx={{ backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }  } onClick={()=> sendlogout(logout())}>
+            <ListItem button sx={{ backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }  } onClick={()=> { sendlogout(logout()) ; navigate('/') }}>
               <ListItemIcon><Logout style={{ color: "white" }} /></ListItemIcon>
               <ListItemText primary="Logout" sx={{ fontFamily: "Segoe UI", color: "white" }} />
             </ListItem>
