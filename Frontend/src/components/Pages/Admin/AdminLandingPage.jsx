@@ -6,6 +6,8 @@ import axios from 'axios';
 import { Users, FileText, BarChart3, Shield } from 'lucide-react';
 import InsurerRegistrationForm from '../Insurer/InsurerRegistrationForm';
 import { useSelector } from 'react-redux';
+import { API_BASE_URL } from '../../../config/api';
+
 
 const RupeeSign = () => {
   return <span style={{ fontSize: 30, color: 'green' }}>&#8377;</span>;
@@ -30,7 +32,7 @@ const AdminLandingPage = () => {
   const roleName = user?.role;
   const fetchPolicyholders = async () => {
     try {
-      const response = await axios.get('http://localhost:8251/insurance/policyholders/getallpolicyholders');
+   const response = await axios.get(`${API_BASE_URL}/insurance/policyholders/getallpolicyholders`);
       setPolicyholders(response.data);
     } catch (err) {
       console.error('Error fetching policyholders:', err);
@@ -40,7 +42,7 @@ const AdminLandingPage = () => {
 
   const fetchTransactions = async () => {
     try {
-      const response = await axios.get('http://localhost:8251/insurance/transactions/getalltransaction');
+    const response = await axios.get(`${API_BASE_URL}/insurance/transactions/getalltransaction`);
       setTransactions(response.data);
     } catch (err) {
       console.error('Error fetching transactions:', err);
@@ -50,7 +52,7 @@ const AdminLandingPage = () => {
 
   const fetchPolicies = async () => {
     try {
-      const response = await axios.get('http://localhost:8251/insurance/policies/getallpolicies');
+    const response = await axios.get(`${API_BASE_URL}/insurance/policies/getallpolicies`);
       setPolicies(response.data);
     } catch (err) {
       console.error('Error fetching policies:', err);
@@ -60,7 +62,7 @@ const AdminLandingPage = () => {
 
   const fetchInsurers = async () => {
     try {
-      const response = await axios.get('http://localhost:8251/insurance/insurers/getallinsurer'); 
+   const response = await axios.get(`${API_BASE_URL}/insurance/insurers/getallinsurer`);
       setInsurers(response.data);
     } catch (err) {
       console.error('Error fetching insurers:', err);
@@ -70,7 +72,7 @@ const AdminLandingPage = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('http://localhost:8251/insurance/transactions/stats');
+      const response = await axios.get(`${API_BASE_URL}/insurance/transactions/stats`);
       setStatsData(response.data);
     } catch (err) {
       console.error('Error fetching stats:', err);

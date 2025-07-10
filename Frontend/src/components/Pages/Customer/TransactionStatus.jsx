@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { API_BASE_URL } from '../../../config/api';
 
 const TransactionStatus = () => {
   const [transactions, setTransactions] = useState([]);
@@ -12,7 +13,7 @@ const TransactionStatus = () => {
   useEffect(() => {
     const fetchTransactionData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8251/insurance/transactions/byuserid/${user.uid}`);
+        const response = await axios.get(`${API_BASE_URL}/insurance/transactions/byuserid/${user.uid}`);
         setTransactions(response.data); // Assuming the response is an array of transactions
         setLoading(false);
       } catch (error) {
@@ -23,7 +24,7 @@ const TransactionStatus = () => {
     if (user?.uid) {
       fetchTransactionData();
     }
-  }, [user]);
+  }, []);
   if (loading) {
     return <div>Loading...</div>;
   }

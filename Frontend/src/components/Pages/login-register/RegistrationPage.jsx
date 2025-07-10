@@ -18,7 +18,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-
+import { API_BASE_URL } from '../../../config/api';
 const RegistrationPage = () => {
    const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -70,11 +70,11 @@ const RegistrationPage = () => {
   // Check if email exists in the database
   const checkEmailExists = async (email) => {
     setEmailChecking(true);
-    await new Promise((resolve) => setTimeout(resolve, 4000)); // Simulate a delay
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate a delay
     try {
-      const response = await axios.get(
-        `http://localhost:8251/auth/validate-email?email=${email}`
-      );
+    const response = await axios.get(
+  `${API_BASE_URL}/auth/validate-email?email=${email}`
+);
       if (response.data) {
         setEmailValid(false);
         setErrors((prev) => ({
@@ -210,10 +210,10 @@ const RegistrationPage = () => {
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:8251/auth/register",
-        payload
-      );
+    const response = await axios.post(
+  `${API_BASE_URL}/auth/register`,
+  payload
+);
       if (response.status === 200) {
         setRegistrationStatus("success");
         console.log("registration sucessfully ")

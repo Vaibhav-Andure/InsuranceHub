@@ -18,6 +18,7 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginSuccess, loginFailure } from '../../../redux/slices/authSlice';
+import { API_BASE_URL } from '../../../config/api';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -33,13 +34,12 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMessage(''); // Clear previous errors
-
+  
     try {
-      const response = await axios.post('http://localhost:8251/auth/login', {
-        email: email,
-        password: password
-      });
-
+  const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+  email,
+  password
+});
       if (response.status === 200) {
         const userData = response.data;
         console.log('Login successful:', userData);

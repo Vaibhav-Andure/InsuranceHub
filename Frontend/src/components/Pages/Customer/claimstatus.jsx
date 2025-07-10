@@ -3,6 +3,7 @@ import { Table, TableHead, TableRow, TableCell, TableBody ,Typography } from '@m
 import { Pending, CheckCircle, Cancel } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { API_BASE_URL } from '../../../config/api';
 
 const ClaimStatus = () => {
   const [claim, setClaim] = useState([]);
@@ -26,7 +27,7 @@ const ClaimStatus = () => {
   useEffect(() => {
     const fetchClaimData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8251/insurance/claims/user/${user?.uid}`);
+        const response = await axios.get(`${API_BASE_URL}/insurance/claims/user/${user?.uid}`);
 
         setClaim(response.data);
         setLoading(false);

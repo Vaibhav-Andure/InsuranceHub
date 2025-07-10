@@ -8,6 +8,8 @@ export default defineConfig({
     loader: 'jsx',  // This tells esbuild to process .js files as JSX
   },
   server: {
-    port: 3025, // Change this to your desired port number
+    host: '0.0.0.0', 
+    port: 3025,  // Change this to your desired port number
+ 
   },
 });

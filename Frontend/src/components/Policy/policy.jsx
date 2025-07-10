@@ -16,6 +16,7 @@ import {
 
 import { useDispatch } from "react-redux";
 import { setPolicy, clearPolicy } from "../../redux/slices/policiesSlice";
+import { API_BASE_URL } from '../../config/api';
 
 const PolicyBenefits = ({ benefits , comparePolicies}) => {
   const splitBenefits = (benefits) => {
@@ -217,14 +218,14 @@ const ViewPolicy = () => {
   }, [sortOption, policies]);
 
   const fetchPolicies = async () => {
-    try {
-      const response = await fetch('http://localhost:8251/insurance/policies/getallpolicies');
-      if (!response.ok) throw new Error('Network response was not ok');
-      const data = await response.json();
-      setPolicies(data);
-    } catch (error) {
-      setError(error.message);
-    }
+   try {
+    const response = await fetch(`${API_BASE_URL}/insurance/policies/getallpolicies`);
+    if (!response.ok) throw new Error('Failed to Fetch policy');
+    const data = await response.json();
+    setPolicies(data);
+  } catch (error) {
+    setError(error.message);
+  }
   };
 
   const handlebuy = (policyID) => {

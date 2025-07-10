@@ -23,7 +23,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import BusinessIcon from '@mui/icons-material/Business';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import axios from 'axios';
-
+import { API_BASE_URL } from '../../../config/api';
 
 const InsurerRegistrationForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
@@ -61,7 +61,9 @@ const InsurerRegistrationForm = ({ onClose }) => {
     try {
 
       await new Promise((resolve) => setTimeout(resolve, 4000)); // Simulate a delay
-      const response = await axios.get(`http://localhost:8251/insurance/license/check-license-number?licenseNumber=${sanitizedLicenseNumber}`);
+     const response = await axios.get(
+  `${API_BASE_URL}/insurance/license/check-license-number?licenseNumber=${sanitizedLicenseNumber}`
+ );
       
     
       if (response.data) {
@@ -93,7 +95,7 @@ const InsurerRegistrationForm = ({ onClose }) => {
     setEmailChecking(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 4000)); // Simulate a delay
-      const response = await axios.get(`http://localhost:8251/auth/validate-email?email=${email}`);
+      const response = await axios.get(`${API_BASE_URL}/auth/validate-email?email=${email}`);
       console.log("api hit for email validation ")
       if (response.data) {
         setEmailValid(false);
@@ -247,7 +249,7 @@ useEffect(() => {
     };
 
 
-    axios.post('http://localhost:8251/insurance/insurers/registerinsurer', payload)
+    axios.post(`${API_BASE_URL}/insurance/insurers/registerinsurer`, payload)
     .then((response) => {
       console.log(response);
       setLoading(false);

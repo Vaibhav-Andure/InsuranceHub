@@ -70,7 +70,7 @@ public class PolicyService {
         // Set the insurer, status, and dates for the policy
         policy.setInsurer(insurer);
 
-        //set to default for now to health insurance 
+        //set to default for now to health insurance
         policy.setPolicyType("Health");
         policy.setStatus("Active");
         policy.setCreatedDate(new Date());

@@ -4,6 +4,7 @@ import { jsPDF } from 'jspdf';
 import { Button, Typography, Paper, CircularProgress, Alert } from '@mui/material'; // Import Material-UI components
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useSelector } from 'react-redux';
+import { API_BASE_URL } from '../../config/api';
 
 const TransactionPage = () => {
   const { user } = useSelector((state) => state.auth);
@@ -24,10 +25,10 @@ const TransactionPage = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:8251/insurance/transactions/byuserid/${user.uid}`); // Replace with your API endpoint
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
+       const response = await fetch(`${API_BASE_URL}/insurance/transactions/byuserid/${user.uid}`);
+   if (!response.ok) {
+  throw new Error('unable to Fetch Transaction for User');
+    }
         const jsonData = await response.json();
         setTransaction(jsonData); // Set the single transaction data
       } catch (error) {

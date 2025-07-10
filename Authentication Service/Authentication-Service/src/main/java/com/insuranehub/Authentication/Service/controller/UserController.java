@@ -18,14 +18,12 @@ import java.util.Optional;
 @RequestMapping("/auth")
 //@CrossOrigin(origins="http://localhost:5173")
 public class UserController {
-
     @Autowired
     private UserService userService;
 
 
 
-
-
+    
     @GetMapping("/validate-email")
     public ResponseEntity<Boolean> validateUserEmail(@RequestParam String email) {
         boolean userExists = userService.userExistsByEmail(email);
@@ -37,8 +35,8 @@ public class UserController {
 
 
 
-
     // User registration endpoint
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
 

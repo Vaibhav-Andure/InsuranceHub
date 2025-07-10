@@ -8,6 +8,7 @@ import CustomizedSwitches from "../switch/custswitch";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Import axios
 import { useSelector } from 'react-redux';
+import { API_BASE_URL } from '../../config/api';
 
 
 const useStyles = makeStyles({
@@ -57,10 +58,16 @@ useEffect(() => {
     const hitTransactionApi = async () => {
       if (paymentSuccess === true) { // Only hit the API if payment is successful
         try {
-          const transactionResponse = await axios.post('http://localhost:8251/insurance/transactions/savetransaction', Apitransactiondata);
-          console.log("api response for payment " + transactionResponse.data);
+         const transactionResponse = await axios.post(
+  `${API_BASE_URL}/insurance/transactions/savetransaction`,
+  Apitransactiondata
+);
 
-          console.log(transactionResponse.ok)
+console.log("api response for payment " + transactionResponse.data);
+
+// axios doesn't use `ok`, use `status` instead
+  console.log(transactionResponse.ok)
+
 
           
         } catch (error) {
@@ -143,10 +150,13 @@ useEffect(() => {
             };
     
             console.log("Payload (stringified):", JSON.stringify(payload)); // Check payload
-    
-            const response = await axios.post('http://localhost:8251/Payment/CheckPayment', payload, {
-                headers: { 'Content-Type': 'application/json' },
-            });
+     const response = await axios.post(
+     `${API_BASE_URL}/Payment/CheckPayment`,
+                    payload,
+        {
+           headers: { 'Content-Type': 'application/json' },
+           }
+            );
     
             console.log("Payment Response:", response.data); // Access data with response.data
     

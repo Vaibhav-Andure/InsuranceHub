@@ -501,8 +501,10 @@ console.log(Currentuserid + "current policy holder user id is ")
                   <TextField
                     select
                     label="Relationship"
+                    placeholder="Select Relationship"
+                    
                     name={`nominees.${index}.relationship`}
-                    value={nominee.relationship}
+                    value={nominee.relationship }
                     onChange={handleChange}
                     margin="normal"
                     required

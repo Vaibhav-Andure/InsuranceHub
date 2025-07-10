@@ -17,6 +17,8 @@ import { Shield } from "lucide-react";
 import LockIcon from '@mui/icons-material/Lock';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { API_BASE_URL } from '../../../config/api';
+
 
 const ClaimFilingForm = () => {
   const { user } = useSelector((state) => state.auth);
@@ -126,7 +128,7 @@ const ClaimFilingForm = () => {
       incidentDate: formData.incidentDate,
     };
 
-    axios.post('http://localhost:8251/insurance/claims/claimpolicy', payload)
+   axios.post(`${API_BASE_URL}/insurance/claims/claimpolicy`, payload)
       .then((response) => {
         console.log(response);
         setLoading(false);

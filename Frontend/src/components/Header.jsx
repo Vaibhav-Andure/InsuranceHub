@@ -47,7 +47,7 @@ function Header() {
         }
         return '/dashboard'; // Default dashboard
       };
-
+const roleName = user?.role;
   return (
     <header className="bg-white shadow-sm py-3">
       <nav className="container d-flex justify-content-between align-items-center">
@@ -77,38 +77,48 @@ function Header() {
                 <User className="me-2" style={{ width: '20px', height: '20px' }} />
                 <span>{user?.username || 'User'}</span>
               </button>
-              {dropdownOpen && (
-                <ul className="dropdown-menu dropdown-menu-end show" style={{ position: 'absolute', right: 0, top: '100%'  }}>
-                  <li>
-                    <Link className="dropdown-item" to="/profile">
-                      Manage Profile
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" to="/">
-                      My Transactions
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" to="/">
-                      View Claims
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" to="/support">
-                      Customer Support
-                    </Link>
-                  </li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
-                  <li>
-                    <button className="dropdown-item text-danger" onClick={handleLogout}>
-                      Logout
-                    </button>
-                  </li>
-                </ul>
-              )}
+             {dropdownOpen && (
+  <ul
+    className="dropdown-menu dropdown-menu-end show"
+    style={{ position: 'absolute', right: 0, top: '100%' }}
+  >
+    {user?.role === 'Customer' && (
+      <>
+        <li>
+          <Link className="dropdown-item" to="/profile">
+            Manage Profile
+          </Link>
+        </li>
+        <li>
+          <Link className="dropdown-item" to="/">
+            My Transactions
+          </Link>
+        </li>
+        <li>
+          <Link className="dropdown-item" to="/">
+            View Claims
+          </Link>
+        </li>
+        <li>
+          <Link className="dropdown-item" to="/support">
+            Customer Support
+          </Link>
+        </li>
+        <li>
+          <hr className="dropdown-divider" />
+        </li>
+      </>
+    )}
+
+    {/* Logout visible to all */}
+    <li>
+      <button className="dropdown-item text-danger" onClick={handleLogout}>
+        Logout
+      </button>
+    </li>
+  </ul>
+)}
+
             </div>
           )}
         </div>

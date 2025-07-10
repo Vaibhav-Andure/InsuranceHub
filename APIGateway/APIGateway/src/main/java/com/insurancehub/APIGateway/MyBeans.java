@@ -73,18 +73,13 @@ public class MyBeans {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3025")); // React app URL
+        config.addAllowedOriginPattern("*"); // ✅ allows requests from any origin (use with caution in production)
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setExposedHeaders(Arrays.asList("Authorization"));
 
-        // Register CORS configuration for specific paths
-        source.registerCorsConfiguration("/auth/**", config);
-        source.registerCorsConfiguration("/insurance/**", config);
-        source.registerCorsConfiguration("/Payment/**", config);
-
-        // Register CORS configuration globally for all paths
         source.registerCorsConfiguration("/**", config);
         return new CorsWebFilter(source);
     }
+
 }
