@@ -35,34 +35,18 @@ public class PolicyController {
 
 
 
-
-
-
-/// policy cache
-    private static ConcurrentHashMap<String, ResponseEntity<List<PolicyDTO>>> cache = new ConcurrentHashMap<>();
-    private static long lastUpdated = 0;
-
-
-
-    @GetMapping("getallpolicies")
+    @GetMapping("/getallpolicies")
     public ResponseEntity<List<PolicyDTO>> getAllPolicies() {
         long startTime = System.currentTimeMillis();
-        if (cache.containsKey("policies") && System.currentTimeMillis() - lastUpdated < 300000) { // 5 minutes
-            logger.info("cache hit for policy ");
-            ResponseEntity<List<PolicyDTO>> response = cache.get("policies");
-            long endTime = System.currentTimeMillis();
-            logger.info("Time taken to send response: " + (endTime - startTime) + " milliseconds");
-            return response;
-        } else {
-            logger.warn("cache miss and updating cache");
-            ResponseEntity<List<PolicyDTO>> response = ResponseEntity.ok(policyService.getAllPolicies());
-            cache.put("policies", response);
-            lastUpdated = System.currentTimeMillis();
-            long endTime = System.currentTimeMillis();
-            logger.info("Time taken to send response: " + (endTime - startTime) + " milliseconds");
-            return response;
-        }
+        List<PolicyDTO> policies = policyService.getAllPolicies();
+        long endTime = System.currentTimeMillis();
+        logger.info("Time taken to send response: " + (endTime - startTime) + " milliseconds");
+        return ResponseEntity.ok(policies);
     }
+
+
+
+
  // ✅ Get all policies by User Id
     @GetMapping("/byinsureruserid/{userId}")
     public ResponseEntity<List<PolicyDTO>> getPoliciesByUserId(@PathVariable int userId) {

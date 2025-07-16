@@ -45,6 +45,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { logout } from '../../../redux/slices/authSlice'
 import { useSelector, useDispatch, } from 'react-redux';
 import { useNavigate } from 'react-router-dom'; 
+import { API_BASE_URL } from '../../../config/api';
 
 
 const theme = createTheme({
@@ -101,7 +102,7 @@ const StatCard = ({ title, value, icon: Icon, onClick, color = "primary" }) => (
   </Paper>
 );
 
-const DRAWER_WIDTH = 280;
+const DRAWER_WIDTH = 350;
 
 const Sidebar = ({ open, onClose, onNavigate, activeTab ,handleLogout}) => {
   const menuItems = [
@@ -116,7 +117,7 @@ const Sidebar = ({ open, onClose, onNavigate, activeTab ,handleLogout}) => {
     <Box sx={{ width: DRAWER_WIDTH }}>
       <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h6" fontWeight="bold" color="primary">
-          InsuranceHub
+        
         </Typography>
         <IconButton onClick={onClose} sx={{ display: { sm: 'none' } }}>
           <ChevronLeft />
@@ -211,7 +212,7 @@ const InsurerDashboard = () => {
   useEffect(() => {
     const fetchInsurerData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8251/insurance/insurers/by-user/${user.uid}`);
+        const response = await axios.get(`${API_BASE_URL}/insurance/insurers/by-user/${user.uid}`);
         setInsurerId(response.data.insurerId);
         setInsurerName(response.data.insurerName);
         setInsurerLicense(response.data.licenseNumber);
@@ -222,7 +223,7 @@ const InsurerDashboard = () => {
 
     const fetchClaims = async () => {
       try {
-        const response = await axios.get(`http://localhost:8251/insurance/claims/by-insurer-user/${user.uid}`);
+        const response = await axios.get(`${API_BASE_URL}/insurance/claims/by-insurer-user/${user.uid}`);
         setClaims(response.data);
       } catch (error) {
         console.error('Error fetching claims:', error);
@@ -231,7 +232,7 @@ const InsurerDashboard = () => {
 
     const fetchPolicies = async () => {
       try {
-        const response = await axios.get(`http://localhost:8251/insurance/policies/byinsureruserid/${user.uid}`);
+       const response = await axios.get(`${API_BASE_URL}/insurance/policies/byinsureruserid/${user.uid}`);
         setInsurerPolicies(response.data);
       } catch (error) {
         console.error('Error fetching policies:', error);
@@ -240,7 +241,7 @@ const InsurerDashboard = () => {
 
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get(`http://localhost:8251/insurance/transactions/byinsureruserid/${user.uid}`);
+        const response = await axios.get(`${API_BASE_URL}/insurance/transactions/byinsureruserid/${user.uid}`);
         setTransactions(response.data);
 
 
@@ -249,7 +250,7 @@ const InsurerDashboard = () => {
         console.error('Error fetching transactions:', error);
       }
     };
-
+setActiveTab('totalCustomers');
     if (userId) {
       fetchInsurerData();
     }
@@ -267,9 +268,9 @@ const InsurerDashboard = () => {
   const handleStatusChange = async (claimId, newStatus) => {
     try {
     
-      await axios.put(`http://localhost:8251/insurance/claims/${claimId}/status`, null, {
-        params: { newStatus }
-      });
+     await axios.put(`${API_BASE_URL}/insurance/claims/${claimId}/status`, null, {
+  params: { newStatus }
+});
   
       const updatedClaims = claims.map(claim =>
         claim.claimId === claimId ? { ...claim, claimStatus: newStatus } : claim
@@ -284,7 +285,7 @@ const InsurerDashboard = () => {
     setDrawerOpen(!drawerOpen);
   };
 
-  const approvedClaims = Array.isArray(claims) ? claims.filter(c => c.claimStatus === 'Approved') : [];
+  const approvedClaims = Array.isArray(claims) ? claims.filter(c => c.claimStatus ==='Approved') : [];
   const pendingClaims = Array.isArray(claims) ? claims.filter(c => c.claimStatus === 'Pending') : [];
   const rejectedClaims = Array.isArray(claims) ? claims.filter(c => c.claimStatus === 'Rejected') : [];
 
@@ -425,12 +426,12 @@ const InsurerDashboard = () => {
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <StatCard
-                  title="Approved Claims"
-                  value={approvedClaims.length}
-                  icon={CheckCircle}
-                  onClick={() => handleTabChange('approved')}
-                  color="success"
-                />
+              title="Approved Claims"
+              value={approvedClaims.length}
+             icon={CheckCircle}
+            onClick={() => handleTabChange('approved')}
+          color="success"
+               />
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <StatCard
@@ -490,6 +491,11 @@ const InsurerDashboard = () => {
                   </TableContainer>
                 </Box>
               )}
+
+
+
+
+
 
               {activeTab === 'totalCustomers' && (
                 <Box>
@@ -555,6 +561,56 @@ const InsurerDashboard = () => {
 
 
 
+               {activeTab === 'approved' && (
+                <Box>
+                  <Box sx={{ p: 3, borderBottom: 1, borderColor: 'grey.200' }}>
+                    <Typography variant="h6" fontWeight="bold">
+                      Approved Claims
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                   Overview of all the Approved Claims 
+                    </Typography>
+                  </Box>
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Claim ID</TableCell>
+                          <TableCell>Claimant</TableCell>
+                          <TableCell>Amount</TableCell>
+                          <TableCell>Filed Date</TableCell>
+                          <TableCell>claimStatus</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {approvedClaims.map((claim) => (
+                          <TableRow key={claim.claimId} hover>
+                            <TableCell>{claim.claimId}</TableCell>
+                            <TableCell>{claim.claimantName}</TableCell>
+                            <TableCell>&#8377;{claim.claimAmount}</TableCell>
+                            <TableCell>
+                              {new Date(claim.filedDate).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              <Chip
+                                label={claim.claimStatus}
+                                color={claim.claimStatus === 'Approved' ? 'success' : 'default'}
+                                size="small"
+                              />
+                            </TableCell>
+                          
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+              )}
+          
+        
+
+
+
 
               {activeTab === 'pending' && (
                 <Box>
@@ -616,6 +672,9 @@ const InsurerDashboard = () => {
             </Paper>
           </Box>
         </Box>
+
+
+        
 
         <Modal
           open={showRegisterPolicyForm}

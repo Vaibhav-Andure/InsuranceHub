@@ -86,94 +86,100 @@ const LoginPage = () => {
   };
 
   return (
-    <Container
-      maxWidth="lg"
-      sx={{
-        height: "80vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        topmargin:"30vh"
-      }}
-    >
-      <Card sx={{ width: "100%", maxWidth: 600, p: 5, borderRadius: 3, fontFamily: "Segoe UI" , minHeight:"70vh"}}>
-        <CardContent>
-          <Box sx={{ textAlign: "center", mb: 4 }}>
-            <Shield sx={{ width: 40, height: 40, color: "primary.main" }} />
-            <Typography variant="h5" sx={{ mt: 3, fontWeight: "bold" }}>
-              Insurance Hub
-            </Typography>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              Secure your future with us
-            </Typography>
-          </Box>
+<Container
+  maxWidth="sm"
+  sx={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "start", // Aligns the card toward the top
+    minHeight: "100vh",
+    pt: 6, // Smaller top padding instead of centering
+    px: 2,
+  }}
+>
+  <Card
+    sx={{
+      width: "100%",
+      maxWidth: 400,
+      borderRadius: 2,
+      p: 3,
+      boxShadow: 3,
+    }}
+  >
+    <CardContent>
+      <Box sx={{ textAlign: "center", mb: 2 }}>
+        <Shield style={{ width: 36, height: 36, color: "#1976d2" }} />
+        <Typography variant="h6" sx={{ mt: 1, fontWeight: "bold" }}>
+          Insurance Hub
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Secure your future with us
+        </Typography>
+      </Box>
 
-          {errorMessage && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {errorMessage}
-            </Alert>
-          )}
+      {errorMessage && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {errorMessage}
+        </Alert>
+      )}
 
-          <form onSubmit={handleLogin}>
-        
-          <br/>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  error={!!errorMessage}
-                  helperText={errorMessage}
-                  sx={{ "& .MuiFormHelperText-root": { color: "red" } }}
-                />
-              </Grid>
-              <br/>
-              <br/>
-              <br/>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  error={!!errorMessage}
-                  helperText={errorMessage}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end" onClick={handleTogglePasswordVisibility}>
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{ "& .MuiFormHelperText-root": { color: "red" } }}
-                />
-              </Grid>
-            </Grid>
-            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={loading}
+      <form onSubmit={handleLogin}>
+        <TextField
+          fullWidth
+          label="Email address"
+          margin="normal"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={!!errorMessage}
+          helperText={errorMessage}
+        />
+        <TextField
+          fullWidth
+          label="Password"
+          type={showPassword ? "text" : "password"}
+          margin="normal"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={!!errorMessage}
+          helperText={errorMessage}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment
+                position="end"
+                onClick={handleTogglePasswordVisibility}
+                sx={{ cursor: "pointer" }}
               >
-                {loading ? "Logging in..." : "Sign In"}
-              </Button>
-            </Box>
-          </form>
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </InputAdornment>
+            ),
+          }}
+        />
 
-          <div sx={{ mt: 3, textAlign: "center" }}>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              Don't have an account?{' '} 
-              <a href="/register" sx={{ color: "primary.main" }}>
-                Register here
-              </a>
-            </Typography>
-          </div>
-        </CardContent>
-      </Card>
-    </Container>
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          sx={{ mt: 2 }}
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Sign In"}
+        </Button>
+      </form>
+
+      <Box sx={{ mt: 2, textAlign: "center" }}>
+        <Typography variant="body2">
+          Don't have an account?{" "}
+          <a href="/register" style={{ color: "#1976d2", textDecoration: "none" }}>
+            Register here
+          </a>
+        </Typography>
+      </Box>
+    </CardContent>
+  </Card>
+</Container>
+
+
+
   );
 };
 

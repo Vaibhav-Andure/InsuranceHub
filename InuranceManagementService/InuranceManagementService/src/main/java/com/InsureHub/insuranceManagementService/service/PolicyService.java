@@ -7,6 +7,8 @@ import com.InsureHub.insuranceManagementService.entities.Policy;
 import com.InsureHub.insuranceManagementService.repository.InsurerRepository;
 import com.InsureHub.insuranceManagementService.repository.PolicyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -26,30 +28,29 @@ public class PolicyService {
     private InsurerRepository insurerRepository;
 
 
-    public List<Policy> getPoliciesByInsurerId(int insurerId) {
-        return policyRepository.findByInsurer_InsurerId(insurerId);
+    // cached using redis for faster response time
+    @Cacheable(value = "policies", key = "'all'")
+    public List<PolicyDTO> getAllPolicies() {
+        List<Policy> policies = policyRepository.findAll();
+        return policies.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
 
 
-//    // ✅ Create new policy
-//    public PolicyDTO createPolicy(Policy policy) {
-    ////        if (policy.getInsurer() == null || policy.getInsurer().getInsurerId() == 0) {
-    ////            throw new IllegalArgumentException("Insurer is required to create a policy.");
-    ////        }
-//
-//        Insurer insurer = insurerRepository.findByUser_UserId(policy.getInsurer().getUser().getUserId());
-//        if (insurer == null) {
-//            throw new IllegalArgumentException("insurer is not available ");
-//        }
-//        policy.setStatus("Active");
-//        policy.setInsurer(insurer);
-//        policy.setCreatedDate(new Date());
-//        policy.setModifiedDate(new Date());
-//        Policy savedPolicy = policyRepository.save(policy);
-//        return convertToDTO(savedPolicy);
-//    }
 
+
+
+
+
+
+
+    public List<Policy> getPoliciesByInsurerId(int insurerId) {
+        return policyRepository.findByInsurer_InsurerId(insurerId);
+    }
+
+    @CacheEvict(value = "policies", key = "'all'")
     public PolicyDTO createPolicy(Policy policy) {
         // Validate that the policy and insurer are not null
         if (policy == null) {
@@ -142,13 +143,8 @@ public class PolicyService {
         return policy.map(this::convertToDTO);
     }
 
-    // ✅ Get all policies
-    public List<PolicyDTO> getAllPolicies() {
-        List<Policy> policies = policyRepository.findAll();
-        return policies.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
+
+
 
     // ✅ Get all policies by User Id
     public List<PolicyDTO> getPoliciesByUserId(int userId) {

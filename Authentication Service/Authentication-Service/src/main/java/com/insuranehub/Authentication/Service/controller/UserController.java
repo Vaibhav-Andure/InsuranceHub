@@ -23,7 +23,7 @@ public class UserController {
 
 
 
-    
+
     @GetMapping("/validate-email")
     public ResponseEntity<Boolean> validateUserEmail(@RequestParam String email) {
         boolean userExists = userService.userExistsByEmail(email);

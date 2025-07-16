@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -12,15 +12,17 @@ import {
   CircularProgress,
   InputAdornment,
 } from "@mui/material";
-import { Shield } from "lucide-react"; // Import Shield from lucide-react
+import { Shield } from "lucide-react";
 import CheckIcon from "@mui/icons-material/Check";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../../../config/api';
+import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../../config/api";
+
 const RegistrationPage = () => {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     uname: "",
     email: "",
@@ -36,45 +38,40 @@ const RegistrationPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
-     const [seconds, setSeconds] = useState(10);
+  const [seconds, setSeconds] = useState(10);
 
-//count for redirection
-     const startCountdown = () => {
-      setSeconds(10);
-      const interval = setInterval(() => {
-          setSeconds((prevSec) => {
-              if (prevSec > 1) return prevSec - 1;
-              clearInterval(interval);
-              retryPayment();
-              return 0;
-          });
-      }, 1000);
+
+
+  const startCountdown = () => {
+    setSeconds(10);
+    const interval = setInterval(() => {
+      setSeconds((prevSec) => {
+        if (prevSec > 1) return prevSec - 1;
+        clearInterval(interval);
+        retryPayment();
+        return 0;
+      });
+    }, 1000);
   };
 
   const retryPayment = () => {
-      setPaymentSuccess(null);
-      setIsSwitchOn(false);
-      setErrors({});
+    setRegistrationStatus(null);
+    setErrors({});
   };
-
-
-
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|io|org|net|edu|gov)$/;
 
-  // Validate email format
   const validateEmailFormat = (email) => {
     return emailRegex.test(email.toLowerCase()) && email.length >= 20;
   };
 
-  // Check if email exists in the database
   const checkEmailExists = async (email) => {
     setEmailChecking(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate a delay
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     try {
-    const response = await axios.get(
-  `${API_BASE_URL}/auth/validate-email?email=${email}`
-);
+      const response = await axios.get(
+        `${API_BASE_URL}/auth/validate-email?email=${email}`
+      );
       if (response.data) {
         setEmailValid(false);
         setErrors((prev) => ({
@@ -85,7 +82,7 @@ const RegistrationPage = () => {
         setEmailValid(true);
         setErrors((prev) => ({
           ...prev,
-          email: "", // Clear error if email is valid
+          email: "",
         }));
       }
     } catch (error) {
@@ -100,75 +97,109 @@ const RegistrationPage = () => {
     }
   };
 
-  // Validate each field
   const validateField = (name, value) => {
     let newErrors = { ...errors };
 
-    if (name === "uname") {
-      if (!value) {
-        newErrors.uname = "Username is required";
-      } else if (value.length < 8) {
-        newErrors.uname = "Username must be at least 8 characters long";
-      } else {
-        newErrors.uname = ""; // Clear error if valid
-      }
-    }
+  if (name === "uname") {
+  const trimmed = value.trim();
+  const noLeadingOrTrailingSpaces = value === trimmed;
+  const notOnlyWhitespace = trimmed.length > 0;
+  //const noInternalSpaces = !/\s/.test(value);
+
+  if (!value) {
+    newErrors.uname = "Username is required";
+  } else if (!notOnlyWhitespace) {
+    newErrors.uname = "Username cannot be only whitespace";
+  } else if (!noLeadingOrTrailingSpaces) {
+    newErrors.uname = "Username cannot start or end with spaces";
+  } //else if (!noInternalSpaces) {
+    //newErrors.uname = "Username cannot contain spaces";}
+   //else if (value.length < 8) {
+    //newErrors.uname = "Username must be at least 8 characters long";}
+
+else {
+    newErrors.uname = ""; // valid
+  }
+}
+
 
     if (name === "email") {
       newErrors.email = value ? "" : "Email is required";
     }
 
-    if (name === "password") {
-      if (!value) {
-        newErrors.password = "Password is required";
-      } else if (
-        !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-          value
-        )
-      ) {
-        newErrors.password =
-          "Password must be at least 8 characters, contain at least one uppercase letter, one lowercase letter, one number, and one special character";
-      } else {
-        newErrors.password = ""; // Clear error if valid
-      }
+   if (name === "password") {
+  const trimmed = value.trim();
+
+  const hasLowercase = /[a-z]/.test(value);
+  const hasUppercase = /[A-Z]/.test(value);
+  const hasNumber = /\d/.test(value);
+  const hasSpecial = /[@$!%*?&]/.test(value);
+  const hasMinLength = value.length >= 8;
+  const noLeadingOrTrailingSpaces = value === trimmed;
+
+  if (!value) {
+    newErrors.password = "Password is required";
+  } else {
+    const missing = [];
+    if (!hasMinLength) missing.push("at least 8 characters");
+    if (!hasLowercase) missing.push("one lowercase letter");
+    if (!hasUppercase) missing.push("one uppercase letter");
+    if (!hasNumber) missing.push("one number");
+    if (!hasSpecial) missing.push("one special character (@$!%*?&)");
+    if (!noLeadingOrTrailingSpaces)
+      missing.push("no leading or trailing spaces");
+
+    if (missing.length > 0) {
+      newErrors.password = `Password must contain ${missing.join(", ")}`;
+    } else {
+      newErrors.password = "";
     }
+  }
+
+
+
+  if (formData.confirmPassword) {
+    if (formData.confirmPassword !== value) {
+      newErrors.confirmPassword = "Passwords do not match";
+    } else {
+      newErrors.confirmPassword = "";
+    }
+  }
+
+}
+
 
     if (name === "confirmPassword") {
       if (!value) {
         newErrors.confirmPassword = "Confirm Password is required";
-      } else if (value === formData.password) {
-        newErrors.confirmPassword = ""; // Clear error if passwords match
-      } else {
+      } else if (value !== formData.password) {
         newErrors.confirmPassword = "Passwords do not match";
+      } else {
+        newErrors.confirmPassword = "";
       }
     }
 
     setErrors(newErrors);
-    return newErrors;
   };
 
-  // useEffect to validate fields whenever they change
-  useEffect(() => {
-    const { uname, email, password, confirmPassword } = formData;
-    validateField("uname", uname);
-    validateField("email", email);
-    validateField("password", password);
-    validateField("confirmPassword", confirmPassword);
-  }, [formData]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    validateField(name, value);
+  };
 
-  // useEffect to check email existence when email changes
   useEffect(() => {
     const email = formData.email;
     if (email) {
       if (validateEmailFormat(email)) {
-        checkEmailExists(email); // Call API only if email format is valid
+        checkEmailExists(email);
       } else {
         setEmailValid(false);
         setErrors((prev) => ({
           ...prev,
           email: "Invalid email format or must be at least 20 characters long",
         }));
-        setEmailChecking(false); // Stop checking if email is invalid
+        setEmailChecking(false);
       }
     } else {
       setEmailValid(false);
@@ -176,22 +207,17 @@ const RegistrationPage = () => {
         ...prev,
         email: "Email is required",
       }));
-      setEmailChecking(false); // Stop checking if email is empty
+      setEmailChecking(false);
     }
   }, [formData.email]);
 
-  // useEffect to determine if the form is valid
   useEffect(() => {
-    const isValid = Object.values(errors).every((err) => err === "") && 
-                    emailValid && 
-                    Object.values(formData).every((field) => field !== ""); // Ensure all fields are filled
+    const isValid =
+      Object.values(errors).every((err) => err === "") &&
+      emailValid &&
+      Object.values(formData).every((field) => field !== "");
     setIsFormValid(isValid);
   }, [errors, emailValid, formData]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -210,24 +236,21 @@ const RegistrationPage = () => {
     };
 
     try {
-    const response = await axios.post(
-  `${API_BASE_URL}/auth/register`,
-  payload
-);
+      const response = await axios.post(`${API_BASE_URL}/auth/register`, payload);
       if (response.status === 200) {
         setRegistrationStatus("success");
-        console.log("registration sucessfully ")
         setFormData({
           uname: "",
           email: "",
           password: "",
           confirmPassword: "",
         });
+
         setErrors({});
         setEmailValid(false);
         setIsFormValid(false);
         startCountdown();
-        setTimeout(() => navigate('/login'), 10000);
+        setTimeout(() => navigate("/login"), 10000);
       }
     } catch (error) {
       console.error("Registration error:", error);
@@ -237,37 +260,43 @@ const RegistrationPage = () => {
     }
   };
 
+  const password = formData.password || "";
+  const passwordChecklist = {
+    length: password.length >= 8,
+    lowercase: /[a-z]/.test(password),
+    uppercase: /[A-Z]/.test(password),
+    number: /\d/.test(password),
+    special: /[@$!%*?&]/.test(password),
+  };
+
   return (
     <Container
       maxWidth="lg"
       sx={{
-        height: "100vh",
+        mt: 5,
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
+        alignItems: "flex-start",
       }}
     >
       <Card sx={{ width: "100%", maxWidth: 600, p: 5, borderRadius: 3 }}>
         <CardContent>
-         <Box sx={{ textAlign: "center", mb: 4, fontFamily: "Segoe UI" }}>
-                     <Shield sx={{ width: 40, height: 40, color: "primary.main" }} />
-                     <Typography variant="h5" sx={{ mt: 3, fontWeight: "bold", fontFamily: "Segoe UI" }}>
-                       User Registration 
-                     </Typography>
-                   </Box>
+          <Box sx={{ textAlign: "center", mb: 4 }}>
+            <Shield style={{ width: 40, height: 40, color: "#1976d2" }} />
+            <Typography variant="h5" sx={{ mt: 3, fontWeight: "bold" }}>
+              User Registration
+            </Typography>
+          </Box>
 
-                   {registrationStatus === "success" && (
+          {registrationStatus === "success" && (
             <Alert severity="success">
-              Registration successful!
-              <Typography variant="h6" sx={{ fontFamily: "Segoe UI" }}>
-                You will be redirected to the login page in {seconds} seconds.
-              </Typography>
+              Registration successful! You will be redirected in {seconds} seconds.
             </Alert>
           )}
           {registrationStatus === "error" && (
             <Alert severity="error">Registration failed. Try again.</Alert>
           )}
-<br/>
+
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
@@ -279,7 +308,6 @@ const RegistrationPage = () => {
                   onChange={handleChange}
                   error={!!errors.uname}
                   helperText={errors.uname}
-                  sx={{ "& .MuiFormHelperText-root": { color: "red" } }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -291,9 +319,27 @@ const RegistrationPage = () => {
                   onChange={handleChange}
                   error={!!errors.email}
                   helperText={
-                    errors.email ||
-                    (emailChecking ? "Checking..." : emailValid ? "Email available" : "")
-                  }
+    <Typography
+      variant="caption"
+      sx={{
+        color: errors.email
+          ? "error.main"
+          : emailChecking
+          ? "primary.main" // blue
+          : emailValid
+          ? "success.main" // green
+          : "text.secondary",
+      }}
+    >
+      {errors.email
+        ? errors.email
+        : emailChecking
+        ? "Checking..."
+        : emailValid
+        ? "Email available"
+        : ""}
+    </Typography>
+  }
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -305,7 +351,6 @@ const RegistrationPage = () => {
                       </InputAdornment>
                     ),
                   }}
-                  sx={{ "& .MuiFormHelperText-root": { color: errors.email ? "red" : emailValid ? "green" : "black" } }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -325,8 +370,26 @@ const RegistrationPage = () => {
                       </InputAdornment>
                     ),
                   }}
-                  sx={{ "& .MuiFormHelperText-root": { color: "red" } }}
                 />
+              </Grid>
+              <Grid item xs={12}>
+                <Box sx={{ mt: 1, ml: 1 }}>
+                  <Typography variant="caption" color={passwordChecklist.length ? "green" : "Red"}>
+                    {passwordChecklist.length ? "✓" : "•"} At least 8 characters
+                  </Typography><br/>
+                  <Typography variant="caption" color={passwordChecklist.lowercase ? "green" : "Red"}>
+                    {passwordChecklist.lowercase ? "✓" : "•"} One lowercase letter
+                  </Typography><br/>
+                  <Typography variant="caption" color={passwordChecklist.uppercase ? "green" : "Red"}>
+                    {passwordChecklist.uppercase ? "✓" : "•"} One uppercase letter
+                  </Typography><br/>
+                  <Typography variant="caption" color={passwordChecklist.number ? "green" : "Red"}>
+                    {passwordChecklist.number ? "✓" : "•"} One number
+                  </Typography><br/>
+                  <Typography variant="caption" color={passwordChecklist.special ? "green" : "Red"}>
+                    {passwordChecklist.special ? "✓" : "•"} One special character (@$!%*?&)
+                  </Typography>
+                </Box>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -345,7 +408,6 @@ const RegistrationPage = () => {
                       </InputAdornment>
                     ),
                   }}
-                  sx={{ "& .MuiFormHelperText-root": { color: "red" } }}
                 />
               </Grid>
             </Grid>
@@ -353,7 +415,7 @@ const RegistrationPage = () => {
               <Button
                 type="submit"
                 variant="contained"
-                disabled={loading || !isFormValid || emailChecking || !emailValid} // Disable if loading, form is invalid, email is being checked, or email is not valid
+                disabled={loading || !isFormValid || emailChecking || !emailValid}
               >
                 {loading ? "Registering..." : "Register"}
               </Button>
@@ -364,6 +426,5 @@ const RegistrationPage = () => {
     </Container>
   );
 };
-
 
 export default RegistrationPage;
