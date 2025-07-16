@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef} from "react";
 import {
   TextField,
   Button,
@@ -39,6 +39,7 @@ const RegistrationPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [seconds, setSeconds] = useState(10);
+const validationTimers = useRef({});
 
 
 
@@ -181,12 +182,19 @@ else {
 
     setErrors(newErrors);
   };
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData((prev) => ({ ...prev, [name]: value }));
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  clearTimeout(validationTimers.current[name]);
+  validationTimers.current[name] = setTimeout(() => {
     validateField(name, value);
-  };
+
+    if (name === "password" && formData.confirmPassword) {
+      validateField("confirmPassword", formData.confirmPassword);
+    }
+  }, 750);
+};
 
   useEffect(() => {
     const email = formData.email;
