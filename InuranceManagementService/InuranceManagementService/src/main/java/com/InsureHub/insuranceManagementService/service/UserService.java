@@ -60,7 +60,31 @@ public class UserService {
         return users;
     }
 
+    // Register a new user
+    public User registerUser(User user) {
+        // Ensure email uniqueness
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            logger.warn("User with email {} already exists.", user.getEmail());
+            return null;
+        }
 
+        // Fetch the role from the Role table
+        Optional<Role> roleOptional = roleRepository.findByRoleName(user.getRole().getRoleName());
+        if (roleOptional.isEmpty()) {
+            logger.error("Role {} not found, cannot register user", user.getRole().getRoleName());
+            return null;
+        }
+
+        // Set the role to the user
+        user.setRole(roleOptional.get());
+
+        // Encrypt password before saving
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User savedUser = userRepository.save(user);
+
+        logger.info("User registered successfully: {}", savedUser.getEmail());
+        return savedUser ;
+    }
 
 
     // Convert User entity to UserDTO

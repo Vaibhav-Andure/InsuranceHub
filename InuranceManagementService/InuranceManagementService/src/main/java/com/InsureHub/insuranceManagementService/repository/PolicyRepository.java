@@ -13,8 +13,8 @@ import java.util.Optional;
 public interface PolicyRepository extends JpaRepository<Policy, Integer> {
     // Additional custom queries can be defined here
     Policy findByPolicyNumber(String policyNumber);
-
-
+   // for llm context
+    List<Policy> findTop5ByPolicyNameContainingIgnoreCaseOrBenefitsContainingIgnoreCase(String name, String benefits);
 
     // Using derived query method
     List<Policy> findByInsurer_InsurerId(int insurerId);

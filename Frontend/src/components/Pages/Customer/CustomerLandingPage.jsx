@@ -26,7 +26,7 @@ import TransactionStatus from "./TransactionStatus"; // Import the TransactionSt
 import { logout } from '../../../redux/slices/authSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
+import ChatBotWidget  from "./ChatBotWidget";
 const drawerWidth = 280;
 
 const initialState = {
@@ -191,6 +191,7 @@ const CustomerLandingPage = () => {
             </Grid>
           )}
         </Grid>
+        <ChatBotWidget />
       </Box>
     </Box>
   );

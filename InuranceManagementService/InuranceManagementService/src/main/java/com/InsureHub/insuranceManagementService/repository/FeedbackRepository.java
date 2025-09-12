@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface FeedbackRepository extends MongoRepository<Feedback, Integer> {
     List<Feedback> findByTransactionId(String transactionId);
+    List<Feedback> findTop5ByOrderByCreatedAtDesc();
 }
