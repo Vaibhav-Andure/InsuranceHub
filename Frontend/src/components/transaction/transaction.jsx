@@ -1,180 +1,182 @@
 // src/TransactionPage.js
 import React, { useEffect, useState } from 'react';
 import { jsPDF } from 'jspdf';
-import { Button, Typography, Paper, CircularProgress, Alert } from '@mui/material'; // Import Material-UI components
+import { Button, Typography, Paper, CircularProgress, Alert, TextField, Rating, Box } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import { useSelector } from 'react-redux';
 import { API_BASE_URL } from '../../config/api';
 
 const TransactionPage = () => {
-  const { user } = useSelector((state) => state.auth);
-  const [transaction, setTransaction] = useState(null); // State to hold the single transaction
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
-   const { isAuthenticated } = useSelector((state) => state.auth);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const [transaction, setTransaction] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-   const roleName  = user?.role;
+  // Feedback states
+  const [feedbackText, setFeedbackText] = useState('');
+  const [feedbackRating, setFeedbackRating] = useState(null);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
+  const MAX_WORDS = 300;
+  const roleName = user?.role;
 
   useEffect(() => {
-    // Fetch transaction data from the API
     const fetchTransaction = async () => {
       if (!user?.uid) {
-        setError('User  ID is not available.');
+        setError('User ID is not available.');
         setLoading(false);
         return;
       }
-
       try {
-       const response = await fetch(`${API_BASE_URL}/insurance/transactions/byuserid/${user.uid}`);
-   if (!response.ok) {
-  throw new Error('unable to Fetch Transaction for User');
-    }
+        const response = await fetch(`${API_BASE_URL}/insurance/transactions/byuserid/${user.uid}`);
+        if (!response.ok) throw new Error('Unable to fetch transaction for user');
         const jsonData = await response.json();
-        setTransaction(jsonData); // Set the single transaction data
-      } catch (error) {
-        console.error('Error fetching transaction:', error);
+        setTransaction(jsonData);
+      } catch (err) {
+        console.error('Error fetching transaction:', err);
         setError('Failed to fetch transaction data.');
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false);
       }
     };
-
     fetchTransaction();
-  }, [user]); // Dependency on user
+  }, [user]);
 
   const generatePDF = () => {
-    if (!transaction) {
-      console.error('No transaction available to generate PDF');
-      return;
-    }
-
+    if (!transaction) return;
     const doc = new jsPDF();
-
-    // Centered title
     doc.setFontSize(16);
     const title = 'InsuranceHub';
-    const titleWidth = doc.getTextWidth(title);
-    doc.text(title, (doc.internal.pageSize.getWidth() - titleWidth) / 2, 70);
-
-    // Centered subtitle
+    doc.text(title, doc.internal.pageSize.getWidth() / 2, 70, { align: 'center' });
     doc.setFontSize(12);
-    const subtitle = 'Transaction Invoice';
-    const subtitleWidth = doc.getTextWidth(subtitle);
-    doc.text(subtitle, (doc.internal.pageSize.getWidth() - subtitleWidth) / 2, 80);
+    doc.text('Transaction Invoice', doc.internal.pageSize.getWidth() / 2, 80, { align: 'center' });
 
-    // Centered informational text
-    doc.setFontSize(10);
     let y = 120;
+    doc.setFontSize(10);
+    const details = [
+      `Transaction ID: ${transaction.transactionId}`,
+      `Policy Holder Name: ${transaction.policyHolderName}`,
+      `Policy Name: ${transaction.policyName}`,
+      `Amount: ₹ ${transaction.amount.toFixed(2)}`,
+      `Transaction Date: ${new Date(transaction.transactionDate).toLocaleString()}`
+    ];
+    details.forEach(text => {
+      doc.text(text, doc.internal.pageSize.getWidth() / 2, y, { align: 'center' });
+      y += 10;
+    });
 
-    // Add transaction details to the PDF
-    const transactionIdText = `Transaction ID: ${transaction.transactionId}`;
-    const policyHolderNameText = `Policy Holder Name: ${transaction.policyHolderName}`;
-    const policyNameText = `Policy Name: ${transaction.policyName}`;
-    const transactionDateText = `Transaction Date: ${new Date(transaction.transactionDate).toLocaleString()}`;
-
-    // Center-align transaction details
-    doc.text(transactionIdText, (doc.internal.pageSize.getWidth() - doc.getTextWidth(transactionIdText)) / 2, y);
-    y += 10;
-    doc.text(policyHolderNameText, (doc.internal.pageSize.getWidth() - doc.getTextWidth(policyHolderNameText)) / 2, y);
-    y += 10;
-    doc.text(policyNameText, (doc.internal.pageSize.getWidth() - doc.getTextWidth(policyNameText)) / 2, y);
-    y += 10;
-    doc.text(`Amount: ₹ ${transaction.amount}`, (doc.internal.pageSize.getWidth() - doc.getTextWidth(`Amount: ₹${transaction.amount}`)) / 2, y);
-    y += 10;
-    doc.text(transactionDateText, (doc.internal.pageSize.getWidth() - doc.getTextWidth(transactionDateText )) / 2, y);
-    y += 20;
-
-    // Centered thank you message
-    const thankYouText = 'Thank you for choosing Insure Hub!';
-    doc.text(thankYouText, (doc.internal.pageSize.getWidth() - doc.getTextWidth(thankYouText)) / 2, y);
-
-    // Create a sanitized filename
-    const sanitizedPolicyHolderName = transaction.policyHolderName.replace(/[<>:"/\\|?*]/g, ''); // Remove invalid characters
-    const filename = `${transaction.transactionId}_${sanitizedPolicyHolderName}.pdf`;
-
-    // Save the PDF with the transaction ID and policy holder name as the filename
-    doc.save(filename);
+    doc.text('Thank you for choosing Insure Hub!', doc.internal.pageSize.getWidth() / 2, y + 20, { align: 'center' });
+    const sanitizedName = transaction.policyHolderName.replace(/[<>:"/\\|?*]/g, '');
+    doc.save(`${transaction.transactionId}_${sanitizedName}.pdf`);
   };
 
+  const handleFeedbackSubmit = async () => {
+    if (!feedbackText || !feedbackRating) return;
 
+    try {
+      const response = await fetch(`${API_BASE_URL}/insurance/feedback/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.uid,
+          transactionId: transaction.transactionId,
+          rating: feedbackRating,
+          comments: feedbackText
+        })
+      });
+      if (!response.ok) throw new Error('Failed to submit feedback');
+      setFeedbackSubmitted(true);
+    } catch (err) {
+      console.error(err);
+      alert('Error submitting feedback');
+    }
+  };
 
+  const wordCount = feedbackText.trim().split(/\s+/).filter(Boolean).length;
+  const isExceeded = wordCount > MAX_WORDS;
 
   if (!isAuthenticated) {
     return (
-      <div className="d-flex flex-column align-items-center mt-5">
-        <Typography variant="h6" color="error" sx={{ fontFamily: "Segoe UI" }}>
-          You're not allowed to access this page without signing in!
-        </Typography>
-        {/* <Button variant="contained" color="primary" className="mt-3">Login</Button> */}
-      </div>
+      <Box sx={{ mt: 5, textAlign: 'center', fontFamily: 'Segoe UI' }}>
+        <Typography variant="h6" color="error">You're not allowed to access this page without signing in!</Typography>
+      </Box>
     );
   }
 
-
-   
-  if (roleName != "Customer" ) {
+  if (roleName !== 'Customer') {
     return (
-      <div className="d-flex flex-column align-items-center mt-5">
-        <Typography variant="h6" color="error" sx={{ fontFamily: "Segoe UI" }}>
-          You're not authorize to access this page !!
-        </Typography>
-        {/* <Button variant="contained" color="primary" className="mt-3">Login</Button> */}
-      </div>
+      <Box sx={{ mt: 5, textAlign: 'center', fontFamily: 'Segoe UI' }}>
+        <Typography variant="h6" color="error">You're not authorized to access this page!</Typography>
+      </Box>
     );
   }
-
-
-
-
-
-
-
-
-
-
 
   return (
-    <div style={{ padding: '20px', textAlign: 'center', marginTop: "10vh" }}>
-      
-
-      {loading && <CircularProgress />} {/* Loading indicator */}
-      {error && <Alert severity="error">{error}</Alert>} {/* Error message */}
-
+    <Box sx={{ padding: '20px', marginTop: '10vh', textAlign: 'center', fontFamily: 'Segoe UI' }}>
+      {loading && <CircularProgress />}
+      {error && <Alert severity="error">{error}</Alert>}
       {transaction && (
-
-        
-        <Paper elevation={3} style={{ padding: '20px', margin: '20px auto', maxWidth: '600px' }}>
-
-
-<Typography variant="h4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <CheckCircleIcon style={{ color: 'green', marginRight: '8px' }} /> {/* Green check icon */}
-        Transaction Successful
-      </Typography>
-
-
-      <br/>
-          <Typography variant="h6">Transaction Preview:</Typography>
-          <div>
+        <Paper elevation={3} sx={{ padding: '20px', margin: '20px auto', maxWidth: 600 }}>
+          <Typography variant="h4" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <CheckCircleIcon sx={{ color: 'green', mr: 1 }} /> Transaction Successful
+          </Typography>
+          <Box sx={{ mt: 2, mb: 2 }}>
+            <Typography variant="h6">Transaction Preview:</Typography>
             <Typography><strong>Transaction ID:</strong> {transaction.transactionId}</Typography>
             <Typography><strong>Policy Holder Name:</strong> {transaction.policyHolderName}</Typography>
             <Typography><strong>Policy Name:</strong> {transaction.policyName}</Typography>
             <Typography><strong>Amount:</strong> ₹ {transaction.amount.toFixed(2)}</Typography>
             <Typography><strong>Transaction Date:</strong> {new Date(transaction.transactionDate).toLocaleString()}</Typography>
-          </div>
-          <Button 
-            variant="outlined" 
-            color="primary" 
-            onClick={generatePDF} 
-            style={{ marginTop: '20px' }}
-          >
+          </Box>
+          <Button variant="outlined" color="primary" onClick={generatePDF} sx={{ mt: 1, mb: 2 }}>
             Download PDF
           </Button>
 
-          <br />
-          <Typography variant="h6">Thank you for choosing Insure Hub</Typography>
+          {/* Feedback Section */}
+          <Box sx={{ mt: 4, textAlign: 'center' }}>
+            {!feedbackSubmitted ? (
+              <>
+                <Typography variant="h6">Submit Your Feedback</Typography>
+                <Rating
+                  name="feedback-rating"
+                  value={feedbackRating}
+                  onChange={(e, newValue) => setFeedbackRating(newValue)}
+                  size="large"
+                />
+                <TextField
+                  label="Your Feedback"
+                  multiline
+                  rows={4}
+                  fullWidth
+                  value={feedbackText}
+                  onChange={(e) => setFeedbackText(e.target.value)}
+                  sx={{ mt: 2 }}
+                  placeholder="Share your experience..."
+                />
+                <Typography sx={{ mt: 1, color: isExceeded ? 'red' : 'textSecondary' }}>
+                  {wordCount}/{MAX_WORDS} words
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 2 }}
+                  disabled={isExceeded || !feedbackRating || !feedbackText.trim()}
+                  onClick={handleFeedbackSubmit}
+                >
+                  Submit Feedback
+                </Button>
+              </>
+            ) : (
+              <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <SentimentSatisfiedAltIcon sx={{ fontSize: 80, color: 'green', mb: 1 }} />
+                <Typography variant="h6">Thank you for submitting your feedback!</Typography>
+              </Box>
+            )}
+          </Box>
         </Paper>
       )}
-    </div>
+    </Box>
   );
 };
 

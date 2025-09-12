@@ -39,13 +39,6 @@ public class PolicyService {
 
 
 
-
-
-
-
-
-
-
     public List<Policy> getPoliciesByInsurerId(int insurerId) {
         return policyRepository.findByInsurer_InsurerId(insurerId);
     }
@@ -162,14 +155,6 @@ public class PolicyService {
 
 
 
-//    // ✅ Delete policy by ID
-//    public boolean deletePolicy(int id) {
-//        if (!policyRepository.existsById(id)) {
-//            return false;  // Policy not found
-//        }
-//        policyRepository.deleteById(id);
-//        return true;  // Successfully deleted
-//    }
 
     // 🔹 Convert Policy Entity to PolicyDTO
     private PolicyDTO convertToDTO(Policy policy) {

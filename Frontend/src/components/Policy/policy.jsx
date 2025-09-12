@@ -147,7 +147,7 @@ const PolicyComparison = ({ policies, onRemove }) => {
 </Typography>
 
     
-      <br/>
+      
       <Grid container spacing={2}>
         {policies.map(policy => (
           <Grid item key={policy.policyId} xs={12}>
@@ -169,8 +169,7 @@ const PolicyComparison = ({ policies, onRemove }) => {
               <p><strong>Coverage Amount:</strong>&#8377; {policy.coverageAmount}</p>
               <p><strong>Coverage Type:</strong> {policy.coverageType}</p>
               <p><strong>Waiting Period:</strong> {policy.waitingPeriod} days</p>
-              <br/>
-              <br/>
+              
 
 
               <Button 

@@ -27,6 +27,7 @@
     "cra-template": "1.2.0",
     "formik": "^2.4.6",
     "jspdf": "^2.5.2",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.469.0",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.7",

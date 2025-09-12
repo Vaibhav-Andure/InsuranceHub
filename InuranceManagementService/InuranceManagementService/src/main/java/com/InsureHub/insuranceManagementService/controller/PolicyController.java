@@ -87,10 +87,5 @@ public class PolicyController {
         return ResponseEntity.ok(policyService.updatePolicy(id, policy));
     }
 
-//    // Delete a policy
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<String> deletePolicy(@PathVariable int id) {
-//        policyService.deletePolicy(id);
-//        return ResponseEntity.ok("Policy deleted successfully.");
-//    }
+
 }

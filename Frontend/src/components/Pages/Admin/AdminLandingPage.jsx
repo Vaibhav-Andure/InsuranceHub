@@ -13,6 +13,29 @@ const RupeeSign = () => {
   return <span style={{ fontSize: 30, color: 'green' }}>&#8377;</span>;
 };
 
+
+
+
+const formatINR = (value) => {
+  if (!value) return '₹0.00';
+  const number = Number(value); // convert to number just in case
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(number);
+};
+
+
+
+
+
+
+
+
+
+
 const AdminLandingPage = () => {
   const [policyholders, setPolicyholders] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -22,6 +45,8 @@ const AdminLandingPage = () => {
   const [activeView, setActiveView] = useState('transactions'); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [feedbacks, setFeedbacks] = useState([]);
+
   const [selectedPolicyholder, setSelectedPolicyholder] = useState(null); 
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const { user  , isAuthenticated} = useSelector((state) => state.auth);
@@ -74,36 +99,55 @@ const AdminLandingPage = () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/insurance/transactions/stats`);
       setStatsData(response.data);
+      console.log(response.data)
     } catch (err) {
       console.error('Error fetching stats:', err);
       setError('Failed to fetch stats');
     }
   };
 
-  useEffect(() => {
-    fetchTransactions(); 
-    fetchPolicyholders(); 
-    fetchStats(); 
-    fetchInsurers(); 
-    setLoading(false);
-  }, []);
+  const fetchFeedbacks = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/insurance/feedback/all`);
+    setFeedbacks(response.data);
+  } catch (err) {
+    console.error('Error fetching feedbacks:', err);
+    setError('Failed to fetch feedbacks');
+  }
+};
+
+useEffect(() => {
+
+   fetchStats(); 
+   fetchFeedbacks();
+  fetchTransactions(); 
+  fetchPolicyholders(); 
+ 
+  fetchInsurers(); 
+    // <-- Add this
+  setLoading(false);
+}, []);
 
   const handlePolicyholderClick = (holder) => {
     setSelectedPolicyholder(holder);
   };
 
   const handleViewChange = (view) => {
-    setActiveView(view);
-    if (view === 'policyholders') {
-      fetchPolicyholders(); 
-    } else if (view === 'Policies') {
-      fetchPolicies(); 
-    } else if (view === 'Insurers') {
-      fetchInsurers(); 
-    } else if (view === 'transactions') {
-      fetchTransactions(); 
-    }
-  };
+  setActiveView(view);
+
+  if (view === 'policyholders') {
+    fetchPolicyholders();
+  } else if (view === 'Policies') {
+    fetchPolicies();
+  } else if (view === 'Insurers') {
+    fetchInsurers();
+  } else if (view === 'transactions') {
+    fetchTransactions();
+  } else if (view === 'feedbacks') {
+    fetchFeedbacks(); // Fetch feedbacks when the Feedback card is clicked
+  }
+};
+
 
   const handleAddInsurer = () => {
     setShowRegistrationForm(true);
@@ -117,19 +161,19 @@ const AdminLandingPage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <Typography variant="h6" color="error">{error}</Typography>
-      </div>
-    );
+  // if (error) {
+  //   return (
+  //     <div style={{ textAlign: 'center', marginTop: '20px' }}>
+  //       <Typography variant="h6" color="error">{error}</Typography>
+  //     </div>
+  //   );
 
 
 //role based control for login 
 
       
     
-  }
+  // }
 
 
  if (!isAuthenticated) {
@@ -174,7 +218,7 @@ const AdminLandingPage = () => {
               <Users size={32} color="green" />
               <Typography variant="h6">Total Customers</Typography>
               <Typography variant="h5">{statsData.totalCustomers || '0'}</Typography>
-              <Typography style={{ color: 'green' }}>{statsData.change || '+'}0%</Typography>
+            
             </CardContent>
           </Card>
           <Card onClick={() => handleViewChange('Policies')} style={{ cursor: 'pointer' }}>
@@ -182,15 +226,18 @@ const AdminLandingPage = () => {
               <FileText size={32} color="green" />
               <Typography variant="h6">Active Policies</Typography>
               <Typography variant="h5">{statsData.activePolicies || '0'}</Typography>
-              <Typography style={{ color: 'green' }}>{statsData.change || '+'}0%</Typography>
+        
             </CardContent>
           </Card>
           <Card onClick={() => handleViewChange('transactions')} style={{ cursor: 'pointer' }}>
             <CardContent style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <RupeeSign />
               <Typography variant="h6">Revenue</Typography>
-              <Typography variant="h5">{statsData.totalAmount || '$0'}</Typography>
-              <Typography style={{ color: 'green' }}>{statsData.change || '+'}0%</Typography>
+
+<Typography variant="h5">
+{formatINR(statsData.totalAmount)}
+</Typography>
+             
             </CardContent>
           </Card>
           <Card onClick={() => handleViewChange('transactions')} style={{ cursor: 'pointer' }}>
@@ -198,7 +245,7 @@ const AdminLandingPage = () => {
               <BarChart3 size={32} color="green" />
               <Typography variant="h6">Profit</Typography>
               <Typography variant="h5">{(statsData.totalAmount * 0.075).toFixed(2) || '0'}</Typography>
-              <Typography style={{ color: 'green' }}>{statsData.change || '+'}0%</Typography>
+            
             </CardContent>
           </Card>
           <Card onClick={() => handleViewChange('Insurers')} style={{ cursor: 'pointer' }}>
@@ -208,6 +255,15 @@ const AdminLandingPage = () => {
               <Typography variant="h5">{insurers.length || '0'}</Typography>
             </CardContent>
           </Card>
+
+          <Card onClick={() => handleViewChange('feedbacks')} style={{ cursor: 'pointer' }}>
+        <CardContent style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+     <BarChart3 size={32} color="green" /> {/* You can replace with a feedback icon if you want */}
+       <Typography variant="h6">Feedbacks</Typography>
+      <Typography variant="h5">{feedbacks.length || '0'}</Typography>
+      </CardContent>
+       </Card>
+
         </div>
 
         {activeView === 'policyholders' && (
@@ -375,6 +431,51 @@ const AdminLandingPage = () => {
             )}
           </div>
         )}
+
+       {activeView === 'feedbacks' && (
+  <Card>
+    <CardContent>
+      <Typography variant="h6" gutterBottom>All Feedbacks</Typography>
+      {feedbacks.length > 0 ? (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Feedback ID</TableCell>
+                <TableCell>User ID</TableCell>
+                <TableCell>Username</TableCell>
+                <TableCell>Rating</TableCell>
+                <TableCell>Comments</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {feedbacks.map((fb) => (
+                <TableRow key={fb.id}>
+                  <TableCell>{fb.id}</TableCell>
+                  <TableCell>{fb.userId}</TableCell>
+                  <TableCell>{fb.username}</TableCell>
+                  <TableCell>
+                    {Array.from({ length: fb.rating }).map((_, i) => (
+                      <span key={i} style={{ color: 'gold', fontSize: '18px' }}>★</span>
+                    ))}
+                    {Array.from({ length: 5 - fb.rating }).map((_, i) => (
+                      <span key={i} style={{ color: '#ccc', fontSize: '18px' }}>★</span>
+                    ))}
+                  </TableCell>
+                  <TableCell>{fb.comments}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <Typography>No feedbacks found.</Typography>
+      )}
+    </CardContent>
+  </Card>
+)}
+
+
 
         {/* Details Section for Selected Policyholder */}
         {selectedPolicyholder && (

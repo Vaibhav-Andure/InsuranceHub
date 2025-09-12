@@ -100,12 +100,7 @@ public class UserController {
         }
     }
 
-    // Get all users
-    @GetMapping("/getallusers")
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
+
 
     // Update user
     @PutMapping("/{userId}")
@@ -119,10 +114,4 @@ public class UserController {
         }
     }
 
-    // Delete user
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable int userId) {
-        userService.deleteUser(userId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
 }

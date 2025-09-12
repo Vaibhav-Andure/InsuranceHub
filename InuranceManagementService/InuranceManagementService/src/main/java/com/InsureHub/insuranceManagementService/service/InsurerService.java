@@ -84,14 +84,7 @@ logger.info("saved user with insuree is " ,  insureruser);
                 .collect(Collectors.toList());
     }
 
-    // ✅ Delete insurer by ID
-    public boolean deleteInsurer(int id) {
-        if (!insurerRepository.existsById(id)) {
-            return false;  // Insurer not found
-        }
-        insurerRepository.deleteById(id);
-        return true;  // Deleted successfully
-    }
+
     
 
     private InsurerDTO convertToDTO(Insurer insurer) {

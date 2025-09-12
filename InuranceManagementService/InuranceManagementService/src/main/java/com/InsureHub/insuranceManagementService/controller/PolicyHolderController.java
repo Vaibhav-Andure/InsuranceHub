@@ -59,14 +59,5 @@ public class PolicyHolderController {
         return new ResponseEntity<>(policyHolders, HttpStatus.OK);
     }
 
-    // Delete policyholder by ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePolicyHolder(@PathVariable int id) {
-        boolean isDeleted = policyHolderService.deletePolicyHolder(id);
-        if (isDeleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+
 }

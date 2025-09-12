@@ -23,7 +23,7 @@ public class MyBeans {
 
     // Define RateLimiters
     private final RateLimiter authRateLimiter = createRateLimiter("authService", 10, Duration.ofSeconds(2));
-    private final RateLimiter insuranceRateLimiter = createRateLimiter("insuranceService", 10, Duration.ofSeconds(1));
+    private final RateLimiter insuranceRateLimiter = createRateLimiter("insuranceService", 10, Duration.ofSeconds(2));
     private final RateLimiter paymentRateLimiter = createRateLimiter("paymentService", 10, Duration.ofSeconds(1));
 
     @Bean

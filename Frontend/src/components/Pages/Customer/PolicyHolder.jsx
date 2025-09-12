@@ -95,7 +95,10 @@ console.log(Currentuserid + "current policy holder user id is ")
       return "Invalid Phone Number. Please enter 10 digits.";
     } else if (value.length === 10 && !phoneRegex.test(value)) {
       return "Invalid Phone Number. Please enter only numbers.";
-    } else {
+    } else if (value.length < 10) {
+      return "Invalid Phone Number. Please enter 10 digits phone number .";
+    } 
+    else {
       return "";
     }
   };
@@ -479,7 +482,7 @@ console.log(Currentuserid + "current policy holder user id is ")
       pattern: "[0-9]*", // Allow only numbers
     }}
   />
-</Grid>
+             </Grid>
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -492,7 +495,7 @@ console.log(Currentuserid + "current policy holder user id is ")
                   sx={{ fontFamily: "Segoe UI" }}
                 />
               </Grid>
-            </Grid>
+             </Grid>
 
             <Box sx={{ mt: 2 }}>
               <Typography variant="h6">Nominees</Typography>

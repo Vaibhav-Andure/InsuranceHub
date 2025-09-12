@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/insurance/transactions")
-//@CrossOrigin(origins = "http://localhost:5173")
+
 public class TransactionController {
 
     @Autowired
@@ -38,12 +38,6 @@ public class TransactionController {
     }
 
 
-
-//////
-//    @GetMapping("/user/{userId}")
-//    public Optional<TransactionDTO> getTransactionById(@PathVariable int userId) {
-//        return transactionService.getTransactionByUserId(userId);
-//    }
 
     @GetMapping("/byuserid/{userId}")
     public Optional<TransactionDTO> getTransactionByUserId(@PathVariable int userId) {

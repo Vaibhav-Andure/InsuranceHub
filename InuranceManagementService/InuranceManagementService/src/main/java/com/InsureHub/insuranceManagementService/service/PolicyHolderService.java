@@ -99,19 +99,7 @@ public class PolicyHolderService {
                 .collect(Collectors.toList());
     }
 
-    // Delete policyholder by ID
-    public boolean deletePolicyHolder(int id) {
-        logger.info("Attempting to delete PolicyHolder with ID: {}", id);
 
-        if (!policyHolderRepository.existsById(id)) {
-            logger.warn("PolicyHolder with ID: {} does not exist", id);
-            return false;  // Policyholder not found
-        }
-
-        policyHolderRepository.deleteById(id);
-        logger.info("Deleted PolicyHolder with ID: {}", id);
-        return true;  // Deleted successfully
-    }
 
     // DTO conversion
     private PolicyHolderDTO convertToDTO(PolicyHolder policyHolder) {

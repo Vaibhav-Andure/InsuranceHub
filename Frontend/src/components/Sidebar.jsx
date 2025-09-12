@@ -111,8 +111,11 @@ const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', view: 'policyholders' },
   { icon: Users, label: 'Customers', view: 'policyholders' },
   { icon: FileText, label: 'Policies', view: 'Policies' },
-  { icon: BarChart3, label: 'Analytics', view: 'Analytics' },
+
   { icon: Shield, label: 'Insurers', view: 'Insurers' },
+    { icon: Shield, label: 'Feedbacks', view: 'feedbacks' },
+
+      { icon: BarChart3, label: 'Analytics', view: 'Analytics' },
 ];
 
 export function Sidebar({ setActiveView }) {

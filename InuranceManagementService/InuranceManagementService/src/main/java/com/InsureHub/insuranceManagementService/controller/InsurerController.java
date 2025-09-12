@@ -58,16 +58,7 @@ public class InsurerController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // ✅ Delete an insurer
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteInsurer(@PathVariable int id) {
-        boolean deleted = insurerService.deleteInsurer(id);
-        if (deleted) {
-            return ResponseEntity.ok("Insurer deleted successfully.");
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+
     
     
 }
