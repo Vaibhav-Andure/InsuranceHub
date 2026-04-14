@@ -14,7 +14,7 @@ public class OpenAIService {
 
     // Hugging Face chat model endpoint
     private static final String HF_API_URL = "https://router.huggingface.co/v1/models/moonshotai/Kimi-K2-Instruct-0905";
-    private final String hfToken = "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"; // Use env variable in production
+    private final String hfToken = ""; // Use env variable in production
 
     private final RestTemplate restTemplate = new RestTemplate();
 
